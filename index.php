@@ -147,16 +147,16 @@ if (isset($_COOKIE[$SPCookieName])){
 // Set Cookie to remember the selection
 if (isset($_POST['user_idp']) && checkIDP($_POST['user_idp'])){
 	$IDPArray = appendValueToIdPArray($_POST['user_idp'], $IDPArray);
-	setcookie ($SAMLDomainCookieName, getValueFromIdPArray($IDPArray) , time() + (1000*24*3600), '/', $commonDomain, false);
+	setcookie ($SAMLDomainCookieName, getValueFromIdPArray($IDPArray) , time() + (1000*24*3600), '/', $commonDomain, $cookieSecure);
 }
 
 // Set cookie for most recently used Service Provider
 if (isset($_GET['entityID'])){
 	$SPArray = appendValueToIdPArray($_GET['entityID'], array());
-	setcookie ($SPCookieName, getValueFromIdPArray($SPArray), time() + (10*24*3600), '/', $commonDomain, false);
+	setcookie ($SPCookieName, getValueFromIdPArray($SPArray), time() + (10*24*3600), '/', $commonDomain, $cookieSecure);
 } else if (isset($_GET['providerId'])){
 	$SPArray = appendValueToIdPArray($_GET['providerId'], array());
-	setcookie ($SPCookieName, getValueFromIdPArray($SPArray), time() + (10*24*3600), '/', $commonDomain, false);
+	setcookie ($SPCookieName, getValueFromIdPArray($SPArray), time() + (10*24*3600), '/', $commonDomain, $cookieSecure);
 }
 
 
@@ -167,9 +167,9 @@ if (isset($_POST['permanent'])
 	
 	// Set permanent cookie 
 	if (is_numeric($_POST['permanent'])){
-		setcookie ($redirectCookieName, $_POST['user_idp'], time() + ($_POST['permanent']*24*3600), '/', $commonDomain, false);
+		setcookie ($redirectCookieName, $_POST['user_idp'], time() + ($_POST['permanent']*24*3600), '/', $commonDomain, $cookieSecure);
 	} else {
-		setcookie ($redirectCookieName, $_POST['user_idp'], time() + (100*24*3600), '/', $commonDomain, false);
+		setcookie ($redirectCookieName, $_POST['user_idp'], time() + (100*24*3600), '/', $commonDomain, $cookieSecure);
 	}
 } elseif (
 	isset($_POST['user_idp']) 
@@ -178,10 +178,10 @@ if (isset($_POST['permanent'])
 	
 	if (isset($_POST['session'])){
 		// Set redirection cookie and redirection state cookie
-		setcookie ($redirectCookieName, $_POST['user_idp'], null, '/', $commonDomain, false);
-		setcookie ($redirectStateCookieName, 'checked', time() + (100*24*3600), '/', $commonDomain, false);
+		setcookie ($redirectCookieName, $_POST['user_idp'], null, '/', $commonDomain, $cookieSecure);
+		setcookie ($redirectStateCookieName, 'checked', time() + (100*24*3600), '/', $commonDomain, $cookieSecure);
 	} else {
-		setcookie ($redirectStateCookieName, 'checked', time() - 3600, '/', $commonDomain, false);
+		setcookie ($redirectStateCookieName, 'checked', time() - 3600, '/', $commonDomain, $cookieSecure);
 	}
 }
 
@@ -301,7 +301,7 @@ if ($hintedPathIDP != '-'){
 		
 	} elseif ( checkPathInfo('redirect') ){
 		// Set redirect cookie for this session
-		setcookie ($redirectCookieName, $hintedPathIDP, null, '/', $commonDomain, false);
+		setcookie ($redirectCookieName, $hintedPathIDP, null, '/', $commonDomain, $cookieSecure);
 		
 		// Determine if DS or WAYF request
 		if (isValidDSRequest()){
