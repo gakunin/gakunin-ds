@@ -251,5 +251,31 @@ $metadataIDProviders = array (
       'Name' => '九州工業大学',
     ),
   ),
+  'https://gakunin.kyoto-su.ac.jp/idp' => 
+  array (
+    'SSO' => 'https://gakunin.kyoto-su.ac.jp/idp/profile/Shibboleth/SSO',
+    'Name' => '京都産業大学',
+    'en' => 
+    array (
+      'Name' => 'Kyoto Sangyo University',
+    ),
+    'ja' => 
+    array (
+      'Name' => '京都産業大学',
+    ),
+  ),
+  'https://upki-idp.rikkyo.ac.jp/idp/shibboleth' => 
+  array (
+    'SSO' => 'https://upki-idp.rikkyo.ac.jp/idp/profile/Shibboleth/SSO',
+    'Name' => '立教大学',
+    'en' => 
+    array (
+      'Name' => 'Rikkyo University',
+    ),
+    'ja' => 
+    array (
+      'Name' => '立教大学',
+    ),
+  ),
 )
 ?>
