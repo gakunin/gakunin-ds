@@ -20,6 +20,21 @@ $metadataSProviders = array (
       1 => 'https://cdc315-sdauth.sciencedirect.com/SHIRE/SAML/POST',
     ),
   ),
+  'https://sp.tshhosting.com/shibboleth' => 
+  array (
+    'DSURL' => 
+    array (
+      0 => 'https://www.isiknowledge.com/',
+      1 => 'https://www.webofknowledge.com/',
+    ),
+    'ACURL' => 
+    array (
+      0 => 'https://www.isiknowledge.com/?auth=Shibboleth',
+      1 => 'https://www.webofknowledge.com/?auth=Shibboleth',
+      2 => 'https://www.isiknowledge.com/?auth=Shibboleth',
+      3 => 'https://www.webofknowledge.com/?auth=Shibboleth',
+    ),
+  ),
   'https://shibboleth.ovid.com/entity' => 
   array (
     'ACURL' => 
@@ -31,6 +46,18 @@ $metadataSProviders = array (
       4 => 'https://shib-qa.ovid.com/Shibboleth.sso/SAML/Artifact',
       5 => 'https://shibboleth.ovid.com/Shibboleth.sso/SAML/Artifact',
       6 => 'https://shibboleth.ovid.com/Shibboleth.sso/SAML2/POST',
+    ),
+  ),
+  'http://shibboleth.metapress.com/shibboleth-sp' => 
+  array (
+    'ACURL' => 
+    array (
+      0 => 'https://shibboleth.metapress.com/Shibboleth.sso/SAML2/POST',
+      1 => 'https://shibboleth.metapress.com/Shibboleth.sso/SAML2/POST-SimpleSign',
+      2 => 'https://shibboleth.metapress.com/Shibboleth.sso/SAML2/Artifact',
+      3 => 'https://shibboleth.metapress.com/Shibboleth.sso/SAML2/ECP',
+      4 => 'https://shibboleth.metapress.com/Shibboleth.sso/SAML/POST',
+      5 => 'https://shibboleth.metapress.com/Shibboleth.sso/SAML/Artifact',
     ),
   ),
   'https://downloads.channel8.msdn.com/shibboleth-sp' => 
@@ -79,19 +106,32 @@ $metadataSProviders = array (
       3 => 'https://www.refworks.com/Shibboleth.sso/SAML2/POST-SimpleSign',
     ),
   ),
-  'https://mcu-sp.nii.ac.jp/shibboleth-sp' => 
+  'https://atlases.muni.cz/shibboleth' => 
   array (
     'DSURL' => 
     array (
-      0 => 'https://mcu-sp.nii.ac.jp/Shibboleth.sso/DS',
+      0 => 'https://atlases.muni.cz/Shibboleth.sso/WAYF/eduid',
+      1 => 'https://atlases.muni.cz/Shibboleth.sso/DS',
+      2 => 'https://atlases.muni.cz/Shibboleth.sso/DS/eduid',
+      3 => 'https://atlases.muni.cz/Shibboleth.sso/DS/dfnaai',
+      4 => 'https://atlases.muni.cz/Shibboleth.sso/surf',
+      5 => 'https://atlases.muni.cz/Shibboleth.sso/niif',
+      6 => 'https://atlases.muni.cz/Shibboleth.sso/upki',
+      7 => 'https://atlases.muni.cz/Shibboleth.sso/chimarrao',
+      8 => 'https://atlases.muni.cz/Shibboleth.sso/aaf',
+      9 => 'https://atlases.muni.cz/Shibboleth.sso/pionier',
+      10 => 'https://atlases.muni.cz/Shibboleth.sso/kalmar',
+      11 => 'https://atlases.muni.cz/Shibboleth.sso/arnes',
+      12 => 'https://atlases.muni.cz/Shibboleth.sso/switch',
     ),
     'ACURL' => 
     array (
-      0 => 'https://mcu-sp.nii.ac.jp/Shibboleth.sso/SAML2/POST',
-      1 => 'https://mcu-sp.nii.ac.jp/Shibboleth.sso/SAML2/POST-SimpleSign',
-      2 => 'https://mcu-sp.nii.ac.jp/Shibboleth.sso/SAML2/Artifact',
-      3 => 'https://mcu-sp.nii.ac.jp/Shibboleth.sso/SAML/POST',
-      4 => 'https://mcu-sp.nii.ac.jp/Shibboleth.sso/SAML/Artifact',
+      0 => 'https://atlases.muni.cz/Shibboleth.sso/SAML2/POST',
+      1 => 'https://atlases.muni.cz/Shibboleth.sso/SAML2/POST-SimpleSign',
+      2 => 'https://atlases.muni.cz/Shibboleth.sso/SAML2/Artifact',
+      3 => 'https://atlases.muni.cz/Shibboleth.sso/SAML2/ECP',
+      4 => 'https://atlases.muni.cz/Shibboleth.sso/SAML/POST',
+      5 => 'https://atlases.muni.cz/Shibboleth.sso/SAML/Artifact',
     ),
   ),
   'https://attrviewer20.nii.ac.jp/shibboleth-sp' => 
@@ -259,21 +299,6 @@ $metadataSProviders = array (
       4 => 'https://c.yz.yamagata-u.ac.jp/Shibboleth.sso/SAML/Artifact',
     ),
   ),
-  'https://sp.tshhosting.com/shibboleth' => 
-  array (
-    'DSURL' => 
-    array (
-      0 => 'https://www.isiknowledge.com/',
-      1 => 'https://www.webofknowledge.com/',
-    ),
-    'ACURL' => 
-    array (
-      0 => 'https://www.isiknowledge.com/?auth=Shibboleth',
-      1 => 'https://www.webofknowledge.com/?auth=Shibboleth',
-      2 => 'https://www.isiknowledge.com/?auth=Shibboleth',
-      3 => 'https://www.webofknowledge.com/?auth=Shibboleth',
-    ),
-  ),
   'https://webels.ex.nii.ac.jp/shibboleth-sp' => 
   array (
     'DSURL' => 
@@ -320,6 +345,14 @@ $metadataSProviders = array (
       2 => 'https://ninsho-dav.nii.ac.jp/Shibboleth.sso/SAML2/Artifact',
       3 => 'https://ninsho-dav.nii.ac.jp/Shibboleth.sso/SAML/POST',
       4 => 'https://ninsho-dav.nii.ac.jp/Shibboleth.sso/SAML/Artifact',
+    ),
+  ),
+  'https://www.pieronline.jp/shibboleth' => 
+  array (
+    'ACURL' => 
+    array (
+      0 => 'https://www.pieronline.jp/session/shib',
+      1 => 'https://www.pieronline.jp/session/shib',
     ),
   ),
   'https://idp.ixsq.nii.ac.jp/shibboleth-sp' => 
@@ -403,6 +436,22 @@ $metadataSProviders = array (
     'ACURL' => 
     array (
       0 => 'https://shibboleth.ebscohost.com/Shibboleth.sso/SAML/POST',
+    ),
+  ),
+  'https://gakusp01.kyoto-su.ac.jp/shibboleth' => 
+  array (
+    'DSURL' => 
+    array (
+      0 => 'https://gakusp01.kyoto-su.ac.jp/Shibboleth.sso/DS',
+    ),
+    'ACURL' => 
+    array (
+      0 => 'https://gakusp01.kyoto-su.ac.jp/Shibboleth.sso/SAML2/POST',
+      1 => 'https://gakusp01.kyoto-su.ac.jp/Shibboleth.sso/SAML2/POST-SimpleSign',
+      2 => 'https://gakusp01.kyoto-su.ac.jp/Shibboleth.sso/SAML2/Artifact',
+      3 => 'https://gakusp01.kyoto-su.ac.jp/Shibboleth.sso/SAML2/ECP',
+      4 => 'https://gakusp01.kyoto-su.ac.jp/Shibboleth.sso/SAML/POST',
+      5 => 'https://gakusp01.kyoto-su.ac.jp/Shibboleth.sso/SAML/Artifact',
     ),
   ),
 )
