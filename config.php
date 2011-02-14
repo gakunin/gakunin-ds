@@ -40,6 +40,8 @@ $SAMLDomainCookieName = $cookieNamePrefix.'_saml_idp';
 // selected IdP and SP using $SAMLDomainCookieName and $SPCookieName
 $SPCookieName = $cookieNamePrefix.'_saml_sp';
 
+// If true, "secure" attribute is set
+$cookieSecure = true;
 
 // Enabled/Disabled Features
 //**************************
