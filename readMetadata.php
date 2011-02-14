@@ -140,20 +140,23 @@ function parseMetadata($metadataFile, $defaultLanguage){
 		$entityID = $EntityDescriptor->getAttribute('entityID');
 		
 		foreach($EntityDescriptor->childNodes as $RoleDescriptor) {
-			switch($RoleDescriptor->nodeName){
-				case 'IDPSSODescriptor':
-					$IDP = processIDPRoleDescriptor($RoleDescriptor);
-					if ($IDP){
-						$metadataIDProviders[$entityID] = $IDP;
-					}
-					break;
-				case 'SPSSODescriptor':
-					$SP = processSPRoleDescriptor($RoleDescriptor);
-					if ($SP){
-						$metadataSProviders[$entityID] = $SP;
-					}
-					break;
-				default:
+			if( $RoleDescriptor->namespaceURI == 'urn:oasis:names:tc:SAML:2.0:metadata')
+			{
+				switch($RoleDescriptor->localName){
+					case 'IDPSSODescriptor':
+						$IDP = processIDPRoleDescriptor($RoleDescriptor);
+						if ($IDP){
+							$metadataIDProviders[$entityID] = $IDP;
+						}
+						break;
+					case 'SPSSODescriptor':
+						$SP = processSPRoleDescriptor($RoleDescriptor);
+						if ($SP){
+							$metadataSProviders[$entityID] = $SP;
+						}
+						break;
+					default:
+				}
 			}
 		}
 	}
