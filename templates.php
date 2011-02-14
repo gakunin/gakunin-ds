@@ -213,7 +213,7 @@ function printError($message){
 function printEmbeddedWAYFScript(){
 
 	global $langStrings, $language, $imageURL, $logoURL, $smallLogoURL, $federationURL;
-	global $selectedIDP, $IDProviders, $redirectCookieName, $redirectStateCookieName, $federationName;
+	global $selectedIDP, $IDProviders, $redirectCookieName, $redirectStateCookieName, $federationName, $cookieSecure;
 	
 	// Get some values that are used in the script
 	$loginWithString = getLocalString('login_with');
@@ -421,7 +421,22 @@ function setCookie(c_name, value, expiredays){
 	var exdate = new Date();
 	exdate.setDate(exdate.getDate() + expiredays);
 	document.cookie=c_name + "=" + escape(value) +
-	((expiredays==null) ? "" : "; expires=" + exdate.toGMTString());
+	((expiredays==null) ? "" : "; expires=" + exdate.toGMTString())
+SCRIPT;
+	if( isset($cookieSecure) )
+	{
+		echo <<<SCRIPT
+ + "; secure";
+SCRIPT;
+	}
+	else
+	{
+		echo <<<SCRIPT
+;
+SCRIPT;
+	}
+	echo <<<SCRIPT
+
 }
 
 function getCookie(check_name){
