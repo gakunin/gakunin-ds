@@ -153,14 +153,14 @@ $IDProviders['https://upki-idp.chiba-u.jp/idp/shibboleth'] =
 $IDProviders['https://authidp1.iimc.kyoto-u.ac.jp/idp/shibboleth'] = 
   array (
     'Type' => 'kansai',
-    'Index' => '',
+    'Index' => 'PI0005JP',
 );
 
 // 広島大学
 $IDProviders['https://idp.hiroshima-u.ac.jp/idp/shibboleth'] = 
   array (
     'Type' => 'chugoku',
-    'Index' => 'PI0005JP',
+    'Index' => 'PI0006JP',
 );
 
 // 金沢大学
@@ -245,6 +245,27 @@ $IDProviders['https://odidp.cc.okayama-u.ac.jp/idp/shibboleth'] =
   array (
     'Type' => 'chugoku',
     'Index' => 'PI0018JP',
+);
+
+//九州工業大学
+$IDProviders['https://idp.isc.kyutech.ac.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'kyusyu',
+    'Index' => 'PI0019JP',
+);
+
+// 京都産業大学
+$IDProviders['https://gakunin.kyoto-su.ac.jp/idp'] =
+  array (
+    'Type' => 'kansai',
+    'Index' => 'PI0020JP',
+);
+
+// 立教大学
+$IDProviders['https://upki-idp.rikkyo.ac.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'kanto',
+    'Index' => 'PI0021JP',
 );
 
 ?>
