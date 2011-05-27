@@ -18,6 +18,7 @@ require_once('config.php');
 require_once('templates.php');
 require_once('functions.php');
 require_once('languages.php');
+require_once('incsearch/printEmbeddedWAYFScript-incsearch.php');
 
 header('P3P: CP="NOI CUR DEVa OUR IND COM NAV PRE"');
 
@@ -534,9 +535,35 @@ if (
 	
 	// Set JavaScript content type
 	header('Content-type: text/javascript;charset="utf-8"');
-	
+
+	$safekind = 0;
+
+	if (isset($useRefererChecked) && $useRefererChecked == true){
+		if (isset($_SERVER["HTTP_REFERER"]) && ($_SERVER["HTTP_REFERER"] != '')){
+			$referer_url = parse_url($_SERVER["HTTP_REFERER"]);
+			$safekind = 1;
+			foreach ($SProviders as $key => $SProvider){
+				$sp_url = parse_url($key);
+				if ($referer_url['host'] == $sp_url['host']){
+					$safekind = 0;
+					break;
+				}
+			}
+		} else {
+			$safekind = 2;
+		}
+
+		if ($safekind > 0){
+			$selectedIDP = '-';
+		}
+	}
+
 	// Generate JavaScript code
-	printEmbeddedWAYFScript();
+	if (isset($useAutocompleteIdP) && $useAutocompleteIdP == true){
+		printEmbeddedWAYFScript_IncSearch();
+	} else {
+		printEmbeddedWAYFScript();
+	}
 	
 	exit;
 	

@@ -45,6 +45,8 @@ $langStrings['en'] = array (
 'most_used' => 'Most often used Home Organisations',
 'invalid_return_url' => 'The return URL <tt>\'%s\'</tt> is not a valid URL.',
 'unverified_return_url' => 'The return URL <tt>\'%s\'</tt> could not be verified for Service Provider <tt>\'%s\'</tt>.',
+'clear_button' => 'Clear/View',
+'alert_sp' => 'Alert SP!',
 );
 
 
@@ -253,6 +255,8 @@ $langStrings['ja'] = array (
 'most_used' => 'Most often used Home Organisations',
 'invalid_return_url' => 'The return URL <tt>\'%s\'</tt> is not a valid URL.',
 'unverified_return_url' => 'The return URL <tt>\'%s\'</tt> could not be verified for Service Provider <tt>\'%s\'</tt>.',
+'clear_button' => 'クリア/表示',
+'alert_sp' => '注意：フェデレーションに登録されてないSPの可能性があります。',
 );
 
 ?>

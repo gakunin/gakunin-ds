@@ -107,6 +107,11 @@ $useLogging = true;
 // if you know what you are doing!
 $exportPreselectedIdP = false;
 
+// Incremental Search
+$useAutocompleteIdP = true;
+
+// Referer Check
+$useRefererChecked = true;
 
 // Look&feel settings
 //*******************
@@ -132,6 +137,12 @@ $logoURL = $imageURL.'/gakunin.png';
 // URL to the small logo that shall be displayed in the embedded WAYF if dimensions are small
 //$smallLogoURL = $imageURL.'/switch-aai-transparent-small.png';
 $smallLogoURL = $imageURL.'/gakunin-seal.png';
+
+$alertURL = $imageURL.'/alert.gif';
+
+$incsearchURL = 'https://ds.gakunin.nii.ac.jp/WAYF2/incsearch';
+$incsearchLibURL = $incsearchURL.'/incsearch.js';
+$incsearchCssURL = $incsearchURL.'/incsearch.css';
 
 
 // Involved files settings

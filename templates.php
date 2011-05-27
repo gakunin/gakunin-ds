@@ -21,13 +21,23 @@ if(!isset($federationURL)) $federationURL = '';
 function printHeader(){
 
 	global $langStrings, $language, $imageURL, $logoURL;
+	global $selectedIDP, $language, $IDProviders;
+	global $useAutocompleteIdP, $selIdP, $incsearchCssURL, $incsearchLibURL;
 	
 	// Check if custom header template exists
 	if(file_exists('custom-header.php')){
-		include('custom-header.php');
+		if (isset($useAutocompleteIdP) && $useAutocompleteIdP == true){
+			include('incsearch/custom-header-incsearch.php');
+		} else {
+			include('custom-header.php');
+		}
 	} else {
-		// Use default code
-		include('default-header.php');
+		if (isset($useAutocompleteIdP) && $useAutocompleteIdP == true){
+			include('incsearch/default-header-incsearch.php');
+		} else {
+			// Use default code
+			include('default-header.php');
+		}
 	}
 }
 
@@ -37,6 +47,7 @@ function printHeader(){
 function printWAYF(){
 	
 	global $selectedIDP, $language, $IDProviders, $redirectCookieName, $imageURL, $redirectStateCookieName, $showPermanentSetting;
+	global $useAutocompleteIdP, $selIdP;
 	
 	if (!isset($showPermanentSetting)){
 		$showPermanentSetting = false;
@@ -60,10 +71,18 @@ function printWAYF(){
 	
 	// Check if custom header template exists
 	if(file_exists('custom-body.php')){
-		include('custom-body.php');
+		if (isset($useAutocompleteIdP) && $useAutocompleteIdP == true){
+			include('incsearch/custom-body-incsearch.php');
+		} else {
+			include('custom-body.php');
+		}
 	} else {
-		// Use default code
-		include('default-body.php');
+		if (isset($useAutocompleteIdP) && $useAutocompleteIdP == true){
+			include('incsearch/default-body-incsearch.php');
+		} else {
+			// Use default code
+			include('default-body.php');
+		}
 	}
 }
 
