@@ -1,0 +1,13 @@
+#view_incsearch {
+    position: absolute;
+    background-color: #FFFFFF;
+    font-size: 100%;
+    overflow: auto;
+}
+
+#view_incsearch div {
+    display: block;
+    overflow: auto;
+    white-space: nowrap;
+}
+
