@@ -256,7 +256,7 @@ $langStrings['ja'] = array (
 'invalid_return_url' => 'The return URL <tt>\'%s\'</tt> is not a valid URL.',
 'unverified_return_url' => 'The return URL <tt>\'%s\'</tt> could not be verified for Service Provider <tt>\'%s\'</tt>.',
 'clear_button' => 'クリア/表示',
-'alert_sp' => '注意:リファラ遮断のためDSから所属IdP情報を取得できません。',
+'alert_sp' => '注意:リファラ遮断のためDSから所属IdP情報を取得できません',
 );
 
 ?>
