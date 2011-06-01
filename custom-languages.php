@@ -1,6 +1,6 @@
 <?php
 // WAYF localized language strings
-// Make sure to use entities instead of plain UTF-8 characters for 
+// Make sure to use HTML entities instead of plain UTF-8 characters for 
 // non-ASCII characters if you are using the Embedded WAYF. It could be that the
 // Embedded WAYF is used on non-UTF8 web pages, which then could cause 
 // encoding issues
@@ -45,6 +45,7 @@ $langStrings['en'] = array (
 'most_used' => 'Most often used Home Organisations',
 'invalid_return_url' => 'The return URL <tt>\'%s\'</tt> is not a valid URL.',
 'unverified_return_url' => 'The return URL <tt>\'%s\'</tt> could not be verified for Service Provider <tt>\'%s\'</tt>.',
+'unknown_sp' => 'The Service Provider <tt>\'%s\'</tt> could not be found in metadata and is therefore unknown.',
 'clear_button' => 'Clear/View',
 'alert_sp' => 'Alert SP!',
 );
@@ -90,6 +91,7 @@ $langStrings['de'] = array (
 'most_used' => 'Meist genutzte Home Organisationen',
 'invalid_return_url' => 'Die return URL <tt>\'%s\'</tt> ist keine g&uuml;tige URL.',
 'unverified_return_url' => 'Die return URL <tt>\'%s\'</tt> ist nicht g&uuml;tige f&uuml;r den Service Provider <tt>\'%s\'</tt>.',
+'unknown_sp' => 'Der Service Provider <tt>\'%s\'</tt> konnte nicht in den Metadaten gefunden werden und ist deshalb unbekannt.',
 );
 
 
@@ -255,6 +257,7 @@ $langStrings['ja'] = array (
 'most_used' => 'Most often used Home Organisations',
 'invalid_return_url' => 'The return URL <tt>\'%s\'</tt> is not a valid URL.',
 'unverified_return_url' => 'The return URL <tt>\'%s\'</tt> could not be verified for Service Provider <tt>\'%s\'</tt>.',
+'unknown_sp' => 'The Service Provider <tt>\'%s\'</tt> could not be found in metadata and is therefore unknown.',
 'clear_button' => 'クリア/表示',
 'alert_sp' => '注意:リファラ遮断のためDSから所属IdP情報を取得できません',
 );

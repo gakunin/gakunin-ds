@@ -1,4 +1,5 @@
-<?php
+<?php // Copyright (c) 2011, SWITCH - Serving Swiss Universities
+
 /******************************************************************************/
 // Commonly used functions for the WAYF
 /******************************************************************************/
@@ -305,10 +306,7 @@ function getLocalString($string, $encoding = ''){
 /******************************************************************************/
 // Converts string to a JavaScript format that can be used in JS alert
 function convertToJSString($string){
-//chg nii-help ->
-//      return addslashes(utf8_encode(html_entity_decode($string)));
-      return addslashes(html_entity_decode($string, ENT_COMPAT, 'UTF-8'));
-//chg nii-help <-
+	return addslashes(html_entity_decode($string, ENT_COMPAT, 'UTF-8'));
 }
 
 /******************************************************************************/
@@ -398,37 +396,39 @@ function getIPAdressHint() {
 	}
 	return '-';
 }
+
 /******************************************************************************/
-// Returns true if URL could be verified, false otherwise
-function isVerifiedReturnURL($entityID, $returnURL) {
-	global $SProviders, $enableDSReturnParamCheck, $useACURLsForReturnParamCheck;
+// Returns true if URL could be verified or if no check is necessary, false otherwise
+function verifyReturnURL($entityID, $returnURL) {
+	global $SProviders, $useACURLsForReturnParamCheck;
 	
-	// Is check necessary
-	if (!isset($enableDSReturnParamCheck) || !$enableDSReturnParamCheck){
-		return true;
+	// If SP has a <idpdisc:DiscoveryResponse>, check return param
+	if (isset($SProviders[$entityID]['DSURL'])){
+		return in_array($returnURL, $SProviders[$entityID]['DSURL']);
 	}
 	
-	// SP unknown, therefore return false
-	if (!isset($SProviders[$entityID])){
-		return false;
-	}
-	
-	// Check using DiscoveryResponse extension
-	if (isset($SProviders[$entityID]['DSURL']) && in_array($returnURL, $SProviders[$entityID]['DSURL'])){
-		return true;
-	}
-	
-	if ($useACURLsForReturnParamCheck && isset($SProviders[$entityID]['ACURL'])){
+	// If fall back check is enabled, check return param
+	if (isset($useACURLsForReturnParamCheck) && $useACURLsForReturnParamCheck){
+		
+		// Return true if no assertion consumer URL is defined to check against
+		// Should never happend
+		if (!isset($SProviders[$entityID]['ACURL'])){
+			return false;
+		}
+		
 		$returnURLHostName = getHostNameFromURI($returnURL);
 		foreach($SProviders[$entityID]['ACURL'] as $ACURL){
 			if (getHostNameFromURI($ACURL) == $returnURLHostName){
 				return true;
 			}
 		}
+		// We haven't found a matchin assertion consumer url so we return false
+		return false;
 	}
 	
-	// Default return value
-	return false;
+	// SP has no <idpdisc:DiscoveryResponse> and $useACURLsForReturnParamCheck
+	// is disabled, so we don't check anything
+	return true;
 }
 
 /******************************************************************************/
@@ -479,20 +479,29 @@ function logAccessEntry($protocol, $type, $sp, $idp){
 	
 	// Let's make sure the file exists and is writable first.
 	if (is_writable($WAYFLogFile)) {
-			// In our example we're opening $filename in append mode.
-			// The file pointer is at the bottom of the file hence
-			// that's where $somecontent will go when we fwrite() it.
-			if (!$handle = fopen($WAYFLogFile, 'a')) {
-					return;
-			}
 			
 			// Create log entry
 			$entry = date('Y-m-d H:i:s').' '.$_SERVER['REMOTE_ADDR'].' '.$protocol.' '.$type.' '.$idp.' '.$sp."\n";
 			
-			// Write $somecontent to our opened file.
-			if (fwrite($handle, $entry) === FALSE) {
-					return;
+			// We are opening $filename in append mode.
+			// The file pointer is at the bottom of the file hence
+			// that's where $somecontent will go when we fwrite() it.
+			if (!$handle = fopen($WAYFLogFile, 'a')) {
+				return;
 			}
+			
+			// Try getting lock
+			while (!flock($handle, LOCK_EX)){
+				usleep(rand(10, 100));
+			}
+			
+			// Write $somecontent to our opened file.
+			fwrite($handle, $entry);
+			
+			// Release the lock
+			flock($handle, LOCK_UN);
+			
+			// Close file handle
 			fclose($handle);
 	}
 }
@@ -625,7 +634,7 @@ function sortIdentityProviders(&$IDProviders){
 	$IDProviders = Array();
 	
 	// Compose array
-	$showUnknownCategory = false;
+	$unknownCategoryIsEmpty = true;
 	while(list($categoryKey, $categoryValue) = each($sortedCategories)){
 		$IDProviders[$categoryKey] = $categoryValue;
 		
@@ -641,14 +650,14 @@ function sortIdentityProviders(&$IDProviders){
 			if ($categoryKey == 'unknown' || !isset($sortedCategories[$IDProvidersValue['Type']])){
 				$IDProviders[$IDProvidersPKey] = $IDProvidersValue;
 				unset($sortedIDProviders[$IDProvidersPKey]);
-				$showUnknownCategory = true;
+				$unknownCategoryIsEmpty = false;
 			}
 			
 		}
 	}
 	
 	// Check if unkown category is needed
-	if (!$showUnknownCategory){
+	if ($unknownCategoryIsEmpty || (count($sortedCategories) == 1)){
 		unset($IDProviders['unknown']);
 	}
 	

@@ -1,22 +1,26 @@
-<?php
-/* 
- * This file is used to dynamically create the list of IdPs to be 
- * displayed for the WAYF/DS service based on the federation metadata.
- * Configuration parameters are specified in config.php.
- */
+<?php // Copyright (c) 2011, SWITCH - Serving Swiss Universities
 
-// Check configuration
-if (!isset($metadataSPFile)){
-	$errorMsg = 'Please first define a file $metadataSPFile = \'SProvider.metadata.conf.php\'; in config.php before running this script.';
-	syslog(LOG_ERR, $errorMsg);
-	die($errorMsg);
-}
+// This file is used to dynamically create the list of IdPs to be 
+// displayed for the WAYF/DS service based on the federation metadata.
+// Configuration parameters are specified in config.php.
+//
+// The list of Identity Providers can also be updated by running the script
+// readMetadata.php periodically as web server user, e.g. with a cron entry like:
+// 5 * * * * /usr/bin/php readMetadata.php > /dev/null
+
+// Init log file
+openlog("SWITCHwayf.readMetadata.php", LOG_PID | LOG_PERROR, LOG_LOCAL0);
 
 // Make sure this script is not accessed directly
 if(isRunViaCLI()){
 	// Run in cli mode.
 	// Could be used for testing purposes or to facilitate startup confiduration.
 	// Results are dumped in $metadataIDPFile (see config.php)
+	
+	// Set dummy server name
+	$_SERVER['SERVER_NAME'] = 'localhost';
+	
+	// Load configuration files
 	require('config.php');
 	require($IDPConfigFile);
 	
@@ -27,15 +31,46 @@ if(isRunViaCLI()){
 	  exit ("Exiting: File ".$metadataFile." is empty or does not exist\n");
 	}
 	
+	// Check configuration
+	if (!isset($metadataSPFile)){
+		$errorMsg = 'Please first define a file $metadataSPFile = \'SProvider.metadata.conf.php\'; in config.php before running this script.';
+		syslog(LOG_ERR, $errorMsg);
+		die($errorMsg);
+	}
+	
+	// Get an exclusive lock to generate our parsed IdP and SP files.
+	if (($lockFp = fopen($metadataLockFile, 'a+')) === false) {
+		$errorMsg = 'Could not open lock file '.$metadataLockFile;
+		die($errorMsg);
+	}
+	if (flock($lockFp, LOCK_EX) === false) { 
+		$errorMsg = 'Could not lock file '.$metadataLockFile;
+		die($errorMsg);
+	}
+	
 	echo 'Parsing metadata file '.$metadataFile."\n";
 	list($metadataIDProviders, $metadataSProviders) = parseMetadata($metadataFile, $defaultLanguage);
 	
-	// If $metadataIDProviders is not FALSE update $IDProviders and dump results in $metadataIDPFile, else do nothing.
+	// If $metadataIDProviders is not FALSE, dump results in $metadataIDPFile.
 	if(is_array($metadataIDProviders)){ 
 		
 		echo 'Dumping parsed Identity Providers to file '.$metadataIDPFile."\n";
 		dumpFile($metadataIDPFile, $metadataIDProviders, 'metadataIDProviders');
+	}
+	// If $metadataSProviders is not FALSE, dump results in $metadataSPFile.
+	if(is_array($metadataSProviders)){ 
 		
+		echo 'Dumping parsed Service Providers to file '.$metadataSPFile."\n";
+		dumpFile($metadataSPFile, $metadataSProviders, 'metadataSProviders');
+	}
+
+	// Release the lock, and close.
+	flock($lockFp, LOCK_UN);
+	fclose($lockFp);
+		
+	// If $metadataIDProviders is not FALSE, update $IDProviders and print the Identity Providers lists.
+	if(is_array($metadataIDProviders)){ 
+
 		echo 'Merging parsed Identity Providers with data from file '.$IDProviders."\n";
 		$IDProviders = mergeInfo($IDProviders, $metadataIDProviders, $SAML2MetaOverLocalConf, $includeLocalConfEntries);
 		
@@ -46,11 +81,8 @@ if(isRunViaCLI()){
 		print_r($IDProviders);
 	}
 	
-	// If $metadataSProviders is not FALSE update $SProviders and dump results in $metadataSPFile, else do nothing.
+	// If $metadataSProviders is not FALSE, update $SProviders and print the list.
 	if(is_array($metadataSProviders)){ 
-		
-		echo 'Dumping parsed Service Providers to file '.$metadataSPFile."\n";
-		dumpFile($metadataSPFile, $metadataSProviders, 'metadataSProviders');
 		
 		// Fow now copy the array by reference
 		$SProviders = &$metadataSProviders;
@@ -61,8 +93,35 @@ if(isRunViaCLI()){
 	
 	
 } elseif (isRunViaInclude()) {
+	
+	// Check configuration
+	if (!isset($metadataSPFile)){
+		$errorMsg = 'Please first define a file $metadataSPFile = \'SProvider.metadata.conf.php\'; in config.php before running this script.';
+		syslog(LOG_ERR, $errorMsg);
+		die($errorMsg);
+	}
+	
+	if (!isset($metadataFile)){
+		$errorMsg = 'Please first define a file $metadataFile in config.php before running this script.';
+		syslog(LOG_ERR, $errorMsg);
+		die($errorMsg);
+	}
+	
+	// Open the metadata lock file.
+	if (($lockFp = fopen($metadataLockFile, 'a+')) === false) {
+		$errorMsg = 'Could not open lock file '.$metadataLockFile;
+		syslog(LOG_ERR, $errorMsg);
+	}
+
 	// Run as included file
 	if(!file_exists($metadataIDPFile) or filemtime($metadataFile) > filemtime($metadataIDPFile)){
+		// Get an exclusive lock to regenerate the parsed files.
+		if ($lockFp !== false) {
+			if (flock($lockFp, LOCK_EX) === false) { 
+				$errorMsg = 'Could not get exclusive lock on '.$metadataLockFile;
+				syslog(LOG_ERR, $errorMsg);
+			}
+		}
 		// Regenerate $metadataIDPFile.
 		list($metadataIDProviders, $metadataSProviders) = parseMetadata($metadataFile, $defaultLanguage);
 		
@@ -78,6 +137,11 @@ if(isRunViaCLI()){
 			require($metadataSPFile);
 		}
 		
+		// Release the lock.
+		if ($lockFp !== false) {
+			flock($lockFp, LOCK_UN);
+		}
+
 				// Now merge IDPs from metadata and static file
 		$IDProviders = mergeInfo($IDProviders, $metadataIDProviders, $SAML2MetaOverLocalConf, $includeLocalConfEntries);
 		
@@ -86,21 +150,41 @@ if(isRunViaCLI()){
 		
 	} elseif (file_exists($metadataIDPFile)){
 		
+		// Get a shared lock to read the IdP and SP files
+		// generated from the metadata file.
+		if ($lockFp !== false) {
+			if (flock($lockFp, LOCK_SH) === false) { 
+				$errorMsg = 'Could not lock file '.$metadataLockFile;
+				syslog(LOG_ERR, $errorMsg);
+			}
+		}
+
 		// Read SP and IDP files generated with metadata
 		require($metadataIDPFile);
 		require($metadataSPFile);
 	
+		// Release the lock.
+		if ($lockFp !== false) {
+			flock($lockFp, LOCK_UN);
+		}
+
 		// Now merge IDPs from metadata and static file
 		$IDProviders = mergeInfo($IDProviders, $metadataIDProviders, $SAML2MetaOverLocalConf, $includeLocalConfEntries);
 		
 		// Fow now copy the array by reference
 		$SProviders = &$metadataSProviders;
 	}
-	
+
+	// Close the metadata lock file.
+	if ($lockFp !== false) {
+		fclose($lockFp);
+	}
 	
 } else {
 	exit('No direct script access allowed');
 }
+
+closelog();
 
 /*****************************************************************************/
 // Function parseMetadata, parses metadata file and returns Array($IdPs, SPs)  or
@@ -108,9 +192,9 @@ if(isRunViaCLI()){
 function parseMetadata($metadataFile, $defaultLanguage){
 	
 	if(!file_exists($metadataFile)){
-		$errorMsg = 'File '.$metadataFile." does not exist.\n"; 
+		$errorMsg = 'File '.$metadataFile." does not exist"; 
 		if (isRunViaCLI()){
-			echo $errorMsg;
+			echo $errorMsg."\n";
 		} else {
 			syslog(LOG_ERR, $errorMsg);
 		}
@@ -118,17 +202,23 @@ function parseMetadata($metadataFile, $defaultLanguage){
 	}
 
 	if(!is_readable($metadataFile)){
-		$errorMsg = 'File '.$metadataFile." cannot be read due to insufficient permissions\n"; 
-		syslog(LOG_ERR, $errorMsg);
-		echo $errorMsg;
+		$errorMsg = 'File '.$metadataFile." cannot be read due to insufficient permissions"; 
+		if (isRunViaCLI()){
+			echo $errorMsg."\n";
+		} else {
+			syslog(LOG_ERR, $errorMsg);
+		}
 		return Array(false, false);
 	}
 	
 	$doc = new DOMDocument();
 	if(!$doc->load( $metadataFile )){
-		$errorMsg = 'Could not parse metadata file '.$metadataFile.".\n"; 
-		syslog(LOG_ERR, $errorMsg);
-		echo $errorMsg;
+		$errorMsg = 'Could not parse metadata file '.$metadataFile; 
+		if (isRunViaCLI()){
+			echo $errorMsg."\n";
+		} else {
+			syslog(LOG_ERR, $errorMsg);
+		}
 		return Array(false, false);
 	}
 	
@@ -140,26 +230,42 @@ function parseMetadata($metadataFile, $defaultLanguage){
 		$entityID = $EntityDescriptor->getAttribute('entityID');
 		
 		foreach($EntityDescriptor->childNodes as $RoleDescriptor) {
-			if( $RoleDescriptor->namespaceURI == 'urn:oasis:names:tc:SAML:2.0:metadata')
-			{
-				switch($RoleDescriptor->localName){
-					case 'IDPSSODescriptor':
-						$IDP = processIDPRoleDescriptor($RoleDescriptor);
-						if ($IDP){
-							$metadataIDProviders[$entityID] = $IDP;
+			$nodeName = $RoleDescriptor->nodeName;
+ 			$nodeName = preg_replace('/^(\w+\:)/', '', $nodeName);
+ 			switch($nodeName){
+				case 'IDPSSODescriptor':
+					$IDP = processIDPRoleDescriptor($RoleDescriptor);
+					if ($IDP){
+						$metadataIDProviders[$entityID] = $IDP;
+					}
+					break;
+				case 'SPSSODescriptor':
+					$SP = processSPRoleDescriptor($RoleDescriptor);
+					if ($SP){
+						$metadataSProviders[$entityID] = $SP;
+					} else {
+						$errorMsg = "Failed to load SP with entityID $entityID from metadata file $metadataFile";
+						if (isRunViaCLI()){
+							echo $errorMsg."\n";
+						} else {
+							syslog(LOG_WARNING, $errorMsg);
 						}
-						break;
-					case 'SPSSODescriptor':
-						$SP = processSPRoleDescriptor($RoleDescriptor);
-						if ($SP){
-							$metadataSProviders[$entityID] = $SP;
-						}
-						break;
-					default:
-				}
+					}
+					break;
+				default:
 			}
 		}
 	}
+	
+	
+	// Output result
+	$infoMsg = "Successfully parsed metadata file ".$metadataFile. ". Found ".count($metadataIDProviders)." IdPs and ".count($metadataSProviders)." SPs";
+	if (isRunViaCLI()){
+		echo $infoMsg."\n";
+	} else {
+		syslog(LOG_INFO, $infoMsg);
+	}
+	
 	
 	return Array($metadataIDProviders, $metadataSProviders);
 }
@@ -254,25 +360,23 @@ function dumpFile($dumpFile, $providers, $variableName){
 	 
 	if(($fp = fopen($dumpFile, 'w')) !== false){
 		
-		if (flock($fp, LOCK_EX)) { // do an exclusive lock
-			fwrite($fp, "<?php\n\n");
-			fwrite($fp, "// This file was automatically generated by readMetadata.php\n");
-			fwrite($fp, "// Don't edit!\n\n");
-			
-			fwrite($fp, '$'.$variableName.' = ');
-			fwrite($fp, var_export($providers,true));
-			
-			fwrite($fp, "\n?>");
-			
-			// release the lock
-			flock($fp, LOCK_UN); 
-		} else {
-			syslog(LOG_ERR, 'Could not lock file '.$dumpFile.' for writting.');
-		}
+		fwrite($fp, "<?php\n\n");
+		fwrite($fp, "// This file was automatically generated by readMetadata.php\n");
+		fwrite($fp, "// Don't edit!\n\n");
 		
+		fwrite($fp, '$'.$variableName.' = ');
+		fwrite($fp, var_export($providers,true));
+		
+		fwrite($fp, "\n?>");
+			
 		fclose($fp);
 	} else {
-		syslog(LOG_ERR, 'Could not open file '.$dumpFile.' for writting.');
+		$errorMsg = 'Could not open file '.$dumpFile.' for writting';
+		if (isRunViaCLI()){
+			echo $errorMsg."\n";
+		} else {
+			syslog(LOG_ERR, $errorMsg);
+		}
 	}
 }
 

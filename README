@@ -1,6 +1,8 @@
-SWITCH WAYF
+Copyright 2011 SWITCH - Serving Swiss Universities. 
+See LICENSE file for details.
+
 -------------------------------------------------------------------------------
-Copyright 2010 SWITCH - Serving Swiss Universities
+SWITCH WAYF
 Contact: aai@switch.ch or go to http://www.switch.ch/aai/wayf
 Version: See head of file 'WAYF' in the same directory
 Project web site: https://forge.switch.ch/redmine/projects/wayf
@@ -13,13 +15,15 @@ Service protocol for use withing a Shibboleth architecture.
 
 -------------------------------------------------------------------------------
 
-Security Note (25. October 2010):
-The current implementation of the Discovery Service protocol as defined in 
+Security Notes
+
+Release (25. October 2010):
+The Discovery Service protocol as defined in 
 http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-idp-discovery.pdf 
 states that the protocol creates opportunities for phishing attacks as do all
-SSO protocols that make use of redirection. Therefore, the specification states
-that an implementation should examine the 'return' parameter used in a 
-Discovery Service request and match it against the <idpdisc:DiscoveryResponse> 
+SSO protocols that make use of redirection. The specification states that an 
+implementation "SHOULD" examine the 'return' parameter used in a Discovery 
+Service request and match it against the <idpdisc:DiscoveryResponse> 
 extension in SAML metadata. The implementation of the Discovery Service protocol
 in the SWITCHwayf prior to version 1.14 does NOT verify the return parameter 
 even if SAML metadata was used to generate the list of Identity Provider.
@@ -29,9 +33,7 @@ Thanks to Tom Scavo for making us aware of this issue.
 
 -------------------------------------------------------------------------------
 
-Features:
-Some of the features include
-
+Some of the Features:
 - Preselecting entry in drop down list by
   - SAML common domain cookie that contains selected Identity Providers 
   - resource path info hint (e.g. 
@@ -41,12 +43,13 @@ Some of the features include
   - IP range preselection
   - IP reverse DNS lookup preselection
 - Transparent redirection mode, e.g. /WAYF/unige.ch/redirect?shire=https://...
-- Support for SAML2 metadata files
-- Various customizations optionas for header, footer, language strings etc.
+- Can read SAML2 metadata files
+- Supports Discovery Service and the Shibboleth authentication request protocol 
+- Various customizations options for header, footer, language strings etc.
 - HTML code generation for embedding the WAYF directly into a web page
+- Support for templates
 - Support for remembering IdP selection permanently
 - I18N support, currently language packs for en, de, it, fr and pt are included
-- Support for templates
 
 -------------------------------------------------------------------------------
 
@@ -55,17 +58,32 @@ Requirements:
 - If the configuration and the backup configuration differ, you have to make 
   sure the user that runs the php script has write access for the configuration
   files.
-
+- PHP XML Parser extension for parsing SAML2 metadata
 -------------------------------------------------------------------------------
 
 Installation:
+1. Unpack the Zip archive into a directory on a host where Apache 
+  (IIS also should work) is deployed. 
 
-Unpack the Zip archive into an arbitrary directory on a host that has a deployed
-Apache (IIS also should work though). Make sure that permissions for the files 
-'SProvider.metadata.php' and 'IDProvider.metadata.php' are set such that the 
-web server user (e.g. www-data, www or httpd) has write access on the files:
+2. Make a copy of the *.dist.php files
+   - Copy the file config.dist.php and name it config.php 
+     This is the main configuration file of the SWITCHwayf
+   - Copy the file IDProvider.conf.dist.php and name it IDProvider.conf.php
+     This file contains the list of Identity Providers that you configure 
+     by hand
 
-If you use Apache 2, add the following statement to the Apache configugration:
+3. Make sure that permissions for the files:
+     - SProvider.metadata.php
+     - IDProvider.metadata.php 
+     - metadata.lock
+     - $WAYFLogFile (typically /var/log/apache2/wayf.log)
+   are set such that the web server user (e.g. www-data, www or httpd) has write
+   permissions for these two files.
+
+4. Adapt the SWITCHwayf configuration in config.php. There are comments in that
+   file that should help you make suitable choices for your use case.
+
+5. If you use Apache 2, add the following statement to the Apache configugration:
 
 --
 <Location /path/to/WAYF>
@@ -73,8 +91,8 @@ If you use Apache 2, add the following statement to the Apache configugration:
 </Location>
 --
 
-In some clustered environments with FastCGI it may be necessary to use something
-like
+   In some clustered environments with FastCGI it may be necessary to use 
+   something like
 
 --
 Options +FollowSymLinks
@@ -86,27 +104,50 @@ Options +FollowSymLinks
 </IfModule>
 --
 
-Alternatively, one also could rename the file 'WAYF' to 'WAYF.php'.
+   Alternatively, one also could rename the file 'WAYF' to 'WAYF.php'.
 
-When using the embedded WAYF feature it might be necessary to add a line to 
-the Apache configuration like below in order to prevent certain web browsers 
-from not displaying the Embedded WAYF or parts of it:
+6. When using the embedded WAYF feature it might be necessary to add a line to 
+   the Apache configuration like below in order to prevent certain web browsers 
+   from not displaying the Embedded WAYF or parts of it:
 
 --
 Header set P3P "CP=\"NOI CUR DEVa OUR IND COM NAV PRE\""
 --
 
-For that to work, the Apache header extension must also be enabled
-with a command like:
+   For that to work, the Apache header extension must also be enabled
+   with a command like:
 
 --
 a2enmod headers
 /etc/init.d/apache2 reload
 --
 
-See http://www.w3.org/P3P/ for more details on P3P.
+   See http://www.w3.org/P3P/ for more details on P3P.
+
+7. Test access by calling the WAYF with a URL like:
+   https://your.host.com/path/to/WAYF
+   Use this URL as Location for your Shibboleth configuration. The WAYF
+   will automatically be able to detect whether it receives a Shibboleth 
+   authentication request or a Discovery Service request.
 
 -------------------------------------------------------------------------------
+
+Update in general:
+1. Make a backup of the directory where the currently active version of the 
+   SWITCHwayf is installed
+2. Get the compressed archive of the new version and move it into the directory
+   of the currently deployed version
+3. Unpack the archive with zip or tar
+   This step will overwrite some existing files. Files whose name starts 
+   with 'custom-' will not be overwritten.
+4. Have a look at config.dist.php and compare this file with your current
+   config.php in order to identify new configuration options.
+
+Update from versions before 1.4.3:
+The new setting '$metadataLockFile' was introduced in config.php. It allows
+configuring the location of the lock file. When the SWITCHwayf is used in a 
+Windows environment, the path to this file probably has to be adapted.
+
 
 Update from versions before 1.8:
 This version has a slightly different structure than previous versions. 
@@ -267,6 +308,10 @@ users to malicous pages, steal their sessions etc). You also have to make sure
 that your central WAYF has a very high availability because a lot of third-party
 services will depend on it.
 
+Also, please be aware that using the Embedded WAYF allows anybody to guess a 
+user's Home Organisation without much effort. This information then could be 
+used for phising attacks for example!
+
 -------------------------------------------------------------------------------
 
 Kerberos support:
@@ -342,158 +387,38 @@ For category entries, only Type, (local) Name and Index are relevant.
 -------------------------------------------------------------------------------
 
 Version History:
-1.14   - Added the configuration option wayf_force_remember_for_session to
-         the Embedded WAYF on request of Wolgang Lierz from ETH Zurich. This
-         option allows setting the remember for session checkbox to true
-       - The 'return' parameter of a Discovery Service request can now be 
-         checked using the idp-discovery-protocol extension or using the FQDN 
-         of all the Service Provider's assertion consumer URLs. The latter 
-         alternative is less secure but still offers better security against 
-         phising attacks. Have a look at config.dist.php and the README for 
-         more detailed explanations on these feature.
-       - Metadata parsing now uses DOM XML for PHP5 instead of Simple XML
-       - Fixed a minor HTML error in template for Embedded WAYF
-       - Sorting within categories works now correctly if SAML2 metadata is 
-         used to generate Identity Provider drop-down list. Thanks to 
-         Kazutsuna Yamaji from the Japanese National Institute of 
-         Informatics (NII) for reporting this issue.
-       - Fixed a minor bug in templates.php that cause PHP warnings to show up
-         in case an invalid IdP was stored in the cookie.
-       - Fixed a bug affecting the Kerberos authentication.
-         Thanks to Robert Basch from MIT for reporting these bugs and for 
-         submitting patches.
-       - Fixed a bug where hidden IdPs would still be shown in Embedded WAYF
-1.13   - Added Favourite IdPs to Embedded WAYF
-       - Fixed a bug where the state of the "Remember for session" checkbox was
-         not remembered.
-1.12.2 - Fixed a XSS security vulnerability
-       - Fixed an error in function appendValueToIdPArray
-         Thanks to Martins Purins from Latvijas Universitates for reporting this
-       - Improved description for setting PHP handler on WAYF script. 
-       - Removed newly introduced PHP short tag in default-body.php
-       - Fixed inconsistency in default Embedded WAYF snippet
-         Thanks to Huân Thebault from Centre de Calcul de l'IN2P3 for 
-         reporting most of the above issues
-1.12.1 - Fixed a bug in the the getToplevelDomain function. 
-         Thanks to Olivier Salaün. 
-1.12   - Added code contributions from CRU. Thanks to Olivier Salaün and co.
-       - Added hooks for persistent customizations that should survive upgrades
-       - Fixed a bug where the last used SP's entityID is not stored for DS 
-         requests
-       - Changed behaviour for WAYF requests to store providerId/entityID
-         in _saml_sp cookie instead of assertion consumer URL
-       - Optimized JavaScript code
-1.11.1 - Fixed a Javascript HTML entities issue
-1.11   - Replaced deprecated PHP 4/5 functions with current ones
-       - Reworked JSON handler in order to output a harmonized data structure
-         that will be compatible with the Internet2 Discovery Service
-1.10.1 - Fixed a minor bug that resulted in PHP warnings when using SAML2 
-         metadata directly. Added a default type for the IDPs when SAML2
-         metadata is used in combination with Embedded WAYF.
-         Thanks to Lourival Pereira Vieira Neto from RNP (Brasil) for reporting.
-1.10   - Added new settings of embedded wayf to set custom texts and to 
-         hide the logo
-       - Added feature to force embedded wayf to use a specific language
-       - Added JSON, PHP, Text export handler of IdP list and guessed IdP
-       - Added cookie deletion handler to clear all settings
-       - Most elements drawn by the Embedded WAYF now have a CSS ID to further
-         customize their appearance although this should be done only at own risk
-       - Added a setting that allows to define a function that checks whether a
-         user is logged in or not
-       - Changed the wayf_use_small_logo default setting to true because most 
-         deployments use this setting
-       - Fixed a bug that occurred when additional IdPs were defined and
-         some IdPs were hidden.
-       - Removed language file setting because this probably was not used anyway
-       - Replaced all non ASCII strings in languages.php with their entities
-         to prevent problems in Embedded WAYF
-       - Rearranged and refactored some code
-       
-1.9.5  - Added explicit script name for form action parameter to fix issues with
-         some test and monitoring web utilities
-1.9.5  - Added category support for the embedded WAYF
-       - The embedded WAYF submit button now is an input element instead of an
-         image surrounded by a button element. This has the advantage that the
-         CSS rules of the embedding page are also applied to the embedded WAYF.
-       - Made sure that there are no JS escaping errors anymore
-       - Fixed a bug in readMetadata.php that resulted in the wront SSOService 
-         URLs being parsed if they were in a certain order. Thanks to 
-         Olivier Salaun from CRU for reporting this bug.
- 
-1.9    - Added three more settings to the embedded WAYF configuration
-       - Fixed some JavaScript warnings
-       - Fixed some minor bugs in the embedded WAYF
-       - Changed button in embedded WAYF to submit input button
-       - Added category support
-       - readMetadata is now more tolerant and flexible when reading SAML 2 metadata
-       - Embedded WAYF now stores cookie itself if IdP from other 
-         federation is used
- 
-1.8    - SAML2 metadata can now be read and displayed
-         This feature has been developed in the framework of GRNET's project 
-         VNOC by Pavlos Drandakis from University of Athens
-       - WAYF/DS can be embedded on remote site using JavaScript
-       - There now is a setting to hide the permanent setting checkbox
-       - Added logging support for statistics generation
-       - Changed character encoding to UTF-8
-       - Added Portuegese language translation provided by 
-         Nuno Gonçalves from FCCN
-       - Cascading of other WAYFs is now possible when Type is set accordingly
- 
-1.7.2  - Fixed a small JavaScript Bug reportet by Franz Kuster from ETHZ
- 
-1.7.1  - Added back-wards patch mode for older WAYF version that didn't use 
-         transparent GET arguments in all requests
-       - Removed RelyingParty configuration option because it is not needed in general
-       - Changed Home Organization to Home Organisation and corrected various typos
-       - Added support for multilingual IdP names. 
-         Thanks go to Pavlos Drandakis from University of Athens 
- 
-1.7    - Added part of the OASIS Directory Service protocol for SAML2/Shibboleth 2.
-         For now, the Service Provider must set the return parameters because 
-         metadata lookup is not implemented. Also, the optional policy 
-         paramenter currently is ignored. These two limitations shouldn't 
-         affect the behaviour negatively for Shibboleth  -based environments.
-       - Fixed some typos in the language strings and some HTML code
- 
-1.6    - Added Reverse  -DNS Lookup to find out users IdP. It is assumed that the
-         reverse DNS lookup hostname is part of the IdPs URN values.
-       - Running several instance of the WAYF in the same domain
-         In this case, you should set the $cookiePrefix variable so that your 
-         differents instances do not share the same cookies. Patch by Florent Guilleux
-         from CRU
-       - Redirect path info together with a resource hint also sets the 
-         redirect cookie now
- 
-1.5.2  - More French corrections by Nicolas Dunand from Uni Lausanne 
- 
-1.5.1  - Added French language corrections by Florent Guilleux from CRU
-       - Made code more resistent against PHP configuration issues
-       - Fixed a small typo in the english translation found by Michael R. Gettes 
-         from Internet2
-       - Adapted SWITCH tagline in License and README
-       - Removed SwissSign certificate notice
- 
-1.5    - State of checkbox to remember session is now stored in a cookie too
-       - Determination of user language now has a more reasonable precedence
- 
-1.4    - Added IP preselection hint by Mika Suvanto CSC (Finland)
- 
-1.3.1  - Corrected two minor inconsistencies
-       - Deactivated Kerberos in default configuration
- 
-1.3    - Configuration is now in a separate file
-       - Kerberos automatic redirection by Josh Howlett from University of Bristol
-       - Some structural code changes
-       - checkConfig now doesn't need shell access anymore
-       - GET parameters received by WAYF are now unchanged appended to each request 
-       - Easier customization options
-1.2    - Added permanent redirect cookie
-       - Cleaned up the code a bit.
- 
-1.1    - Added (BSD) license
-       - Removed and optimized some code
-     
+
+1.14.3  Release date: 4. March 2011
+        - Fixed a race condition. Thanks go to Robert Basch from MIT for 
+          reporting the issue and providing a patch.
+
+1.14.2  Release date: 15. December 2010
+        - IDProvider.conf.php and config.php are not overwritten anymore by upgrades
+        - Logging to Syslog now works properly and is more consistent
+        - Access log now properly locks file
+        - Unknown category is not shown anymore when there is no other category
+        - Namespaces are now taken properly into account when parsing SAML2 
+          metadata. Thanks go to Olivier Salaün for reporting this issue and
+          submitting a patch.
+        - Improved installation instructions
+
+1.14.1  Release date: 12. November 2010
+        - Fixed an encoding bug that affected non-ASCII characters in 
+          JavaScripts. Thanks to Prof. Kazutsuna Yamaji for reporting this issue.
+        - Corrected behaviour of $enableDSReturnParamCheck and 
+          $useACURLsForReturnParamCheck. There won't be an error anymore if an SP 
+          has no <idpdisc:DiscoveryResponse> extension defined. In such a case
+          there will only be a check if $useACURLsForReturnParamCheck is enabled.
+        - Fixed a bug in readMetadata.php that prevented CLI execution
+        - Changed the default configuration option to generate the Embedded WAYF
+          to false due to some concerns regarding phishing attacks
+        - Added proper copyright statements to all source code files
+
+To see the revision history of older versions, please have a look at:
+https://forge.switch.ch/redmine/projects/wayf/wiki/Changes
+
+Releases with a version number X.Y.Z usually are bug fix releases whereas
+releases with a version number X.Y introduce new functionality.
 
 -------------------------------------------------------------------------------
 Embedded WAYF code snippet:
@@ -582,3 +507,30 @@ Path Info Extensions:
                                    in the drop-down list for that user.
 [/IDProviders.txt]                 Same as above but in human readable form.
 [/IDProviders.php]                 Same as above but as PHP code
+
+-------------------------------------------------------------------------------
+
+Credits:
+Find below the list of people who have contributed to code, either because they 
+found bugs, suggested improvements or contributed code. Have a look at the 
+version history in order to see the individual contributions. The list is sorted 
+alphabetically.
+
+- Robert Basch from MIT (US)
+- Pavlos Drandakis from University of Athens (GR)
+- Nicolas Dunand from Université Lausanne (CH)
+- Michael R. Gettes from Internet2 (US)
+- Nuno Gonçalves from FCCN (PT)
+- Florent Guilleux from CRU (FR)
+- Josh Howlett from University of Bristol (UK)
+- Franz Kuster from ETHZ (CH)
+- Wolgang Lierz from ETH Zurich (CH)
+- Lourival Pereira Vieira Neto from RNP (BR)
+- Martins Purins from Latvijas Universitates (LV)
+- Olivier Salaün from RENATER (FR)
+- Tom Scavo from Internet2 (US)
+- Mika Suvanto from CSC (FI)
+- Huân Thebault from Centre de Calcul de l'IN2P3 (FR)
+- Prof. Kazutsuna Yamaji from NII (JP)
+- And of course all SWITCH staff members who have contributed suggestions,
+  bug fixes and translation to this code.

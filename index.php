@@ -1,10 +1,9 @@
-<?php
+<?php // Copyright (c) 2011, SWITCH - Serving Swiss Universities
 
 /*
 ******************************************************************************
 SWITCH PHP WAYF, 
-Copyright 2009 SWITCH - Serving Swiss Universities
-Version: 1.14
+Version: 1.14.3
 Contact:  aai@switch.ch
 Web site: http://www.switch.ch/aai/wayf
 ******************************************************************************
@@ -28,7 +27,7 @@ if (file_exists('custom-languages.php')){
 }
 
 /*------------------------------------------------*/
-// Turn on logging depending on development mode
+// Turn on PHP error reporting
 /*------------------------------------------------*/
 if (isset($developmentMode) && $developmentMode){
 	ini_set('error_reporting', E_ALL);
@@ -93,13 +92,26 @@ if(isValidDSRequest()){
 		exit;
 	}
 	
-	// Check that return URL in DS request is verified
-	if(!isVerifiedReturnURL($_GET['entityID'], $returnURL)){
-		// Show error
-		$message = sprintf(getLocalString('unverified_return_url'), htmlentities($returnURL), htmlentities($_GET['entityID']));
-		printError($message);
-		exit;
+	if (isset($enableDSReturnParamCheck) && $enableDSReturnParamCheck){
+		// Check SP
+		if(!isset($SProviders[$_GET['entityID']])){
+			// Show error
+			$message = sprintf(getLocalString('unknown_sp'), htmlentities($_GET['entityID']));
+			printError($message);
+			exit;
+		}
+		
+		// Check return URL in DS request if checks are enabled
+		$returnURLOK = verifyReturnURL($_GET['entityID'], $returnURL);
+		if(!$returnURLOK){
+			// Show error
+			$message = sprintf(getLocalString('unverified_return_url'), htmlentities($returnURL), htmlentities($_GET['entityID']));
+			printError($message);
+			exit;
+		}
 	}
+	
+	
 }
 
 /*------------------------------------------------*/
@@ -535,26 +547,36 @@ if (
 	
 	// Set JavaScript content type
 	header('Content-type: text/javascript;charset="utf-8"');
-
+	
 	$safekind = 0;
-
-	if (isset($useRefererChecked) && $useRefererChecked == true){
-		if (isset($_SERVER["HTTP_REFERER"]) && ($_SERVER["HTTP_REFERER"] != '')){
-			$referer_url = parse_url($_SERVER["HTTP_REFERER"]);
-			$safekind = 1;
-			foreach ($SProviders as $key => $SProvider){
-				$sp_url = parse_url($key);
-				if ($referer_url['host'] == $sp_url['host']){
-					$safekind = 0;
-					break;
+	
+	// Is Embedded WAYF data protection feature enabled?
+	if (
+		   isset($useEmbeddedWAYFPrivacyProtection) 
+		&& $useEmbeddedWAYFPrivacyProtection == true
+		){
+		$selectedIDP = '-';
+		$safekind = 3;
+	} else {
+		if (isset($useRefererChecked) && $useRefererChecked == true){
+			// Referer Check
+			if (isset($_SERVER["HTTP_REFERER"]) && ($_SERVER["HTTP_REFERER"] != '')){
+				$referer_url = parse_url($_SERVER["HTTP_REFERER"]);
+				$safekind = 1;
+				foreach ($SProviders as $key => $SProvider){
+					$sp_url = parse_url($key);
+					if ($referer_url['host'] == $sp_url['host']){
+						$safekind = 0;
+						break;
+					}
 				}
+			} else {
+				$safekind = 2;
 			}
-		} else {
-			$safekind = 2;
-		}
-
-		if ($safekind > 0){
-			$selectedIDP = '-';
+			
+			if ($safekind > 0){
+				$selectedIDP = '-';
+			}
 		}
 	}
 

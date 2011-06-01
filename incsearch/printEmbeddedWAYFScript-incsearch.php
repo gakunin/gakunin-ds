@@ -5,7 +5,7 @@
 function printEmbeddedWAYFScript_IncSearch(){
 
 	global $langStrings, $language, $imageURL, $logoURL, $smallLogoURL, $federationURL;
-	global $selectedIDP, $IDProviders, $redirectCookieName, $redirectStateCookieName, $federationName;
+	global $selectedIDP, $IDProviders, $redirectCookieName, $redirectStateCookieName, $federationName, $cookieSecure;
 	global $safekind, $selIdP, $incsearchLibURL, $incsearchCssURL, $alertURL;
 	
 	// Get some values that are used in the script
@@ -287,7 +287,22 @@ function setCookie(c_name, value, expiredays){
 	var exdate = new Date();
 	exdate.setDate(exdate.getDate() + expiredays);
 	document.cookie=c_name + "=" + escape(value) +
-	((expiredays==null) ? "" : "; expires=" + exdate.toGMTString());
+	((expiredays==null) ? "" : "; expires=" + exdate.toGMTString())
+SCRIPT;
+	if( isset($cookieSecure) )
+	{
+		echo <<<SCRIPT
+ + "; secure";
+SCRIPT;
+	}
+	else
+	{
+		echo <<<SCRIPT
+;
+SCRIPT;
+	}
+	echo <<<SCRIPT
+
 }
 
 function getCookie(check_name){
@@ -745,7 +760,7 @@ SCRIPT;
 		
 		// Set selected attribute
 		echo <<<SCRIPT
-		if (safekind != 3 && last_idp == '{$key}'){
+		if (last_idp == '{$key}'){
 			dispDefault = '{$IdPName}';
 		}
 SCRIPT;

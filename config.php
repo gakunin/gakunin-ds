@@ -1,16 +1,17 @@
-<?php
+<?php // Copyright (c) 2011, SWITCH - Serving Swiss Universities
+
 //******************************************************************************
 // This file contains the WAYF/DS configuration. Adapt the settings to reflect
 // your environment and then do some testing before deploying the WAYF.
 //******************************************************************************
 
-// Language settings
-//******************
+// 1. Language settings
+//*********************
 //$defaultLanguage = 'en'; 
 $defaultLanguage = 'ja';
 
-// Cookie settings
-//****************
+// 2. Cookie settings
+//*******************
 
 // Domain within the WAYF cookei shall be readable. Must start with a .
 //$commonDomain = '.switch.ch';
@@ -43,8 +44,9 @@ $SPCookieName = $cookieNamePrefix.'_saml_sp';
 // If true, "secure" attribute is set
 $cookieSecure = true;
 
-// Enabled/Disabled Features
-//**************************
+
+// 3. Features and extensions
+//***************************
 
 // Whether to show the checkbox to permanently remember a setting
 $showPermanentSetting = true;
@@ -113,8 +115,9 @@ $useAutocompleteIdP = true;
 // Referer Check
 $useRefererChecked = true;
 
-// Look&feel settings
-//*******************
+
+// 4. Look and feel settings
+//**************************
 
 // Name of the federation
 //$federationName = 'SWITCHaai Federation';
@@ -145,8 +148,9 @@ $incsearchLibURL = $incsearchURL.'/incsearch.js';
 $incsearchCssURL = $incsearchURL.'/incsearch.css';
 
 
-// Involved files settings
-//************************
+// 5. Files and path settings
+//***************************
+
 // Set both config files to the same value if you don't want to use the 
 // the WAYF to read a (potential) automatically generated file that undergoes
 // some plausability checks before being used
@@ -170,8 +174,9 @@ $metadataIDPFile = 'IDProvider.metadata.php';
 // The user running the script must have permission to create $metadataIdpFile
 $metadataSPFile = 'SProvider.metadata.php';
 
-// A Kerboros-protected soft link back to this script!
-//$kerberosRedirectURL = '/SWITCHaai/kerberosRedirect.php';
+// File to use as the lock file for writing the parsed IdP and SP lists.
+// The user running the script must have permission to write $metadataLockFile
+$metadataLockFile = '/tmp/wayf_metadata.lock';
 
 // Where to log the access
 // Make sure the web server user has write access to this file!
@@ -179,9 +184,16 @@ $metadataSPFile = 'SProvider.metadata.php';
 $WAYFLogFile = 'logs/wayf.log';
 
 
+// 6. Other settings
+//******************
+
+// A Kerboros-protected soft link back to this script!
+//$kerberosRedirectURL = '/SWITCHaai/kerberosRedirect.php';
+
 // Development mode settings
 //**************************
 // If the development mode is activated, PHP errors and warnings will be displayed
 //$developmentMode = false;
 $developmentMode = true;
+
 ?>
