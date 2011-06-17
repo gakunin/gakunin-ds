@@ -268,4 +268,39 @@ $IDProviders['https://upki-idp.rikkyo.ac.jp/idp/shibboleth'] =
     'Index' => 'PI0021JP',
 );
 
+// 九州大学
+$IDProviders['https://idp.kyushu-u.ac.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'kyusyu',
+    'Index' => 'PI0022JP',
+);
+
+// 明治大学図書館
+$IDProviders['https://servs.lib.meiji.ac.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'kanto',
+    'Index' => 'PI0023JP',
+);
+
+// 神戸大学
+$IDProviders['https://fed.center.kobe-u.ac.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'kansai',
+    'Index' => 'PI0024JP',
+);
+
+// 学認
+$IDProviders['https://idp.gakunin.nii.ac.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'kanto',
+    'Index' => 'PI0025JP',
+);
+
+// 信州大学 
+$IDProviders['https://gakunin.ealps.shinshu-u.ac.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'chubu',
+    'Index' => 'PI0026JP',
+);
+
 ?>

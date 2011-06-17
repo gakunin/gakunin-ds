@@ -277,5 +277,70 @@ $metadataIDProviders = array (
       'Name' => '立教大学',
     ),
   ),
+  'https://idp.kyushu-u.ac.jp/idp/shibboleth' => 
+  array (
+    'SSO' => 'https://idp.kyushu-u.ac.jp/idp/profile/Shibboleth/SSO',
+    'Name' => '九州大学',
+    'en' => 
+    array (
+      'Name' => 'Kyushu University',
+    ),
+    'ja' => 
+    array (
+      'Name' => '九州大学',
+    ),
+  ),
+  'https://servs.lib.meiji.ac.jp/idp/shibboleth' => 
+  array (
+    'SSO' => 'https://servs.lib.meiji.ac.jp/idp/profile/Shibboleth/SSO',
+    'Name' => '明治大学',
+    'en' => 
+    array (
+      'Name' => 'Meiji University',
+    ),
+    'ja' => 
+    array (
+      'Name' => '明治大学',
+    ),
+  ),
+  'https://fed.center.kobe-u.ac.jp/idp/shibboleth' => 
+  array (
+    'SSO' => 'https://fed.center.kobe-u.ac.jp/idp/profile/Shibboleth/SSO',
+    'Name' => '神戸大学',
+    'en' => 
+    array (
+      'Name' => 'Kobe University',
+    ),
+    'ja' => 
+    array (
+      'Name' => '神戸大学',
+    ),
+  ),
+  'https://idp.gakunin.nii.ac.jp/idp/shibboleth' => 
+  array (
+    'SSO' => 'https://idp.gakunin.nii.ac.jp/idp/profile/Shibboleth/SSO',
+    'Name' => '学認',
+    'en' => 
+    array (
+      'Name' => 'GakuNin',
+    ),
+    'ja' => 
+    array (
+      'Name' => '学認',
+    ),
+  ),
+  'https://gakunin.ealps.shinshu-u.ac.jp/idp/shibboleth' => 
+  array (
+    'SSO' => 'https://gakunin.ealps.shinshu-u.ac.jp/idp/profile/Shibboleth/SSO',
+    'Name' => '信州大学',
+    'en' => 
+    array (
+      'Name' => 'Shinshu University',
+    ),
+    'ja' => 
+    array (
+      'Name' => '信州大学',
+    ),
+  ),
 )
 ?>
