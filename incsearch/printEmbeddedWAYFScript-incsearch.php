@@ -831,11 +831,18 @@ SCRIPT;
 		writeHTML('<tr>');
 		writeHTML('<td>');
 		if (dispDefault == ''){
-			writeHTML('<input id="keytext" type="text" name="pattern" value="' + initdisp + '" autocomplete="off" size="40" tabindex=5 style="width: 100%; display: block" onclick="searchKeyText();" onBlur="clearListArea();" />');
+			writeHTML('<input id="keytext" type="text" name="pattern" value="' + initdisp + '" autocomplete="off" size="40" tabindex=5 style="width: 100%; display: block" onclick="searchKeyText(' + "'click'" + ');" onBlur="clearListArea();" onFocus="searchKeyText(' + "'focus'" + ');" />');
 		} else {
-			writeHTML('<input id="keytext" type="text" name="pattern" value="' + dispDefault + '" autocomplete="off" size="40" tabindex=5 style="width: 100%; display: block" onclick="searchKeyText();" onBlur="clearListArea();" />');
+			writeHTML('<input id="keytext" type="text" name="pattern" value="' + dispDefault + '" autocomplete="off" size="40" tabindex=5 style="width: 100%; display: block" onclick="searchKeyText(' + "'click'" + ');" onBlur="clearListArea();" onFocus="searchKeyText(' + "'focus'" + ');" />');
 		}
-		writeHTML('<div id="view_incsearch" style="display:none; overflow:hidden;" onKeyPress="return submitCheck(event);"></div>');
+
+		if(navigator.userAgent.indexOf("MSIE",0)>1){
+			wayf_width = wayf_width.slice(0, wayf_width.length - 2);
+			wayf_width = wayf_width - 21;
+			wayf_width = wayf_width + 'px';
+		}
+
+		writeHTML('<div id="view_incsearch" style="display:none; overflow:hidden; width: ' + wayf_width + ';"></div>');
 		writeHTML('</td>');
 		writeHTML('<td>');
 		if (last_idp == "" && safekind == 2) {

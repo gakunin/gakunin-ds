@@ -8,7 +8,7 @@
 <table border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td>
-			<input id="keytext" type="text" name="pattern" tabindex="5" value="<?php echo $selIdP ?>" autocomplete="off" size="60" onclick="searchKeyText();" onBlur="clearListArea();"/>&nbsp;
+			<input id="keytext" type="text" name="pattern" tabindex="5" value="<?php echo $selIdP ?>" autocomplete="off" size="60" onclick="searchKeyText('click');" onBlur="clearListArea();" onFocus="searchKeyText('focus');"/>&nbsp;
 		</td>
 		<td>
 			<input id="clearbtn" type="button" name="Clear" accesskey="c" tabindex="7" value="<?php echo getLocalString('clear_button') ?>" onClick="clearKeyText();">&nbsp;
@@ -19,7 +19,7 @@
 	</tr>
 	<tr>
 		<td  colspan="3">
-			<div id="view_incsearch" style="display:none; overflow:hidden;" onKeyPress="return submitCheck(event);"></div>
+			<div id="view_incsearch" style="display:none; overflow:hidden; width:400px;" onKeyPress="return submitCheck(event);"></div>
 		</td>
 	</tr>
 	<tr>

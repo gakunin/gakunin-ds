@@ -35,23 +35,6 @@ window.addEventListener ?
         window.addEventListener('load', start, false) :
         window.attachEvent('onload', start);
 
-function submitCheck(e){
-        if (!e) var e = window.event;
-
-        if(e.keyCode == 13 || e.keyCode == 77){
-                if (document.activeElement.id == "select_idplist"){
-                        var index = document.IdPList.select_idplist.selectedIndex;
-    			if (index >= 0){
-                        	var keytext = document.IdPList.select_idplist.options[index].text;
-                        	dispDefault = keytext.substring(0, keytext.length - 5);
-                        	document.IdPList.keytext.value = dispDefault;
-				document.IdPList.keytext.focus();
-                        }
-                        return false;
-                }
-        }
-}
-
 function setEntityID(){
 
         var idp_name = document.getElementById('keytext').value;
@@ -76,13 +59,14 @@ function clearKeyText(){
         searchList = true;
 }
 
-function searchKeyText(){
+function searchKeyText(prmEvent){
 
         if (initdisp == document.IdPList.keytext.value){
                 document.IdPList.keytext.value = "";
         }
-        document.IdPList.keytext.focus();
-        searchList = true;
+	if (prmEvent == 'click'){
+        	searchList = true;
+	}
 }
 
 function clearListArea(){
@@ -154,9 +138,6 @@ IncSearch.ViewBase.prototype = {
     this.matchList = null;
     this.setOptions(arguments[3] || {});
 
-    this.nowPage = 0;
-    this.nowRow = 0;
-
     // check loop start
     this.checkLoop();
   },
@@ -170,11 +151,11 @@ IncSearch.ViewBase.prototype = {
   highlight: true,
   highClassName: 'high',
   highClassNum: 4,
-  delim: ' ',
+  //delim: ' ',
   escape: false,
   pagePrevName: 'prev',
   pageNextName: 'next',
-  useHotkey: false,
+  useHotkey: true,
   focusRowClassName: 'focus',
   moveRow: false,
   createObjId: 'select_idplist',
@@ -224,16 +205,77 @@ IncSearch.ViewBase.prototype = {
     if (!this.initDispNon || input.length != 0 || searchList) {
       searchList = false;
       if (dispDefault == undefined || dispDefault == "") {
-        if (this.searchBefore) this.searchBefore();
         this.search(input);
         this.createViewArea(0, this.dispMax, input);
-        this.nowPage = 1;
-        if (this.moveRow) this.changeRow(1);
-        if (this.pageLink) this.createPageLink(1, this.pageLink);
-        if (this.searchAfter) this.searchAfter();
       } else {
         dispDefault = "";
       }
+    }
+  },
+
+  hotkey: function(event) {
+    switch(event.keyCode) {
+      case 13:  // Enter
+      case 77:  // m (Enter Max OS X)
+        if (document.activeElement.id == this.createObjId){
+          var target_object = document.getElementById(this.createObjId);
+          if (target_object){
+            var index = target_object.selectedIndex;
+            if (index < 0){
+              target_object.selectedIndex = 0;
+            }
+            this.listClick();
+            IncSearch._stopEvent(event);
+          }
+        }
+        break;
+      case 37:  // Left
+//        alert('left');
+//        IncSearch._stopEvent(event);
+        break;
+      case 38:  // Up
+//        alert('up');
+        if (document.activeElement.id == this.createObjId){
+          var target_object = document.getElementById(this.createObjId);
+          if (target_object){
+            var index = target_object.selectedIndex;
+            if (index == 0){
+              document.IdPList.keytext.focus();
+              this.clearViewArea(false);
+              if (initdisp == document.IdPList.keytext.value){
+                document.IdPList.keytext.value = "";
+              }
+            }
+          }
+        }
+        break;
+      case 39:  // Right
+//        alert('right');
+//        IncSearch._stopEvent(event);
+        break;
+      case 40:  // Down
+//        alert('down');
+        if (document.activeElement.id == this.input.id){
+          var target_object = document.getElementById(this.createObjId);
+          if (target_object){
+            target_object.focus();
+            var index = target_object.selectedIndex;
+            if (index < 0){
+              if ((navigator.userAgent.indexOf("Chrome") != -1) ||
+                  ((navigator.userAgent.indexOf("Opera") != -1) && (target_object.length == 1))){
+                target_object.selectedIndex = 0;
+              }
+            }
+          } else {
+            if (initdisp == document.IdPList.keytext.value){
+              document.IdPList.keytext.value = "";
+            }
+            searchList = true;
+          }
+        }  
+        break;
+      default:
+        break;
     }
   },
 
@@ -246,10 +288,7 @@ IncSearch.ViewBase.prototype = {
     }
 
     for (var i = start; i < end; i++) {
-      // chg secioss start
       elementText.push(this.createLineElement(this.matchList[i], patternList, i));
-
-      // chg secioss end
     }
     oldGroup = '';
 
@@ -270,7 +309,6 @@ IncSearch.ViewBase.prototype = {
   clearViewArea: function(setInitDisp) {
     this.viewArea.innerHTML = '';
     this.matchList = null;
-    this.nowPage = 1;
     this.viewArea.style.display = 'none';
     if (this.input.value == '' && setInitDisp){
       this.input.value = initdisp;
