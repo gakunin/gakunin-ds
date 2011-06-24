@@ -262,6 +262,7 @@ IncSearch.ViewBase.prototype = {
             var index = target_object.selectedIndex;
             if (index < 0){
               if ((navigator.userAgent.indexOf("Chrome") != -1) ||
+                  (navigator.userAgent.indexOf("Apple") > -1) ||
                   ((navigator.userAgent.indexOf("Opera") != -1) && (target_object.length == 1))){
                 target_object.selectedIndex = 0;
               }
