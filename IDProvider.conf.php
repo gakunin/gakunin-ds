@@ -303,4 +303,18 @@ $IDProviders['https://gakunin.ealps.shinshu-u.ac.jp/idp/shibboleth'] =
     'Index' => 'PI0026JP',
 );
 
+// 自治医科大学
+$IDProviders['https://ws1.jichi.ac.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'kanto',
+    'Index' => 'PI0027JP',
+);
+
+// 名古屋工業大学
+$IDProviders['https://gknidp.ict.nitech.ac.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'kanto',
+    'Index' => 'PI0028JP',
+);
+
 ?>
