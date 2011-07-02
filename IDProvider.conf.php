@@ -313,7 +313,7 @@ $IDProviders['https://ws1.jichi.ac.jp/idp/shibboleth'] =
 // 名古屋工業大学
 $IDProviders['https://gknidp.ict.nitech.ac.jp/idp/shibboleth'] =
   array (
-    'Type' => 'kanto',
+    'Type' => 'chubu',
     'Index' => 'PI0028JP',
 );
 
