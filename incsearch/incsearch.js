@@ -23,7 +23,7 @@ var start = function(){
                 'keytext',        // 入力が行われるエレメントのID
                 'view_incsearch', // 検索結果を表示するエレメントのID
                 inc_search_list,  // 検索対象のリスト
-                {dispMax: 50,     // オプション
+                {dispMax: 500,     // オプション
                 startElementText: '<select id="select_idplist" name="select_idplist" size=10 tabindex=6 style="margin-top: 0px;margin-bottom: 0px; width: 100%;" onBlur="clearListArea();">',
                 ignoreCase: true,
                 initDispNon: true,
