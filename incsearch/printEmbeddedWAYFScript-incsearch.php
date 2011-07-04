@@ -165,7 +165,6 @@ function submitForm(){
         var NonFedEntityID;
         var chkFlg = false;
 
-	Counter = 0;
         for (var i=0; i<inc_search_list.length; i++){ 
                 if (inc_search_list[i][2] == document.IdPList.keytext.value){
                         NonFedEntityID = inc_search_list[i][0];
@@ -187,8 +186,7 @@ function submitForm(){
         // TODO: FIX windows error
         // 4 >= (8 - 3/4)
         if (
-                wayf_additional_idps.length > 0
-                && Counter >= (inc_search_list.length - wayf_additional_idps.length)){
+                i >= (inc_search_list.length - wayf_additional_idps.length)){
 
                 var redirect_url;
 
