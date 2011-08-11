@@ -19,7 +19,9 @@
 	</tr>
 	<tr>
 		<td  colspan="3">
-			<div id="view_incsearch" style="display:none; overflow:hidden; width:400px;" onKeyPress="return submitCheck(event);"></div>
+			<div id="view_incsearch_base">
+				<div id="view_incsearch" style="display:none; overflow:hidden; width:400px;" onKeyPress="return submitCheck(event);"></div>
+			</div>
 		</td>
 	</tr>
 	<tr>

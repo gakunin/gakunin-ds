@@ -1,3 +1,7 @@
+#view_incsearch_base {
+    position: relative;
+}
+
 #view_incsearch {
     position: absolute;
     background-color: #FFFFFF;

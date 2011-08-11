@@ -840,7 +840,9 @@ SCRIPT;
 			wayf_width = wayf_width + 'px';
 		}
 
+		writeHTML('<div id="view_incsearch_base">');
 		writeHTML('<div id="view_incsearch" style="display:none; overflow:hidden; width: ' + wayf_width + ';"></div>');
+		writeHTML('</div>');
 		writeHTML('</td>');
 		writeHTML('<td>');
 		if (last_idp == "" && safekind == 2) {
