@@ -558,7 +558,7 @@ if (
 		$selectedIDP = '-';
 		$safekind = 3;
 	} else {
-		if (isset($useRefererChecked) && $useRefererChecked == true){
+		if (isset($useRefererForPrivacyProtection) && $useRefererForPrivacyProtection == true){
 			// Referer Check
 			if (isset($_SERVER["HTTP_REFERER"]) && ($_SERVER["HTTP_REFERER"] != '')){
 				$referer_url = parse_url($_SERVER["HTTP_REFERER"]);

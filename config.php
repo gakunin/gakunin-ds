@@ -113,7 +113,7 @@ $exportPreselectedIdP = false;
 $useAutocompleteIdP = true;
 
 // Referer Check
-$useRefererChecked = true;
+$useRefererForPrivacyProtection = true;
 
 
 // 4. Look and feel settings
