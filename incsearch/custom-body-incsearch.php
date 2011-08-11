@@ -4,15 +4,30 @@
 	<?php echo $promptMessage ?>
 </p>
 <form id="IdPList" name="IdPList" method="post" onSubmit="return checkForm()" action="<?php echo $actionURL ?>">
-<input id="user_idp" type="hidden" name="user_idp" value=""/>
+
+<script language="JavaScript" type="text/javascript">
+<!--
+   document.write('<input id="user_idp" type="hidden" name="user_idp" value=""/>');
+   document.write('<table border="0" cellpadding="0" cellspacing="0">');
+   document.write('	<tr>');
+   document.write('		<td>');
+   document.write('			<input id="keytext" type="text" name="pattern" tabindex="5" value="<?php echo $selIdP ?>" autocomplete="off" size="60" onclick="searchKeyText(' + "'click'" + ');" onBlur="clearListArea();" onFocus="searchKeyText(' + "'focus'" + ');"/>&nbsp;');
+   document.write('		</td>');
+   document.write('		<td>');
+   document.write('			<input id="clearbtn" type="button" name="Clear" accesskey="c" tabindex="7" value="<?php echo getLocalString('clear_button') ?>" onClick="clearKeyText();">&nbsp;');
+   document.write('		</td>');
+-->
+</script>
+<noscript>
 <table border="0" cellpadding="0" cellspacing="0">
 	<tr>
-		<td>
-			<input id="keytext" type="text" name="pattern" tabindex="5" value="<?php echo $selIdP ?>" autocomplete="off" size="60" onclick="searchKeyText('click');" onBlur="clearListArea();" onFocus="searchKeyText('focus');"/>&nbsp;
+		<td colspan="2">
+			<select name="user_idp">
+				<option value="-" <?php echo $defaultSelected ?>><?php echo getLocalString('select_idp') ?> ...</option>
+				<?php printDropDownList($IDProviders, $selectedIDP) ?>
+			</select>
 		</td>
-		<td>
-			<input id="clearbtn" type="button" name="Clear" accesskey="c" tabindex="7" value="<?php echo getLocalString('clear_button') ?>" onClick="clearKeyText();">&nbsp;
-		</td>
+</noscript>
 		<td>
 			<input type="submit" name="Select" accesskey="s" tabindex="10" value="<?php echo getLocalString('select_button') ?>" >
 		</td>
