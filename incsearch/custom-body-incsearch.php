@@ -11,20 +11,18 @@
    document.write('<table border="0" cellpadding="0" cellspacing="0">');
    document.write('	<tr>');
    document.write('		<td style="width:100%;">');
-   document.write('			<input id="keytext" type="text" name="pattern" value="<?php echo $selIdP ?>" autocomplete="off" size="60" tabindex="5" style="width:100%; display:block;" onclick="searchKeyText(' + "'click'" + '); return false;" />');
+   document.write('			<input id="keytext" type="text" name="pattern" value="<?php echo $selIdP ?>" autocomplete="off" size="60" tabindex="5" style="width:100%; display:block;" />');
    document.write('			<div id="view_incsearch_base">');
    document.write('				<div id="view_incsearch" style="display:none;"></div>');
    document.write('			</div>');
    document.write('		</td>');
    document.write('		<td>');
-   document.write('			<a href="" onClick="searchKeyText(' + "'dropdown'" + '); return false;">');
-   document.write('				<img id="dropdown_img" src="" title="<?php echo getLocalString('dropdown') ?>" style="border:0px; width:20px; height:20px; vertical-align:middle;">');
-   document.write('			</a>');
+   document.write('			<img id="dropdown_img" src="" title="<?php echo getLocalString('dropdown') ?>" tabindex=6 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
    document.write('		</td>');
    document.write('		<td>&nbsp;</td>');
    document.write('		<td>');
    document.write('			<input id="wayf_submit_button" type="submit" name="Select" accesskey="s" tabindex="10" value="<?php echo getLocalString('select_button') ?>" ');
-   if (noMatch) {
+   if (dispidp == initdisp) {
      document.write('disabled >');
    } else {
      document.write('>');
@@ -63,7 +61,7 @@
 		<td style="vertical-align:text-top; text-align:center;">
 <script language="JavaScript" type="text/javascript">
 <!--
-   document.write('			<a href="" style="font-size: 70%;" onClick="searchKeyText(' + "'clear'" + '); return false;"><?php echo getLocalString('clear_button') ?></a>');
+   document.write('			<div id="clear_a" class="default" tabindex=11><?php echo getLocalString('clear_button') ?></div>');
 -->
 </script>
 <noscript>

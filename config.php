@@ -146,8 +146,8 @@ $dropdownUpURL = $imageURL.'/dropdown_up.png';
 $dropdownDnURL = $imageURL.'/dropdown_down.png';
 
 $incsearchURL = 'https://ds.gakunin.nii.ac.jp/WAYF2/incsearch';
-$incsearchLibURL = $incsearchURL.'/incsearch.js';
-$incsearchCssURL = $incsearchURL.'/incsearch.css';
+$incsearchLibURL = $incsearchURL.'/suggest.js';
+$incsearchCssURL = $incsearchURL.'/suggest.css';
 
 
 // 5. Files and path settings

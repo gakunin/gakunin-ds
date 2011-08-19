@@ -206,23 +206,45 @@ ENTRY;
 ?>
 
 var inc_search_list = [ <?php echo $IncSearchList ?> ];
-initdisp = '<?php echo getLocalString('select_idp') ?>';
-dispDefault = '<?php echo $selIdP ?>';
-dropdown_up = '<?php echo $dropdownUpURL ?>';
-dropdown_down = '<?php echo $dropdownDnURL ?>';
-if (initdisp == dispDefault){
-	dispDefault = '';
-	noMatch = true;
+var initdisp = '<?php echo getLocalString('select_idp') ?>';
+var dispDefault = '<?php echo $selIdP ?>';
+var dispidp = '';
+var dropdown_up = '<?php echo $dropdownUpURL ?>';
+var dropdown_down = '<?php echo $dropdownDnURL ?>';
+if (dispDefault == ''){
+	dispidp = initdisp;
 } else {
-	noMatch = false;
+	dispidp = dispDefault;
 }
+
 -->
 </script>
 
 </head>
-<body bgcolor="#ffffff" onLoad="if (top != self) {top.location = self.location;};if (document.IdPList && document.IdPList.Select) document.IdPList.Select.focus()">
+<body bgcolor="#ffffff" onLoad="if (top != self) {top.location = self.location;};if (document.IdPList && document.IdPList.Select && !document.IdPList.Select.disabled) document.IdPList.Select.focus()">
 <script language="JavaScript" type="text/javascript">
 <!--
+/* Central DS: Selection IdP check */
+function checkSelectIdP(){
+
+	var idp_name = document.getElementById('keytext').value.toLowerCase();
+	var chkFlg = false;
+
+	if (initdisp != idp_name) {
+		for (var i = 0, len = inc_search_list.length; i < len; i++) {
+			for (var j = 3, len2 = inc_search_list[i].length; j < len2; j++) {
+				var list_idp_name = inc_search_list[i][j].toLowerCase();
+				if (idp_name == list_idp_name) {
+					document.getElementById('user_idp').value = inc_search_list[i][0];
+					chkFlg = true;
+					break;
+				}
+			}
+		}
+	}
+	return chkFlg;
+}
+
 function showConfirmation(){
 	
 	return confirm(unescape('<?php echo getLocalString('confirm_permanent_selection', 'js') ?>'));
@@ -232,7 +254,7 @@ function checkForm(){
 
 	var chkFlg = false;
 
-	chkFlg = setEntityID();
+	chkFlg = checkSelectIdP();
 	if (!chkFlg){
 		alert(unescape('<?php echo getLocalString('make_selection', 'js') ?>'));
 		return false;

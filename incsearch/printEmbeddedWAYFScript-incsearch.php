@@ -156,12 +156,12 @@ var wayf_idps = { {$JSONIdPList} };
 var inc_search_list = [ {$IncSearchList} ];
 var safekind = '{$safekind}';
 var allIdPList = '';
+var initdisp = '{$InitDisp}';
+var dispDefault = '{$selIdP}';
+var dispidp = '';
 
-initdisp = '{$InitDisp}';
-dispDefault = '{$selIdP}';
-
-dropdown_up = '{$dropdownUpURL}';
-dropdown_down = '{$dropdownDnURL}';
+var dropdown_up = '{$dropdownUpURL}';
+var dropdown_down = '{$dropdownDnURL}';
 
 // Define functions
 function submitForm(){
@@ -171,7 +171,7 @@ function submitForm(){
 	var chkFlg = false;
 	
 	for (var i=0; i<inc_search_list.length; i++){
-		for (var j = 2, len2 = inc_search_list[i].length; j < len2; j++) {
+		for (var j = 3, len2 = inc_search_list[i].length; j < len2; j++) {
 			var list_idp_name = inc_search_list[i][j].toLowerCase();
 			if (idp_name == list_idp_name){
 				NonFedEntityID = inc_search_list[i][0];
@@ -838,12 +838,10 @@ SCRIPT;
 		writeHTML('<td style="width: 100%;">');
 		if (dispDefault == ''){
 			dispidp = initdisp;
-			noMatch = true;
 		} else {
 			dispidp = dispDefault;
-			noMatch = false;
 		}
-		writeHTML('<input id="keytext" type="text" name="pattern" value="' + dispidp + '" autocomplete="off" size="60" tabindex=5 style="width: 100%; display: block" onclick="searchKeyText(' + "'click'" + '); return false;" />');
+		writeHTML('<input id="keytext" type="text" name="pattern" value="' + dispidp + '" autocomplete="off" size="60" tabindex=5 style="width: 100%; display: block" />');
 		
 		writeHTML('<div id="view_incsearch_base">');
 		writeHTML('<div id="view_incsearch" style="display:none;"></div>');
@@ -851,9 +849,7 @@ SCRIPT;
 		writeHTML('</td>');
 		
 		writeHTML('<td>');
-		writeHTML('<a href="" onClick="searchKeyText(' + "'dropdown'" + '); return false;">');
-		writeHTML('<img id="dropdown_img" src="" title="{$dropdownString}" style="border:0px; width:20px; height:20px; vertical-align:middle;">');
-		writeHTML('</a>');
+		writeHTML('<img id="dropdown_img" src="{$dropdownDnURL}" title="{$dropdownString}" tabindex=6 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
 		writeHTML('</td>');
 		
 		writeHTML('<td>');
@@ -872,7 +868,7 @@ SCRIPT;
 			writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="' + wayf_overwrite_submit_button_text + '" tabindex="10" ');
 		}
 
-		if (noMatch) {
+		if (dispidp == initdisp) {
 			writeHTML('disabled >');
 		} else {
 			writeHTML('>');
@@ -912,7 +908,7 @@ SCRIPT;
 		writeHTML('</td>');
 		
 		writeHTML('<td style="vertical-align:middle; text-align:center;">');
-		writeHTML('<a href="" style="font-size: 70%;" onClick="searchKeyText(' + "'clear'" + '); return false;">{$clearString}</a>');
+		writeHTML('<div id="clear_a" class="default" tabindex=11>{$clearString}</div>');
 		writeHTML('</td>');
 		writeHTML('</tr>');
 		writeHTML('</table>');
