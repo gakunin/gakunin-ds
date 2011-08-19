@@ -142,6 +142,8 @@ $logoURL = $imageURL.'/gakunin.png';
 $smallLogoURL = $imageURL.'/gakunin-seal.png';
 
 $alertURL = $imageURL.'/alert.gif';
+$dropdownUpURL = $imageURL.'/dropdown_up.png';
+$dropdownDnURL = $imageURL.'/dropdown_down.png';
 
 $incsearchURL = 'https://ds.gakunin.nii.ac.jp/WAYF2/incsearch';
 $incsearchLibURL = $incsearchURL.'/incsearch.js';
