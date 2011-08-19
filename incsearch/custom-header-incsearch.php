@@ -206,8 +206,13 @@ ENTRY;
 var inc_search_list = [ <?php echo $IncSearchList ?> ];
 initdisp = '<?php echo getLocalString('select_idp') ?>';
 dispDefault = '<?php echo $selIdP ?>';
+dropdown_up = '<?php echo $dropdownUpURL ?>';
+dropdown_down = '<?php echo $dropdownDnURL ?>';
 if (initdisp == dispDefault){
 	dispDefault = '';
+	noMatch = true;
+} else {
+	noMatch = false;
 }
 -->
 </script>

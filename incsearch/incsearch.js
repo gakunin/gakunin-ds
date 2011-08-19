@@ -16,17 +16,22 @@ var clearList = false;
 var searchList = false;
 var oldGroup = '';
 var dispDefault;
+var listStatus = false;
+var dropdown_up;
+var dropdown_down;
+var noMatch;
 
-// wondowのonloadイベントに追加
+// It adds it to window event.
 var start = function(){
         new IncSearch.ViewSelect(
-                'keytext',        // 入力が行われるエレメントのID
-                'view_incsearch', // 検索結果を表示するエレメントのID
-                inc_search_list,  // 検索対象のリスト
-                {dispMax: 500,     // オプション
+                'keytext',        // element id of input area
+                'view_incsearch', // element id of IdP list display area
+                inc_search_list,  // IdP list
+                {dispMax: 500,     // option
                 startElementText: '<select id="select_idplist" name="select_idplist" size=10 tabindex=6 style="margin-top: 0px;margin-bottom: 0px; width: 100%;" onBlur="clearListArea();">',
                 ignoreCase: true,
                 initDispNon: true,
+                selectbtnObjId: 'wayf_submit_button',
                 createObjId: 'select_idplist'
                 }
         );
@@ -37,34 +42,38 @@ window.addEventListener ?
 
 function setEntityID(){
 
-        var idp_name = document.getElementById('keytext').value;
-        var chkFlg = false;
+	var idp_name = document.getElementById('keytext').value.toLowerCase();
+	var chkFlg = false;
 
-        if (initdisp != idp_name) {
-                for (var i = 0, len = inc_search_list.length; i < len; i++) {
-                        if (idp_name == inc_search_list[i][2]) {
-                                chkFlg = true;
-                                document.getElementById('user_idp').value = inc_search_list[i][0];
-                                break;
-                        }
-                }
-        }
+	if (initdisp != idp_name) {
+		for (var i = 0, len = inc_search_list.length; i < len; i++) {
+			for (var j = 2, len2 = inc_search_list[i].length; j < len2; j++) {
+				var list_idp_name = inc_search_list[i][j].toLowerCase();
+				if (idp_name == list_idp_name) {
+					document.getElementById('user_idp').value = inc_search_list[i][0];
+					chkFlg = true;
+					break;
+				}
+			}
+		}
+	}
         return chkFlg;
-}
-
-function clearKeyText(){
-
-        document.IdPList.keytext.value = "";
-        document.IdPList.keytext.focus();
-        searchList = true;
 }
 
 function searchKeyText(prmEvent){
 
-        if (initdisp == document.IdPList.keytext.value){
+	if (prmEvent == 'dropdown' && document.IdPList.dropdown_img.src == dropdown_up) {
+		clearListArea();
+		return;
+	}
+
+        if (initdisp == document.IdPList.keytext.value || prmEvent == 'clear') {
                 document.IdPList.keytext.value = "";
         }
-	if (prmEvent == 'click'){
+
+        document.IdPList.keytext.focus();
+
+	if (prmEvent != 'focus') {
         	searchList = true;
 	}
 }
@@ -158,6 +167,7 @@ IncSearch.ViewBase.prototype = {
   useHotkey: true,
   focusRowClassName: 'focus',
   moveRow: false,
+  selectbtnObjId: 'wayf_submit_button',
   createObjId: 'select_idplist',
 
   setOptions: function(options) {
@@ -176,11 +186,12 @@ IncSearch.ViewBase.prototype = {
       if (clearList) {
         clearList = false;
         if (document.activeElement.id != this.createObjId && document.activeElement.id != this.input.id){
-           this.clearViewArea(true);
+          this.clearViewArea(true);
         }
       } else if (this.isChange(input)) {
         this.oldInput = input;
         if (this.delay == 0) {
+          noMatch = true;
           this.startSearch(input);
         } else {
           if (this.startSearchTimer) clearTimeout(this.startSearchTimer);
@@ -304,7 +315,11 @@ IncSearch.ViewBase.prototype = {
 
       this.viewArea.style.display = '';
       this.viewArea.scrollTop = 0;
+
+      document.IdPList.dropdown_img.src = dropdown_up;
     }
+    document.getElementById(this.selectbtnObjId).disabled = noMatch;
+      
   },
 
   clearViewArea: function(setInitDisp) {
@@ -315,6 +330,7 @@ IncSearch.ViewBase.prototype = {
       this.input.value = initdisp;
     }
     clearList = false;
+    document.IdPList.dropdown_img.src = dropdown_down;
   },
 
   search: function(patternList) {
@@ -374,8 +390,16 @@ IncSearch.ViewBase.prototype = {
   matchIndex: function(value, pattern) {
 
     if (this.ignoreCase) {
+      var checkAllMatchVal = value.toLowerCase();
+      var checkAllMatchPat = pattern.toLowerCase();
+      if (checkAllMatchVal == checkAllMatchPat) {
+        noMatch = false;
+      }
       return value.toLowerCase().indexOf(pattern.toLowerCase());
     } else {
+      if (value == pattern) {
+        noMatch = false;
+      }
       return value.indexOf(pattern);
     }
   },
@@ -418,6 +442,7 @@ IncSearch.ViewBase.prototype = {
   listClick: function() {
     var index = document.getElementById(this.createObjId).selectedIndex;
     if (index >= 0){
+      document.getElementById(this.selectbtnObjId).disabled = false;
       var keytext = document.getElementById(this.createObjId).options[index].text;
       this.input.value = keytext.substring(0, keytext.length - 5);
       this.clearViewArea(true);

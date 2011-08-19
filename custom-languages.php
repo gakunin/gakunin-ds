@@ -46,8 +46,9 @@ $langStrings['en'] = array (
 'invalid_return_url' => 'The return URL <tt>\'%s\'</tt> is not a valid URL.',
 'unverified_return_url' => 'The return URL <tt>\'%s\'</tt> could not be verified for Service Provider <tt>\'%s\'</tt>.',
 'unknown_sp' => 'The Service Provider <tt>\'%s\'</tt> could not be found in metadata and is therefore unknown.',
-'clear_button' => 'Clear/View',
+'clear_button' => 'Clear',
 'alert_sp' => 'Alert SP!',
+'dropdown' => 'Display/non-display of IdP list',
 );
 
 
@@ -250,16 +251,17 @@ $langStrings['ja'] = array (
 'valid_saml2_request_description' => '有効なSAML2のリクエストでは少なくとも，<tt>entityID</tt>と<tt>return</tt>の適正な値を必要とします．オプショナルな引数である<tt>isPassive</tt>, <tt>policy</tt>や<tt>returnIDParam</tt>を送信することにより，ウェブブラウザを所属機関にIdPに自動的にリダイレクトさせることができます．',
 'invalid_query' => 'エラー: 無効なクエリです',
 'select_button' => '選択',
-'login' => 'ログイン',
-'login_with' => 'ログイン:',
+'login' => '選択',
+'login_with' => '所属機関:',
 'other_federation' => '他のフェデレーションから',
 'logged_in' => '認証済',
 'most_used' => 'Most often used Home Organisations',
 'invalid_return_url' => 'The return URL <tt>\'%s\'</tt> is not a valid URL.',
 'unverified_return_url' => 'The return URL <tt>\'%s\'</tt> could not be verified for Service Provider <tt>\'%s\'</tt>.',
 'unknown_sp' => 'The Service Provider <tt>\'%s\'</tt> could not be found in metadata and is therefore unknown.',
-'clear_button' => 'クリア/表示',
+'clear_button' => 'クリア',
 'alert_sp' => '注意:リファラ遮断のためDSから所属IdP情報を取得できません',
+'dropdown' => 'IdPリストの表示/非表示',
 );
 
 ?>

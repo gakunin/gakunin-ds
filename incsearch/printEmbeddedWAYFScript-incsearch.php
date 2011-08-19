@@ -6,7 +6,7 @@ function printEmbeddedWAYFScript_IncSearch(){
 
 	global $langStrings, $language, $imageURL, $logoURL, $smallLogoURL, $federationURL;
 	global $selectedIDP, $IDProviders, $redirectCookieName, $redirectStateCookieName, $federationName, $cookieSecure;
-	global $safekind, $selIdP, $incsearchLibURL, $incsearchCssURL, $alertURL;
+	global $safekind, $selIdP, $incsearchLibURL, $incsearchCssURL, $alertURL, $dropdownUpURL, $dropdownDnURL;
 	
 	// Get some values that are used in the script
 	$loginWithString = getLocalString('login_with');
@@ -22,6 +22,7 @@ function printEmbeddedWAYFScript_IncSearch(){
 	$mostUsedIdPsString = addslashes(getLocalString('most_used'));
 	$clearString = addslashes(getLocalString('clear_button'));
 	$alertSP = addslashes(getLocalString('alert_sp'));
+	$dropdownString = addslashes(getLocalString('dropdown'));
 	
 	$selIdP = '';
 	$IncSearchArray = array();
@@ -159,23 +160,30 @@ var allIdPList = '';
 initdisp = '{$InitDisp}';
 dispDefault = '{$selIdP}';
 
+dropdown_up = '{$dropdownUpURL}';
+dropdown_down = '{$dropdownDnURL}';
+
 // Define functions
 function submitForm(){
 
-        var NonFedEntityID;
-        var chkFlg = false;
-
-        for (var i=0; i<inc_search_list.length; i++){ 
-                if (inc_search_list[i][2] == document.IdPList.keytext.value){
-                        NonFedEntityID = inc_search_list[i][0];
-                        document.IdPList.user_idp.value = inc_search_list[i][0];
-                        chkFlg = true;
-			if (safekind > 0 && safekind != 3){
-				// Store SAML domain cookie for this foreign IdP
-				 setCookie('_saml_idp', encodeBase64(inc_search_list[i][0]) , 100);
-			}
-                        break;
-                }
+	var NonFedEntityID;
+	var idp_name = document.getElementById('keytext').value.toLowerCase();
+	var chkFlg = false;
+	
+	for (var i=0; i<inc_search_list.length; i++){
+		for (var j = 2, len2 = inc_search_list[i].length; j < len2; j++) {
+			var list_idp_name = inc_search_list[i][j].toLowerCase();
+			if (idp_name == list_idp_name){
+				NonFedEntityID = inc_search_list[i][0];
+				document.getElementById('user_idp').value = inc_search_list[i][0];
+				chkFlg = true;
+				if (safekind > 0 && safekind != 3){
+					// Store SAML domain cookie for this foreign IdP
+					setCookie('_saml_idp', encodeBase64(inc_search_list[i][0]) , 100);
+				}
+				break;
+                	}
+		}
         }
         if (!chkFlg){
                 alert('{$makeSelectionString}');
@@ -723,7 +731,7 @@ SCRIPT;
 		writeHTML(form_start);
 		writeHTML('<input name="request_type" type="hidden" value="embedded">');
 		// add secioss
-		writeHTML('<input name="user_idp" type="hidden" value="">');
+		writeHTML('<input id="user_idp" name="user_idp" type="hidden" value="">');
 
 		
 		// Get local cookie
@@ -827,30 +835,55 @@ SCRIPT;
 		writeHTML('<br/>');
 		writeHTML('<table border="0" cellpadding="0" cellspacing="0" style="width: 100%;">');
 		writeHTML('<tr>');
-		writeHTML('<td>');
+		writeHTML('<td style="width: 100%;">');
 		if (dispDefault == ''){
-			writeHTML('<input id="keytext" type="text" name="pattern" value="' + initdisp + '" autocomplete="off" size="40" tabindex=5 style="width: 100%; display: block" onclick="searchKeyText(' + "'click'" + ');" onBlur="clearListArea();" onFocus="searchKeyText(' + "'focus'" + ');" />');
+			dispidp = initdisp;
+			noMatch = true;
 		} else {
-			writeHTML('<input id="keytext" type="text" name="pattern" value="' + dispDefault + '" autocomplete="off" size="40" tabindex=5 style="width: 100%; display: block" onclick="searchKeyText(' + "'click'" + ');" onBlur="clearListArea();" onFocus="searchKeyText(' + "'focus'" + ');" />');
+			dispidp = dispDefault;
+			noMatch = false;
 		}
-
-		if(navigator.userAgent.indexOf("MSIE",0)>1){
-			wayf_width = wayf_width.slice(0, wayf_width.length - 2);
-			wayf_width = wayf_width - 21;
-			wayf_width = wayf_width + 'px';
-		}
-
+		writeHTML('<input id="keytext" type="text" name="pattern" value="' + dispidp + '" autocomplete="off" size="60" tabindex=5 style="width: 100%; display: block" onclick="searchKeyText(' + "'click'" + '); return false;" />');
+		
 		writeHTML('<div id="view_incsearch_base">');
-		writeHTML('<div id="view_incsearch" style="display:none; overflow:hidden; width: ' + wayf_width + ';"></div>');
+		writeHTML('<div id="view_incsearch" style="display:none;"></div>');
 		writeHTML('</div>');
 		writeHTML('</td>');
+		
+		writeHTML('<td>');
+		writeHTML('<a href="" onClick="searchKeyText(' + "'dropdown'" + '); return false;">');
+		writeHTML('<img id="dropdown_img" src="" title="{$dropdownString}" style="border:0px; width:20px; height:20px; vertical-align:middle;">');
+		writeHTML('</a>');
+		writeHTML('</td>');
+		
 		writeHTML('<td>');
 		if (last_idp == "" && safekind == 2) {
-			writeHTML('<img src="{$alertURL}" title="{$alertSP}" style="width:20px; height:20px; float: right;">');
+			writeHTML('<img src="{$alertURL}" title="{$alertSP}" style="border:0px; width:20px; height:20px;">&nbsp;');
+		} else {
+			writeHTML('&nbsp;');
 		}
 		writeHTML('</td>');
-		writeHTML('</tr><tr>');
-		writeHTML('<td colspan="2">');
+		
+		writeHTML('<td>');
+		// Do we have to display custom text?
+		if(typeof(wayf_overwrite_submit_button_text) == "undefined"){
+			writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="{$loginString}" tabindex="10" ');
+		} else {
+			writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="' + wayf_overwrite_submit_button_text + '" tabindex="10" ');
+		}
+
+		if (noMatch) {
+			writeHTML('disabled >');
+		} else {
+			writeHTML('>');
+		}
+
+		writeHTML('</td>');
+		writeHTML('</tr>');
+
+		
+		writeHTML('<tr>');
+		writeHTML('<td colspan="3">');
 		// Draw checkbox
 		writeHTML('<div id="wayf_remember_checkbox_div" style="float: left;margin-top: 0px;margin-bottom:0px; width: 100%;">');
 		// Do we have to show the remember settings checkbox?
@@ -877,20 +910,9 @@ SCRIPT;
 			writeHTML('<input id="wayf_remember_checkbox" type="hidden" name="session" value="true">&nbsp;');
 		}
 		writeHTML('</td>');
-		writeHTML('</tr><tr>');
-		writeHTML('<td colspan="2">&nbsp;</td>');
-		writeHTML('</tr><tr>');
-		writeHTML('<td colspan="2">');
-
-		// Do we have to display custom text?
-		if(typeof(wayf_overwrite_submit_button_text) == "undefined"){
-			//writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="{$loginString}" tabindex="10" style="float: right;" onClick="javascript:return submitForm();">');
-			writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="{$loginString}" tabindex="10" style="float: right;">');
-		} else {
-			//writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="' + wayf_overwrite_submit_button_text + '" tabindex="10" style="float: right;" onClick="javascript:return submitForm();">');
-			writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="' + wayf_overwrite_submit_button_text + '" tabindex="10" style="float: right;">');
-		}
-		writeHTML('<input id="clearbtn" type="button" name="Clear" accesskey="c" value="{$clearString}" tabindex="7" style="float: right;" onClick="clearKeyText();">');
+		
+		writeHTML('<td style="vertical-align:middle; text-align:center;">');
+		writeHTML('<a href="" style="font-size: 70%;" onClick="searchKeyText(' + "'clear'" + '); return false;">{$clearString}</a>');
 		writeHTML('</td>');
 		writeHTML('</tr>');
 		writeHTML('</table>');

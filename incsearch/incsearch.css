@@ -4,14 +4,13 @@
 
 #view_incsearch {
     position: absolute;
-    background-color: #FFFFFF;
     font-size: 100%;
-    overflow: auto;
+    width: 100%;
 }
 
 #view_incsearch div {
     display: block;
-    overflow: auto;
+    overflow: hidden;
     white-space: nowrap;
 }
 

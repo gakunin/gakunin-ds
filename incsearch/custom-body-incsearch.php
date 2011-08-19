@@ -10,11 +10,25 @@
    document.write('<input id="user_idp" type="hidden" name="user_idp" value=""/>');
    document.write('<table border="0" cellpadding="0" cellspacing="0">');
    document.write('	<tr>');
-   document.write('		<td>');
-   document.write('			<input id="keytext" type="text" name="pattern" tabindex="5" value="<?php echo $selIdP ?>" autocomplete="off" size="60" onclick="searchKeyText(' + "'click'" + ');" onBlur="clearListArea();" onFocus="searchKeyText(' + "'focus'" + ');"/>&nbsp;');
+   document.write('		<td style="width:100%;">');
+   document.write('			<input id="keytext" type="text" name="pattern" value="<?php echo $selIdP ?>" autocomplete="off" size="60" tabindex="5" style="width:100%; display:block;" onclick="searchKeyText(' + "'click'" + '); return false;" />');
+   document.write('			<div id="view_incsearch_base">');
+   document.write('				<div id="view_incsearch" style="display:none;"></div>');
+   document.write('			</div>');
    document.write('		</td>');
    document.write('		<td>');
-   document.write('			<input id="clearbtn" type="button" name="Clear" accesskey="c" tabindex="7" value="<?php echo getLocalString('clear_button') ?>" onClick="clearKeyText();">&nbsp;');
+   document.write('			<a href="" onClick="searchKeyText(' + "'dropdown'" + '); return false;">');
+   document.write('				<img id="dropdown_img" src="" title="<?php echo getLocalString('dropdown') ?>" style="border:0px; width:20px; height:20px; vertical-align:middle;">');
+   document.write('			</a>');
+   document.write('		</td>');
+   document.write('		<td>&nbsp;</td>');
+   document.write('		<td>');
+   document.write('			<input id="wayf_submit_button" type="submit" name="Select" accesskey="s" tabindex="10" value="<?php echo getLocalString('select_button') ?>" ');
+   if (noMatch) {
+     document.write('disabled >');
+   } else {
+     document.write('>');
+   }
    document.write('		</td>');
 -->
 </script>
@@ -27,17 +41,12 @@
 				<?php printDropDownList($IDProviders, $selectedIDP) ?>
 			</select>
 		</td>
-</noscript>
+		<td>&nbsp;</td>
 		<td>
 			<input type="submit" name="Select" accesskey="s" tabindex="10" value="<?php echo getLocalString('select_button') ?>" >
 		</td>
-	</tr>
-	<tr>
-		<td  colspan="3">
-			<div id="view_incsearch_base">
-				<div id="view_incsearch" style="display:none; overflow:hidden; width:400px;" onKeyPress="return submitCheck(event);"></div>
-			</div>
-		</td>
+</noscript>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	</tr>
 	<tr>
 		<td colspan="3">
@@ -51,6 +60,17 @@
 			<?php endif ?>
 			</p>
 		</td>
+		<td style="vertical-align:text-top; text-align:center;">
+<script language="JavaScript" type="text/javascript">
+<!--
+   document.write('			<a href="" style="font-size: 70%;" onClick="searchKeyText(' + "'clear'" + '); return false;"><?php echo getLocalString('clear_button') ?></a>');
+-->
+</script>
+<noscript>
+			&nbsp;
+</noscript>
+		</td>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	</tr>
 </table>
 </form>
