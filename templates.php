@@ -23,7 +23,7 @@ function printHeader(){
 
 	global $langStrings, $language, $imageURL, $logoURL;
 	global $selectedIDP, $language, $IDProviders;
-	global $useAutocompleteIdP, $selIdP, $incsearchCssURL, $incsearchLibURL, $dropdownUpURL, $dropdownDnURL;
+	global $useAutocompleteIdP, $selIdP, $incsearchCssURL, $incsearchLibURL, $dropdownUpURL, $dropdownDnURL, $ajaxLibURL, $proxyURL, $jsonURL;
 	
 	// Check if custom header template exists
 	if(file_exists('custom-header.php')){

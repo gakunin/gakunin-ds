@@ -148,7 +148,10 @@ $dropdownDnURL = $imageURL.'/dropdown_down.png';
 $incsearchURL = 'https://ds.gakunin.nii.ac.jp/WAYF2/incsearch';
 $incsearchLibURL = $incsearchURL.'/suggest.js';
 $incsearchCssURL = $incsearchURL.'/suggest.css';
+$ajaxLibURL = $incsearchURL.'/jquery.js';
+$proxyURL = $incsearchURL.'/proxy.php';
 
+$jsonURL = '';
 
 // 5. Files and path settings
 //***************************

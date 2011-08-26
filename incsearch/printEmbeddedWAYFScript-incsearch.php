@@ -6,7 +6,7 @@ function printEmbeddedWAYFScript_IncSearch(){
 
 	global $langStrings, $language, $imageURL, $logoURL, $smallLogoURL, $federationURL;
 	global $selectedIDP, $IDProviders, $redirectCookieName, $redirectStateCookieName, $federationName, $cookieSecure;
-	global $safekind, $selIdP, $incsearchLibURL, $incsearchCssURL, $alertURL, $dropdownUpURL, $dropdownDnURL;
+	global $safekind, $selIdP, $incsearchLibURL, $incsearchCssURL, $alertURL, $dropdownUpURL, $dropdownDnURL, $ajaxLibURL, $proxyURL, $jsonURL;
 	
 	// Get some values that are used in the script
 	$loginWithString = getLocalString('login_with');
@@ -93,7 +93,6 @@ function printEmbeddedWAYFScript_IncSearch(){
 			$SearchIdPName = ', "'.$IdPName.'"';
 		}
 		
-		// add secioss
 		$IncSearchArray[] = <<<ENTRY
 
 	[
@@ -159,16 +158,18 @@ var allIdPList = '';
 var initdisp = '{$InitDisp}';
 var dispDefault = '{$selIdP}';
 var dispidp = '';
-
+var hiddenKeyText = '';
 var dropdown_up = '{$dropdownUpURL}';
 var dropdown_down = '{$dropdownDnURL}';
-
+var proxyURL = '{$proxyURL}';
+var jsonURL = '{$jsonURL}';
 // Define functions
 function submitForm(){
 
 	var NonFedEntityID;
 	var idp_name = document.getElementById('keytext').value.toLowerCase();
 	var chkFlg = false;
+	if (hiddenKeyText != '') idp_name = hiddenKeyText.toLowerCase();
 	
 	for (var i=0; i<inc_search_list.length; i++){
 		for (var j = 3, len2 = inc_search_list[i].length; j < len2; j++) {
@@ -724,13 +725,12 @@ SCRIPT;
 	
 	echo <<<SCRIPT
 
-		// add secioss
 		writeHTML('<link rel="stylesheet" href="{$incsearchCssURL}" type="text/css" />');
 		writeHTML('<script type="text/javascript" src="{$incsearchLibURL}"></script>');
+		writeHTML('<script type="text/javascript" src="{$ajaxLibURL}"></script>');
 
 		writeHTML(form_start);
 		writeHTML('<input name="request_type" type="hidden" value="embedded">');
-		// add secioss
 		writeHTML('<input id="user_idp" name="user_idp" type="hidden" value="">');
 
 		
@@ -788,7 +788,6 @@ SCRIPT;
 	
 	echo <<<SCRIPT
 		if (wayf_additional_idps.length > 0){
-			// add secioss
 			var listcnt = inc_search_list.length;
 			
 			// Show additional IdPs in the order they are defined
@@ -841,10 +840,12 @@ SCRIPT;
 		} else {
 			dispidp = dispDefault;
 		}
-		writeHTML('<input id="keytext" type="text" name="pattern" value="' + dispidp + '" autocomplete="off" size="60" tabindex=5 style="width: 100%; display: block" />');
+		writeHTML('<input id="keytext" type="text" name="pattern" value="' + dispidp + '" autocomplete="off" size="60" tabindex=5 style="width: 100%; display: block" onClick="getJsonData(); return false;"/>');
 		
 		writeHTML('<div id="view_incsearch_base">');
+		writeHTML('<div id="view_incsearch_animate">');
 		writeHTML('<div id="view_incsearch" style="display:none;"></div>');
+		writeHTML('</div>');
 		writeHTML('</div>');
 		writeHTML('</td>');
 		

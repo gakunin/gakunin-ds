@@ -3,6 +3,14 @@
 	position: relative;
 }
 
+/* IdP list display animation area */
+#view_incsearch_animate {
+	position: absolute;
+	display: block;
+	height: 150px;
+	width: 100%;
+}
+
 /* IdP list display area */
 #view_incsearch {
 	position: absolute;

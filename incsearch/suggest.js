@@ -26,6 +26,8 @@ function start() {
         dispDefault,          // Select IdP display of input area
         dropdown_down,        // URL of deropdown down image 
         dropdown_up,          // URL of deropdown up image
+        proxyURL,             // URL of proxy (get json file)
+        jsonURL,              // URL of json file(DiscoFeed)
         {dispMax: 500});      // option
 }
 
@@ -58,7 +60,7 @@ Suggest.Local = function() {
   this.initialize.apply(this, arguments);
 };
 Suggest.Local.prototype = {
-  initialize: function(input, suggestArea, candidateList, dnupImgElm, selectElm, clearElm, initDisp, dispDefault, dnImgURL, upImgURL) {
+  initialize: function(input, suggestArea, candidateList, dnupImgElm, selectElm, clearElm, initDisp, dispDefault, dnImgURL, upImgURL, proxyURL, jsonURL) {
 
     this.input = this._getElement(input);
     this.suggestArea = this._getElement(suggestArea);
@@ -68,14 +70,17 @@ Suggest.Local.prototype = {
     this.clearElm = this._getElement(clearElm);
     this.initDisp = initDisp;
     this.dispDefault = dispDefault;
-    this.dnImgURL= dnImgURL;
-    this.upImgURL= upImgURL;
+    this.dnImgURL = dnImgURL;
+    this.upImgURL = upImgURL;
+    this.proxyURL = proxyURL;
+    this.jsonURL = jsonURL;
     this.oldText = (this.initDisp == this.getInputText()) ?
       '': this.getInputText();
     this.searchFlg = false;
     this.noMatch = true;
+    this.suggestAreaHeight = 150;
 
-    if (arguments[10]) this.setOptions(arguments[10]);
+    if (arguments[12]) this.setOptions(arguments[12]);
 
     // reg event
     this._addEvent(this.input, 'focus', this._bind(this.tabFocus));
@@ -97,6 +102,10 @@ Suggest.Local.prototype = {
 
     // init
     this.clearSuggestArea();
+    $('#view_incsearch_animate').hide();
+    if (this.jsonURL != '') this.checkDiscoFeed();
+    this.checkNoMatch(this.oldText);
+    
   },
 
   // options
@@ -119,6 +128,66 @@ Suggest.Local.prototype = {
     Suggest.copyProperties(this, options);
   },
 
+  checkDiscoFeed: function() {
+    var nowList = this.candidateList;
+    var newList = null;
+    var index = 0;
+    var jsonFlg = false;
+    var url = this.proxyURL;
+    $.ajax({
+      type: 'post',
+      url: url,
+      data: { 
+        "jsonURL": this.jsonURL
+      },
+      dataType: 'json',
+      async: false,
+      success: function(json) {
+        if (!json) return;
+        newList = new Array();
+        for (var i in json) {
+          for (var j = 0, length = nowList.length; j < length; j++) {
+            if (json[i].entityID == nowList[j][0]) {
+              newList[index] = nowList[j];
+              index++;
+              break;
+            }
+          }
+        }
+      }
+    });
+
+    if (newList && newList.length > 0) {
+      this.candidateList = newList;
+    }
+  },
+
+  checkNoMatch: function(text) {
+    var flg = true;
+
+    if (text != '') {
+      for (var i = 0, length = this.candidateList.length; i < length; i++) {
+        for (var j = 3, length2 = this.candidateList[i].length; j < length2; j++) {
+          if (text.toLowerCase() == this.candidateList[i][j].toLowerCase()) {
+            flg = false;
+            break;
+          }
+        }
+        if (!flg) {
+          break;
+        }
+      }
+    }
+
+    if (this.suggestList && this.suggestList.length == 1) {
+      this.setStyleActive(this.suggestList[0]);
+      hiddenKeyText = this.candidateList[this.suggestIndexList[0]][2];
+      flg = false;
+    }
+
+    this.noMatch = flg;
+  },
+
   elementClick: function(event) {
     var element = this._getEventElement(event);
     if (element.id == this.input.id) {
@@ -132,7 +201,6 @@ Suggest.Local.prototype = {
       }
     } else if (element.id == this.clearElm.id) {
       this.setInputText('');
-      this.selectElm.disabled = true;
       this.execSearch();
     }
   },
@@ -165,6 +233,7 @@ Suggest.Local.prototype = {
   closeList: function() {
     this.changeUnactive();
     this.oldText = this.getInputText();
+    $('#view_incsearch_animate').hide();
 
     if (this.timerId) clearTimeout(this.timerId);
     this.timerId = null;
@@ -180,15 +249,13 @@ Suggest.Local.prototype = {
       text = '';
     }
 
-    if (this.dispDefault != '' && text == this.dispDefault) {
-      this.noMatch = false;
-    } else {
-      this.noMatch = true;
-    }
+    this.noMatch = true;
 
     if (text != this.oldText || this.searchFlg) {
+      hiddenKeyText = '';
       this.searchFlg = false;
       this.oldText = text;
+      if (this.jsonURL != '') this.checkDiscoFeed();
       this.search();
     }
 
@@ -207,7 +274,12 @@ Suggest.Local.prototype = {
 
     this.hookBeforeSearch(text);
     var resultList = this._search(text);
-    if (resultList.length != 0) this.createSuggestArea(resultList);
+    if (resultList.length != 0) {
+      this.createSuggestArea(resultList);
+    } else {
+      $('#view_incsearch_animate').hide();
+    }
+    this.checkNoMatch(this.getInputText());
     this.selectElm.disabled = this.noMatch;
   },
 
@@ -239,7 +311,6 @@ Suggest.Local.prototype = {
       : value.indexOf(pattern);
 
     if ((pos == -1) || (this.prefix && pos != 0)) return null;
-    if (pos == 0 && value.length == pattern.length) this.noMatch = false;
     if (this.highlight) {
       return (this._escapeHTML(value.substr(0, pos)) + '<strong>' 
              + this._escapeHTML(value.substr(pos, pattern.length)) 
@@ -287,9 +358,8 @@ Suggest.Local.prototype = {
 
     this.suggestArea.style.display = '';
     this.suggestArea.scrollTop = 0;
-    if (resultList.length > 0) {
-      this.dnupImgElm.src = this.upImgURL;
-    }
+    this.dnupImgElm.src = this.upImgURL;
+    $('#view_incsearch_animate').slideDown("1500");
   },
 
   getInputText: function() {
@@ -334,14 +404,17 @@ Suggest.Local.prototype = {
     } else if (event.keyCode == Suggest.Key.RETURN) {
       // fix
       if (this.selectElm.disabled == true) {
-        this._stopEvent(event);
-        this.keyEventReturn();
+        if (this.suggestList.length != 1) {
+          this._stopEvent(event);
+//          this.keyEventReturn();
+        }
       }
     } else if (event.keyCode == Suggest.Key.ESC) {
       // clear
       this._stopEvent(event);
       this.setInputText('');
       this.selectElm.disabled = true;
+      hiddenKeyText = '';
       this.closeList();
     } else {
       this.keyEventOther(event);
@@ -616,4 +689,3 @@ Suggest.LocalMulti.prototype.setInputText = function(text) {
 Suggest.LocalMulti.prototype.getLastTokenPos = function() {
   return this.input.value.lastIndexOf(this.delim);
 };
-

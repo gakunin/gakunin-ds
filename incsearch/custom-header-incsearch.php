@@ -129,6 +129,7 @@
 </style>
 <link rel="stylesheet" href="<?php echo $incsearchCssURL ?>" type="text/css" />
 <script type="text/javascript" src="<?php echo $incsearchLibURL ?>"></script>
+<script type="text/javascript" src="<?php echo $ajaxLibURL ?>"></script>
 <script type="text/javascript" language="javascript">
 <!--
 
@@ -207,8 +208,11 @@ var inc_search_list = [ <?php echo $IncSearchList ?> ];
 var initdisp = '<?php echo getLocalString('select_idp') ?>';
 var dispDefault = '<?php echo $selIdP ?>';
 var dispidp = '';
+var hiddenKeyText = '';
 var dropdown_up = '<?php echo $dropdownUpURL ?>';
 var dropdown_down = '<?php echo $dropdownDnURL ?>';
+var proxyURL = '<?php echo $proxyURL ?>';
+var jsonURL = '<?php echo $jsonURL ?>';
 if (dispDefault == ''){
 	dispidp = initdisp;
 } else {
