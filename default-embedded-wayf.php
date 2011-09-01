@@ -240,7 +240,10 @@ var wayf_show_categories =  true;
 //-->
 </script>
 
-<script type="text/javascript" src="https://<?php echo $host ?><?php echo $path ?>/embedded-wayf.js"></script>
+<script type="text/javascript" charset="UTF-8"><!--
+    document.write('<script type="text/javascript" src="https://<?php echo $host ?><?php echo $path ?>/embedded-wayf.js?' + (new Date().getTime()) + '"></scr'+'ipt>');
+//-->
+</script>
 
 <noscript>
   <!-- 
