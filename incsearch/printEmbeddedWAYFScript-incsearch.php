@@ -631,9 +631,9 @@ function decodeBase64(input) {
 		wayf_hide_after_login 
 		&& user_logged_in
 	){
-		writeHTML('<div id="wayf_div" style="background:' + wayf_background_color + ';border-style: solid;border-color: ' + wayf_border_color + ';border-width: 1px;padding: 10px; height: auto;width: ' + wayf_width + ';text-align: left;overflow: hidden;">');
+		writeHTML('<div id="wayf_div" style="background:' + wayf_background_color + ';border-style: solid;border-color: ' + wayf_border_color + ';border-width: 1px;padding-top: 5px;padding-bottom: 0px;padding-left: 10px;padding-right: 10px;height: auto;width: ' + wayf_width + ';text-align: left;overflow: hidden;">');
 	} else {
-		writeHTML('<div id="wayf_div" style="background:' + wayf_background_color + ';border-style: solid;border-color: ' + wayf_border_color + ';border-width: 1px;padding: 10px; height: ' + wayf_height + ';width: ' + wayf_width + ';text-align: left;">');
+		writeHTML('<div id="wayf_div" style="background:' + wayf_background_color + ';border-style: solid;border-color: ' + wayf_border_color + ';border-width: 1px;padding-top: 5px;padding-bottom: 0px;padding-left: 10px;padding-right: 10px;height: ' + wayf_height + ';width: ' + wayf_width + ';text-align: left;">');
 	}
 
 	
@@ -641,7 +641,7 @@ function decodeBase64(input) {
 	if (wayf_hide_logo != true){
 		
 		// Write header of logo div
-		writeHTML('<div id="wayf_logo_div" style="float: right;"><a href="$federationURL" target="_blank" style="border:0px">');
+		writeHTML('<div id="wayf_logo_div" style="float: right;margin-bottom: 5px;"><a href="$federationURL" target="_blank" style="border:0px">');
 		
 		// Which size of the logo shall we display
 		if (wayf_use_small_logo){
@@ -668,9 +668,9 @@ function decodeBase64(input) {
 		
 		//Do we have to draw custom text? or any text at all?
 		if(typeof(wayf_overwrite_intro_text) == "undefined"){
-			writeHTML('<label for="user_idp" id="wayf_intro_label" style="float:left; min-width:80px; font-size:' + wayf_font_size + 'px;color:' + wayf_font_color + ';">{$loginWithString}</label>');
+			writeHTML('<label for="user_idp" id="wayf_intro_label" style="float:left; min-width:80px; font-size:' + wayf_font_size + 'px;color:' + wayf_font_color + ';margin-top: 5px;">{$loginWithString}</label>');
 		} else if (wayf_overwrite_intro_text != "") {
-			writeHTML('<label for="user_idp" id="wayf_intro_label" style="float:left; min-width:80px; font-size:' + wayf_font_size + 'px;color:' + wayf_font_color + ';">' + wayf_overwrite_intro_text + '</label>');
+			writeHTML('<label for="user_idp" id="wayf_intro_label" style="float:left; min-width:80px; font-size:' + wayf_font_size + 'px;color:' + wayf_font_color + ';margin-top: 5px;">' + wayf_overwrite_intro_text + '</label>');
 		}
 		
 		var wayf_authReq_URL = '';
