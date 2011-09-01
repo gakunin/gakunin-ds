@@ -46,7 +46,7 @@ $langStrings['en'] = array (
 'invalid_return_url' => 'The return URL <tt>\'%s\'</tt> is not a valid URL.',
 'unverified_return_url' => 'The return URL <tt>\'%s\'</tt> could not be verified for Service Provider <tt>\'%s\'</tt>.',
 'unknown_sp' => 'The Service Provider <tt>\'%s\'</tt> could not be found in metadata and is therefore unknown.',
-'clear_button' => 'Clear',
+'clear_button' => 'Reset',
 'alert_sp' => 'Alert SP!',
 'dropdown' => 'Display/non-display of IdP list',
 );
@@ -259,7 +259,7 @@ $langStrings['ja'] = array (
 'invalid_return_url' => 'The return URL <tt>\'%s\'</tt> is not a valid URL.',
 'unverified_return_url' => 'The return URL <tt>\'%s\'</tt> could not be verified for Service Provider <tt>\'%s\'</tt>.',
 'unknown_sp' => 'The Service Provider <tt>\'%s\'</tt> could not be found in metadata and is therefore unknown.',
-'clear_button' => 'クリア',
+'clear_button' => 'リセット',
 'alert_sp' => '注意:リファラ遮断のためDSから所属IdP情報を取得できません',
 'dropdown' => 'IdPリストの表示/非表示',
 );
