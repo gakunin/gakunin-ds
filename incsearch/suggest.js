@@ -74,6 +74,7 @@ Suggest.Local.prototype = {
     this.upImgURL = upImgURL;
     this.proxyURL = proxyURL;
     this.jsonURL = jsonURL;
+    this.setInputText(dispidp);
     this.oldText = (this.initDisp == this.getInputText()) ?
       '': this.getInputText();
     this.searchFlg = false;

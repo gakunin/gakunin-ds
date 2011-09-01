@@ -11,7 +11,7 @@
    document.write('<table border="0" cellpadding="0" cellspacing="0">');
    document.write('	<tr>');
    document.write('		<td style="width:100%;">');
-   document.write('			<input id="keytext" type="text" name="pattern" value="<?php echo $selIdP ?>" autocomplete="off" size="60" tabindex="5" style="width:100%; display:block;" />');
+   document.write('			<input id="keytext" type="text" name="pattern" value="" autocomplete="off" size="60" tabindex="5" style="width:100%; display:block;" />');
    document.write('			<div id="view_incsearch_base">');
    document.write('				<div id="view_incsearch_animate">');
    document.write('					<div id="view_incsearch" style="display:none;"></div>');

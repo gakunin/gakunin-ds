@@ -840,7 +840,7 @@ SCRIPT;
 		} else {
 			dispidp = dispDefault;
 		}
-		writeHTML('<input id="keytext" type="text" name="pattern" value="' + dispidp + '" autocomplete="off" size="60" tabindex=5 style="width: 100%; display: block" onClick="getJsonData(); return false;"/>');
+		writeHTML('<input id="keytext" type="text" name="pattern" value="" autocomplete="off" size="60" tabindex=5 style="width: 100%; display: block" onClick="getJsonData(); return false;"/>');
 		
 		writeHTML('<div id="view_incsearch_base">');
 		writeHTML('<div id="view_incsearch_animate">');
