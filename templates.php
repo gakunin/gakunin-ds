@@ -691,7 +691,7 @@ function decodeBase64(input) {
 		typeof(wayf_hide_after_login) == "undefined"
 		|| typeof(wayf_hide_after_login) != "boolean"
 		){
-		wayf_hide_after_login = true;
+		wayf_hide_after_login = false;
 	}
 	
 	if(typeof(wayf_logged_in_messsage) == "undefined"){

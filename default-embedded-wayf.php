@@ -91,8 +91,8 @@ var wayf_auto_login = true;
 // could be authenticated, which is the default case when Shibboleth is used.
 // For other Service Provider implementations have a look at the setting
 // wayf_check_login_state_function that allows you to customize this
-// [Optional, default: true]
-var wayf_hide_after_login = true;
+// [Optional, default: false]
+var wayf_hide_after_login = false;
 
 // Whether or not to show the categories in the drop-down list
 // Possible values are: true or false
