@@ -231,6 +231,7 @@ function checkSelectIdP(){
 
 	var idp_name = document.getElementById('keytext').value.toLowerCase();
 	var chkFlg = false;
+	if (hiddenKeyText != '') idp_name = hiddenKeyText.toLowerCase();
 
 	if (initdisp != idp_name) {
 		for (var i = 0, len = inc_search_list.length; i < len; i++) {
