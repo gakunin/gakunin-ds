@@ -31,7 +31,7 @@ var wayf_sp_handlerURL = "https://my-app.switch.ch/Shibboleth.sso";
 var wayf_return_url = "https://my-app.switch.ch/aai/index.php?page=show_welcome";
 
 // URL of DiscoFeed
-// Examples: "https://office.gakunin.nii.ac.jp/DiscoFeeds/PS0045JP"
+// Examples: "https://point.switch.ch/Shibboleth.sso/DiscoFeed"
 // [Mandatory]
 var wayf_discofeed_url = "";
 
