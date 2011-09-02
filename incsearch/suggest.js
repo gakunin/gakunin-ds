@@ -16,17 +16,19 @@ For details, see the web site:
 // It adds it to window event.
 function start() {
   new Suggest.Local(
-        "keytext",            // element id of input area
-        "view_incsearch",     // element id of IdP list display area
-        inc_search_list,      // IdP list
-        "dropdown_img",       // element id of dropdown image
-        "wayf_submit_button", // element id of select button
-        "clear_a",            // element id of clear
-        initdisp,             // Initial display of input area
-        dispDefault,          // Select IdP display of input area
-        dropdown_down,        // URL of deropdown down image 
-        dropdown_up,          // URL of deropdown up image
-        {dispMax: 500});      // option
+        "keytext",                // element id of input area
+        "view_incsearch",         // element id of IdP list display area
+        "view_incsearch_animate", // element id of IdP list display animate area
+        "view_incsearch_scroll",  // element id of IdP list display scroll area
+        inc_search_list,          // IdP list
+        "dropdown_img",           // element id of dropdown image
+        "wayf_submit_button",     // element id of select button
+        "clear_a",                // element id of clear
+        initdisp,                 // Initial display of input area
+        dispDefault,              // Select IdP display of input area
+        dropdown_down,            // URL of deropdown down image 
+        dropdown_up,              // URL of deropdown up image
+        {dispMax: 500});          // option
 }
 
 window.addEventListener ?
@@ -58,10 +60,13 @@ Suggest.Local = function() {
   this.initialize.apply(this, arguments);
 };
 Suggest.Local.prototype = {
-  initialize: function(input, suggestArea, candidateList, dnupImgElm, selectElm, clearElm, initDisp, dispDefault, dnImgURL, upImgURL) {
+  initialize: function(input, suggestArea, animateArea, scrollArea, candidateList,
+                       dnupImgElm, selectElm, clearElm, initDisp, dispDefault, dnImgURL, upImgURL) {
 
     this.input = this._getElement(input);
     this.suggestArea = this._getElement(suggestArea);
+    this.animateArea = this._getElement(animateArea);
+    this.scrollArea = this._getElement(scrollArea);
     this.candidateList = candidateList;
     this.dnupImgElm = this._getElement(dnupImgElm);
     this.selectElm = this._getElement(selectElm);
@@ -75,9 +80,8 @@ Suggest.Local.prototype = {
       '': this.getInputText();
     this.searchFlg = false;
     this.noMatch = true;
-    this.suggestAreaHeight = 150;
 
-    if (arguments[10]) this.setOptions(arguments[10]);
+    if (arguments[12]) this.setOptions(arguments[12]);
 
     // reg event
     this._addEvent(this.input, 'focus', this._bind(this.tabFocus));
@@ -99,7 +103,7 @@ Suggest.Local.prototype = {
 
     // init
     this.clearSuggestArea();
-    $('#view_incsearch_animate').hide();
+    $('#' + this.animateArea.id).hide();
     this.checkDiscoFeed();
     this.checkNoMatch(this.oldText);
     
@@ -119,6 +123,7 @@ Suggest.Local.prototype = {
   classActive: 'active',
   classGroup: 'list_group',
   classIdPNm: 'list_idp',
+  dispListTime: 300,
   hookBeforeSearch: function(){},
 
   setOptions: function(options) {
@@ -227,7 +232,7 @@ Suggest.Local.prototype = {
   closeList: function() {
     this.changeUnactive();
     this.oldText = this.getInputText();
-    $('#view_incsearch_animate').hide();
+    $('#' + this.animateArea.id).hide();
 
     if (this.timerId) clearTimeout(this.timerId);
     this.timerId = null;
@@ -270,7 +275,7 @@ Suggest.Local.prototype = {
     if (resultList.length != 0) {
       this.createSuggestArea(resultList);
     } else {
-      $('#view_incsearch_animate').hide();
+      $('#' + this.animateArea.id).hide();
     }
     this.checkNoMatch(this.getInputText());
     this.selectElm.disabled = this.noMatch;
@@ -315,7 +320,6 @@ Suggest.Local.prototype = {
 
   clearSuggestArea: function() {
     this.suggestArea.innerHTML = '';
-    this.suggestArea.style.display = 'none';
     this.suggestList = null;
     this.suggestIndexList = null;
     this.activePosition = null;
@@ -328,6 +332,7 @@ Suggest.Local.prototype = {
     this.inputValueBackup = this.input.value;
 
     var oldGroup = '';
+    $('#' + this.suggestArea.id).css('width', '');
     for (var i = 0, length = resultList.length; i < length; i++) {
       if (oldGroup != resultList[i][1]) {
         var element = document.createElement(this.listTagName);
@@ -349,10 +354,13 @@ Suggest.Local.prototype = {
       this.suggestList.push(element);
     }
 
-    this.suggestArea.style.display = '';
-    this.suggestArea.scrollTop = 0;
+    this.scrollArea.scrollTop = 0;
     this.dnupImgElm.src = this.upImgURL;
-    $('#view_incsearch_animate').slideDown("1500");
+    $('#' + this.animateArea.id).slideDown(this.dispListTime);
+    var scrollAreaWidth = Number($('#' + this.scrollArea.id).css('width').replace('px', ''));
+    if (scrollAreaWidth > Number($('#' + this.suggestArea.id).css('width').replace('px', ''))) {
+      $('#' + this.suggestArea.id).css('width', scrollAreaWidth - 20 + 'px');
+    }
   },
 
   getInputText: function() {
@@ -442,7 +450,7 @@ Suggest.Local.prototype = {
         if (this.activePosition < 0) {
           this.activePosition = null;
           this.input.value = this.inputValueBackup;
-          this.suggestArea.scrollTop = 0;
+          this.scrollArea.scrollTop = 0;
           return;
         }
       }
@@ -457,7 +465,7 @@ Suggest.Local.prototype = {
       if (this.activePosition >= this.suggestList.length) {
         this.activePosition = null;
         this.input.value = this.inputValueBackup;
-        this.suggestArea.scrollTop = 0;
+        this.scrollArea.scrollTop = 0;
         return;
       }
     }
@@ -543,10 +551,10 @@ Suggest.Local.prototype = {
     var offset = element.offsetTop;
     var offsetWithHeight = offset + element.clientHeight;
 
-    if (this.suggestArea.scrollTop > offset) {
-      this.suggestArea.scrollTop = offset
-    } else if (this.suggestArea.scrollTop + this.suggestArea.clientHeight < offsetWithHeight) {
-      this.suggestArea.scrollTop = offsetWithHeight - this.suggestArea.clientHeight;
+    if (this.scrollArea.scrollTop > offset) {
+      this.scrollArea.scrollTop = offset
+    } else if (this.scrollArea.scrollTop + this.scrollArea.clientHeight < offsetWithHeight) {
+      this.scrollArea.scrollTop = offsetWithHeight - this.scrollArea.clientHeight;
     }
   },
 

@@ -847,7 +847,9 @@ SCRIPT;
 		
 		writeHTML('<div id="view_incsearch_base">');
 		writeHTML('<div id="view_incsearch_animate">');
-		writeHTML('<div id="view_incsearch" style="display:none;"></div>');
+		writeHTML('<div id="view_incsearch_scroll">');
+		writeHTML('<div id="view_incsearch"></div>');
+		writeHTML('</div>');
 		writeHTML('</div>');
 		writeHTML('</div>');
 		writeHTML('</td>');

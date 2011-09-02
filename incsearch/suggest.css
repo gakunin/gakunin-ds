@@ -6,58 +6,65 @@
 /* IdP list display animation area */
 #view_incsearch_animate {
 	position: absolute;
-	display: block;
+	display: none;
 	height: 150px;
 	width: 100%;
+}
+
+/* IdP list display scroll area */
+#view_incsearch_scroll {
+        position: absolute;
+        display: block;
+        background-color: #FFFFFF;
+        border: 1px solid #CCCCFF;
+        height: 150px;
+        width: 100%;
+        overflow-y: scroll;
+        overflow-x: auto;
 }
 
 /* IdP list display area */
 #view_incsearch {
 	position: absolute;
-	background-color: #FFFFFF;
-	border: 1px solid #CCCCFF;
-	width: 100%;
-	height: 150px;
-	overflow-x: hidden;
-	overflow-y: auto;
+	display: block;
 }
 
 /* div in IdP list display area */
 #view_incsearch div {
 	display: block;
 	width: 100%;
-	overflow: hidden;
 	white-space: nowrap;
 }
 
 /* IdP list: select */
 #view_incsearch div.select {
-	color: #FFFFFF;
+	color: white;
 	background-color: #3366FF;
 }
 
 /* IdP list: mouseover */
 #view_incsearch div.over {
+	color: black;
 	background-color: #99CCFF;
 	cursor: pointer;
 }
 
 /* IdP list: group title */
 div.list_group {
+	color: white;
+	background-color: indianred;
 	font-weight: bold;
 	font-size: 75%;
-	text-align: center;
-	background-color: indianred;
-	color: white;
+	text-align: left;
 }
 
 /* IdP list: IdP name */
 div.list_idp {
+	color: black;
+	background-color: white;
 	font-weight: normal;
 	font-size: 100%;
 	text-align: left;
-	background-color: white;
-	color: black;
 }
 
 /* dropdown image */

@@ -16,7 +16,9 @@
    document.write('			<input id="keytext" type="text" name="pattern" value="" autocomplete="off" size="60" tabindex="5" style="width:100%; display:block;" />');
    document.write('			<div id="view_incsearch_base">');
    document.write('				<div id="view_incsearch_animate">');
-   document.write('					<div id="view_incsearch" style="display:none;"></div>');
+   document.write('					<div id="view_incsearch_scroll">');
+   document.write('						<div id="view_incsearch"></div>');
+   document.write('					</div>');
    document.write('				</div>');
    document.write('			</div>');
    document.write('		</td>');
