@@ -417,6 +417,8 @@ Suggest.Local.prototype = {
       this.selectElm.disabled = true;
       hiddenKeyText = '';
       this.closeList();
+    } else if (event.keyCode == Suggest.Key.TAB) {
+      if (this.suggestList) this.closeList();
     } else {
       this.keyEventOther(event);
     }
