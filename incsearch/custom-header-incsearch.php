@@ -211,8 +211,6 @@ var dispidp = '';
 var hiddenKeyText = '';
 var dropdown_up = '<?php echo $dropdownUpURL ?>';
 var dropdown_down = '<?php echo $dropdownDnURL ?>';
-var proxyURL = '<?php echo $proxyURL ?>';
-var jsonURL = '<?php echo $jsonURL ?>';
 if (dispDefault == ''){
 	dispidp = initdisp;
 } else {

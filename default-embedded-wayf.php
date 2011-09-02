@@ -30,6 +30,11 @@ var wayf_sp_handlerURL = "https://my-app.switch.ch/Shibboleth.sso";
 // [Mandatory]
 var wayf_return_url = "https://my-app.switch.ch/aai/index.php?page=show_welcome";
 
+// URL of DiscoFeed
+// Examples: "https://office.gakunin.nii.ac.jp/DiscoFeeds/PS0045JP"
+// [Mandatory]
+var wayf_discofeed_url = "";
+
 
 //////////////////// RECOMMENDED SETTINGS ////////////////////
 

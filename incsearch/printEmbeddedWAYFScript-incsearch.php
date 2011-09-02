@@ -6,7 +6,7 @@ function printEmbeddedWAYFScript_IncSearch(){
 
 	global $langStrings, $language, $imageURL, $logoURL, $smallLogoURL, $federationURL;
 	global $selectedIDP, $IDProviders, $redirectCookieName, $redirectStateCookieName, $federationName, $cookieSecure;
-	global $safekind, $selIdP, $incsearchLibURL, $incsearchCssURL, $alertURL, $dropdownUpURL, $dropdownDnURL, $ajaxLibURL, $proxyURL, $jsonURL;
+	global $safekind, $selIdP, $incsearchLibURL, $incsearchCssURL, $alertURL, $dropdownUpURL, $dropdownDnURL, $ajaxLibURL;
 	
 	// Get some values that are used in the script
 	$loginWithString = getLocalString('login_with');
@@ -161,8 +161,6 @@ var dispidp = '';
 var hiddenKeyText = '';
 var dropdown_up = '{$dropdownUpURL}';
 var dropdown_down = '{$dropdownDnURL}';
-var proxyURL = '{$proxyURL}';
-var jsonURL = '{$jsonURL}';
 // Define functions
 function submitForm(){
 
@@ -459,6 +457,11 @@ function decodeBase64(input) {
 		alert('The mandatory parameter \'wayf_return_url\' is missing. Please add it as a javascript variable on this page.');
 		config_ok = false;
 	}
+
+	if(typeof(wayf_discofeed_url) == "undefined"){
+		wayf_discofeed_url = '';
+	}
+
 	
 	if(wayf_use_discovery_service == false && typeof(wayf_sp_handlerURL) == "undefined"){
 		alert('The mandatory parameter \'wayf_sp_handlerURL\' is missing. Please add it as a javascript variable on this page.');
@@ -840,7 +843,7 @@ SCRIPT;
 		} else {
 			dispidp = dispDefault;
 		}
-		writeHTML('<input id="keytext" type="text" name="pattern" value="" autocomplete="off" size="60" tabindex=5 style="width: 100%; display: block" onClick="getJsonData(); return false;"/>');
+		writeHTML('<input id="keytext" type="text" name="pattern" value="" autocomplete="off" size="60" tabindex=5 style="width: 100%; display: block"/>');
 		
 		writeHTML('<div id="view_incsearch_base">');
 		writeHTML('<div id="view_incsearch_animate">');

@@ -23,7 +23,7 @@ function printHeader(){
 
 	global $langStrings, $language, $imageURL, $logoURL;
 	global $selectedIDP, $language, $IDProviders;
-	global $useAutocompleteIdP, $selIdP, $incsearchCssURL, $incsearchLibURL, $dropdownUpURL, $dropdownDnURL, $ajaxLibURL, $proxyURL, $jsonURL;
+	global $useAutocompleteIdP, $selIdP, $incsearchCssURL, $incsearchLibURL, $dropdownUpURL, $dropdownDnURL, $ajaxLibURL;
 	
 	// Check if custom header template exists
 	if(file_exists('custom-header.php')){
@@ -605,6 +605,10 @@ function decodeBase64(input) {
 	if(typeof(wayf_return_url) == "undefined"){
 		alert('The mandatory parameter \'wayf_return_url\' is missing. Please add it as a javascript variable on this page.');
 		config_ok = false;
+	}
+
+	if(typeof(wayf_discofeed_url) == "undefined"){
+		wayf_discofeed_url = '';
 	}
 	
 	if(wayf_use_discovery_service == false && typeof(wayf_sp_handlerURL) == "undefined"){

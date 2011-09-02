@@ -26,8 +26,6 @@ function start() {
         dispDefault,          // Select IdP display of input area
         dropdown_down,        // URL of deropdown down image 
         dropdown_up,          // URL of deropdown up image
-        proxyURL,             // URL of proxy (get json file)
-        jsonURL,              // URL of json file(DiscoFeed)
         {dispMax: 500});      // option
 }
 
@@ -60,7 +58,7 @@ Suggest.Local = function() {
   this.initialize.apply(this, arguments);
 };
 Suggest.Local.prototype = {
-  initialize: function(input, suggestArea, candidateList, dnupImgElm, selectElm, clearElm, initDisp, dispDefault, dnImgURL, upImgURL, proxyURL, jsonURL) {
+  initialize: function(input, suggestArea, candidateList, dnupImgElm, selectElm, clearElm, initDisp, dispDefault, dnImgURL, upImgURL) {
 
     this.input = this._getElement(input);
     this.suggestArea = this._getElement(suggestArea);
@@ -72,8 +70,6 @@ Suggest.Local.prototype = {
     this.dispDefault = dispDefault;
     this.dnImgURL = dnImgURL;
     this.upImgURL = upImgURL;
-    this.proxyURL = proxyURL;
-    this.jsonURL = jsonURL;
     this.setInputText(dispidp);
     this.oldText = (this.initDisp == this.getInputText()) ?
       '': this.getInputText();
@@ -81,7 +77,7 @@ Suggest.Local.prototype = {
     this.noMatch = true;
     this.suggestAreaHeight = 150;
 
-    if (arguments[12]) this.setOptions(arguments[12]);
+    if (arguments[10]) this.setOptions(arguments[10]);
 
     // reg event
     this._addEvent(this.input, 'focus', this._bind(this.tabFocus));
@@ -104,7 +100,7 @@ Suggest.Local.prototype = {
     // init
     this.clearSuggestArea();
     $('#view_incsearch_animate').hide();
-    if (this.jsonURL != '') this.checkDiscoFeed();
+    this.checkDiscoFeed();
     this.checkNoMatch(this.oldText);
     
   },
@@ -134,13 +130,10 @@ Suggest.Local.prototype = {
     var newList = null;
     var index = 0;
     var jsonFlg = false;
-    var url = this.proxyURL;
+    if (typeof(wayf_discofeed_url) == "undefined" || wayf_discofeed_url == '') return;
     $.ajax({
       type: 'post',
-      url: url,
-      data: { 
-        "jsonURL": this.jsonURL
-      },
+      url: wayf_discofeed_url,
       dataType: 'json',
       async: false,
       success: function(json) {
@@ -256,7 +249,6 @@ Suggest.Local.prototype = {
       hiddenKeyText = '';
       this.searchFlg = false;
       this.oldText = text;
-      if (this.jsonURL != '') this.checkDiscoFeed();
       this.search();
     }
 
