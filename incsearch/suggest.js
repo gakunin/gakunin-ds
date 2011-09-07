@@ -413,10 +413,7 @@ Suggest.Local.prototype = {
     } else if (event.keyCode == Suggest.Key.ESC) {
       // clear
       this._stopEvent(event);
-      this.setInputText('');
-      this.selectElm.disabled = true;
-      hiddenKeyText = '';
-      this.closeList();
+      setTimeout(this._bind(this.keyEventEsc), 5);
     } else if (event.keyCode == Suggest.Key.TAB) {
       if (this.suggestList) this.closeList();
     } else {
@@ -486,11 +483,10 @@ Suggest.Local.prototype = {
 
   keyEventEsc: function() {
 
-    this.clearSuggestArea();
-    this.input.value = this.inputValueBackup;
-    this.oldText = this.getInputText();
-
-    if (window.opera) setTimeout(this._bind(this.moveEnd), 5);
+    this.setInputText('');
+    this.selectElm.disabled = true;
+    hiddenKeyText = '';
+    this.closeList();
   },
 
   keyEventOther: function(event) {},
