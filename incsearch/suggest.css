@@ -76,6 +76,7 @@ div.list_idp {
 #clear_a {
 	font-size: 70%;
 	text-decoration: underline;
+	white-space: nowrap;
 	cursor: pointer;
 }
 
