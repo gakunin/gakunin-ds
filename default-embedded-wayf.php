@@ -125,11 +125,6 @@ var wayf_show_categories =  true;
 // [Optional, commented out by default]
 // var wayf_hide_idps = new Array();
 
-// The list which is the target of incremental search is extracted to IdP acquired by DiscpFeed
-// URL of DiscpFeed is set up
-// var wayf_discofeed_url = "https://point.switch.ch/Shibboleth.sso/DiscoFeed";
-// [Optional, commented out by default]
-// var wayf_discofeed_url = "";
 
 //////////////////// ADVANCED SETTINGS ////////////////////
 
@@ -220,6 +215,12 @@ var wayf_show_categories =  true;
 //        entityID:"https://other.univ.edu/idp/shibboleth",
 //        SAML1SSOurl:"https://other.univ.edu/shibboleth-idp/SSO"},
 // ];
+
+// The list which is the target of incremental search is extracted to IdP acquired by DiscpFeed
+// URL of DiscpFeed is set up
+// var wayf_discofeed_url = "https://point.switch.ch/Shibboleth.sso/DiscoFeed";
+// [Optional, commented out by default]
+// var wayf_discofeed_url = "";
 
 
 //////////////////// ADDITIONAL CSS CUSTOMIZATIONS ////////////////////
