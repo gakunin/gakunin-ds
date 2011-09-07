@@ -30,11 +30,6 @@ var wayf_sp_handlerURL = "https://my-app.switch.ch/Shibboleth.sso";
 // [Mandatory]
 var wayf_return_url = "https://my-app.switch.ch/aai/index.php?page=show_welcome";
 
-// URL of DiscoFeed
-// Examples: "https://point.switch.ch/Shibboleth.sso/DiscoFeed"
-// [Mandatory]
-var wayf_discofeed_url = "";
-
 
 //////////////////// RECOMMENDED SETTINGS ////////////////////
 
@@ -129,6 +124,12 @@ var wayf_show_categories =  true;
 // var wayf_hide_idps = new Array("https://idp.unige.ch/idp/shibboleth", "https://lewotolo.switch.ch/idp/shibboleth");
 // [Optional, commented out by default]
 // var wayf_hide_idps = new Array();
+
+// The list which is the target of incremental search is extracted to IdP acquired by DiscpFeed
+// URL of DiscpFeed is set up
+// var wayf_discofeed_url = "https://point.switch.ch/Shibboleth.sso/DiscoFeed";
+// [Optional, commented out by default]
+// var wayf_discofeed_url = "";
 
 //////////////////// ADVANCED SETTINGS ////////////////////
 
