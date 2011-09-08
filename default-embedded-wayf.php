@@ -222,6 +222,12 @@ var wayf_show_categories =  true;
 // [Optional, commented out by default]
 // var wayf_discofeed_url = "";
 
+// The path of Cookie created by SP is set. As for default configuration, 
+// the path of an access place is set.
+// var wayf_sp_cookie_path = "/";
+// [Optional, commented out by default]
+// var wayf_sp_cookie_path = "";
+
 
 //////////////////// ADDITIONAL CSS CUSTOMIZATIONS ////////////////////
 

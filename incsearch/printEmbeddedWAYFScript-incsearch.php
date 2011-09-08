@@ -148,6 +148,8 @@ var wayf_unhide_idps;
 var wayf_show_remember_checkbox;
 var wayf_force_remember_for_session;
 var wayf_additional_idps;
+var wayf_discofeed_url;
+var wayf_sp_cookie_path;
 var wayf_sp_samlDSURL;
 var wayf_sp_samlACURL;
 var wayf_html = "";
@@ -292,7 +294,8 @@ function setCookie(c_name, value, expiredays){
 	var exdate = new Date();
 	exdate.setDate(exdate.getDate() + expiredays);
 	document.cookie=c_name + "=" + escape(value) +
-	((expiredays==null) ? "" : "; expires=" + exdate.toGMTString())
+	((expiredays==null) ? "" : "; expires=" + exdate.toGMTString()) +
+	"; path=" + wayf_sp_cookie_path
 SCRIPT;
 	if( isset($cookieSecure) )
 	{
@@ -462,7 +465,10 @@ function decodeBase64(input) {
 		wayf_discofeed_url = '';
 	}
 
-	
+	if(typeof(wayf_sp_cookie_path) == "undefined"){
+		wayf_sp_cookie_path = '';
+	}
+
 	if(wayf_use_discovery_service == false && typeof(wayf_sp_handlerURL) == "undefined"){
 		alert('The mandatory parameter \'wayf_sp_handlerURL\' is missing. Please add it as a javascript variable on this page.');
 		config_ok = false;
