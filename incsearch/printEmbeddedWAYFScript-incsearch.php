@@ -150,6 +150,7 @@ var wayf_force_remember_for_session;
 var wayf_additional_idps;
 var wayf_discofeed_url;
 var wayf_sp_cookie_path;
+var wayf_list_height;
 var wayf_sp_samlDSURL;
 var wayf_sp_samlACURL;
 var wayf_html = "";
@@ -467,6 +468,12 @@ function decodeBase64(input) {
 
 	if(typeof(wayf_sp_cookie_path) == "undefined"){
 		wayf_sp_cookie_path = '';
+	}
+	
+	if((typeof(wayf_list_height) == "undefined") || (wayf_list_height < 0)){
+		wayf_list_height = "150px";
+	} else if (typeof(wayf_width) == "number"){
+		wayf_list_height += 'px';
 	}
 
 	if(wayf_use_discovery_service == false && typeof(wayf_sp_handlerURL) == "undefined"){
@@ -852,8 +859,8 @@ SCRIPT;
 		writeHTML('<input id="keytext" type="text" name="pattern" value="" autocomplete="off" size="60" tabindex=5 style="width: 100%; display: block"/>');
 		
 		writeHTML('<div id="view_incsearch_base">');
-		writeHTML('<div id="view_incsearch_animate">');
-		writeHTML('<div id="view_incsearch_scroll">');
+		writeHTML('<div id="view_incsearch_animate" style="height:' + wayf_list_height + ';">');
+		writeHTML('<div id="view_incsearch_scroll" style="height:' + wayf_list_height + ';">');
 		writeHTML('<div id="view_incsearch"></div>');
 		writeHTML('</div>');
 		writeHTML('</div>');
