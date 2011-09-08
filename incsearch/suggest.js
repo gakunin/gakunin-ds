@@ -259,7 +259,8 @@ Suggest.Local.prototype = {
 
   closeList: function() {
     this.changeUnactive();
-    this.oldText = this.getInputText();
+    this.oldText = (this.initDisp == this.getInputText()) ?
+      '': this.getInputText();
     $('#' + this.animateArea.id).hide();
 
     if (this.timerId) clearTimeout(this.timerId);
@@ -443,6 +444,7 @@ Suggest.Local.prototype = {
       this._stopEvent(event);
       setTimeout(this._bind(this.keyEventEsc), 5);
     } else if (event.keyCode == Suggest.Key.TAB) {
+      if (this.getInputText() == '') this.setInputText(this.initDisp);
       if (this.suggestList) this.closeList();
     } else {
       this.keyEventOther(event);
