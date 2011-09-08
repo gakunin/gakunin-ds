@@ -125,10 +125,6 @@ var wayf_show_categories =  true;
 // [Optional, commented out by default]
 // var wayf_hide_idps = new Array();
 
-// Width of the embedded WAYF IdP List in pixels
-// [Optional, default: 150]
-var wayf_list_height = 150;
-
 
 //////////////////// ADVANCED SETTINGS ////////////////////
 
@@ -231,6 +227,10 @@ var wayf_list_height = 150;
 // var wayf_sp_cookie_path = "/";
 // [Optional, commented out by default]
 // var wayf_sp_cookie_path = "";
+
+// Width of the embedded WAYF IdP List in pixels
+// [Optional, default: 150]
+//var wayf_list_height = 150;
 
 
 //////////////////// ADDITIONAL CSS CUSTOMIZATIONS ////////////////////
