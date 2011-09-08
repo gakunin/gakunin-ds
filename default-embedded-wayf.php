@@ -230,7 +230,7 @@ var wayf_show_categories =  true;
 
 // Width of the embedded WAYF IdP List in pixels
 // [Optional, default: 150]
-//var wayf_list_height = 150;
+// var wayf_list_height = 150;
 
 
 //////////////////// ADDITIONAL CSS CUSTOMIZATIONS ////////////////////
