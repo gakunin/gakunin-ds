@@ -548,5 +548,36 @@ $metadataSProviders = array (
       4 => 'https://gmembers.sinet.ad.jp/Shibboleth.sso/SAML/Artifact',
     ),
   ),
+  'https://map.gakunin.nii.ac.jp/shibboleth-sp' => 
+  array (
+    'DSURL' => 
+    array (
+      0 => 'https://map.gakunin.nii.ac.jp/Shibboleth.sso/Login',
+      1 => 'https://map.gakunin.nii.ac.jp/Shibboleth.sso/DS',
+    ),
+    'ACURL' => 
+    array (
+      0 => 'https://map.gakunin.nii.ac.jp/Shibboleth.sso/SAML2/POST',
+      1 => 'https://map.gakunin.nii.ac.jp/Shibboleth.sso/SAML2/POST-SimpleSign',
+      2 => 'https://map.gakunin.nii.ac.jp/Shibboleth.sso/SAML2/Artifact',
+      3 => 'https://map.gakunin.nii.ac.jp/Shibboleth.sso/SAML/POST',
+      4 => 'https://map.gakunin.nii.ac.jp/Shibboleth.sso/SAML/Artifact',
+    ),
+  ),
+  'https://meatwiki.nii.ac.jp/shibboleth-sp' => 
+  array (
+    'DSURL' => 
+    array (
+      0 => 'https://meatwiki.nii.ac.jp/Shibboleth.sso/DS',
+    ),
+    'ACURL' => 
+    array (
+      0 => 'https://meatwiki.nii.ac.jp/Shibboleth.sso/SAML2/POST',
+      1 => 'https://meatwiki.nii.ac.jp/Shibboleth.sso/SAML2/POST-SimpleSign',
+      2 => 'https://meatwiki.nii.ac.jp/Shibboleth.sso/SAML2/Artifact',
+      3 => 'https://meatwiki.nii.ac.jp/Shibboleth.sso/SAML/POST',
+      4 => 'https://meatwiki.nii.ac.jp/Shibboleth.sso/SAML/Artifact',
+    ),
+  ),
 )
 ?>
