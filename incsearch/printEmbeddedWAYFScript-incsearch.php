@@ -296,7 +296,7 @@ function setCookie(c_name, value, expiredays){
 	exdate.setDate(exdate.getDate() + expiredays);
 	document.cookie=c_name + "=" + escape(value) +
 	((expiredays==null) ? "" : "; expires=" + exdate.toGMTString()) +
-	"; path=" + wayf_sp_cookie_path
+	((wayf_sp_cookie_path=="") ? "" : "; path=" + wayf_sp_cookie_path)
 SCRIPT;
 	if( isset($cookieSecure) )
 	{
