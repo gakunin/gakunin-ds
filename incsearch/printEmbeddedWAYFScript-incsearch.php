@@ -186,6 +186,9 @@ function submitForm(){
 				break;
                 	}
 		}
+		if (chkFlg) {
+			break;
+		}
         }
         if (!chkFlg){
                 alert('{$makeSelectionString}');

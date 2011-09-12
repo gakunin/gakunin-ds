@@ -241,6 +241,9 @@ function checkSelectIdP(){
 					break;
 				}
 			}
+			if (chkFlg) {
+				break;
+			}
 		}
 	}
 	return chkFlg;
