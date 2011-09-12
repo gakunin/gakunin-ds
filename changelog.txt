@@ -1,3 +1,56 @@
+拡張機能や設定変更について 2011.09.12
+
+【本拡張機能の設定】
+  ・リファラチェックとインクリメンタルサーチをサーバ側の設定で可能とする
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-11
+
+【リファラチェックによるIdP情報の送信可否】
+  ・Embededd DS画面表示時にDSサーバ側でリファラを確認し、メタデータに存在しないSPの場合、
+    前回選択したIdP情報を渡さない。
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-6
+  ・リファラチェック時にリファラが取得できない場合、画面に！マークを表示し、マウスオーバー
+    にて注意メッセージを表示する。
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-1
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-8
+  ・リファラチェックを行い取得できなかった場合は、SP側Cookieを作成し、次回以降そのIdP情報を
+    参照して表示する。	
+
+【インクリメンタルサーチによるIdP検索機能】
+  ・0.5秒のインターバルをおき入力チェックする方法で実装
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-12
+  ・矢印キーでIdPリスト内から選択でき、EnterキーでIdPに遷移
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-14
+  ・テキストボックスをクリアするリセット機能をリンクとして配置
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-17
+  ・インクリメンタルサーチでIdPが1件に絞れた場合、自動的に選択
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-18
+  ・JavaSciprt OFF時にCentral DSにアクセスした際の対応
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-19
+  ・IdP一覧へのマウスカーソルhover時の動作
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-20
+  ・リストの表示/非表示が行える矢印マークを追加
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-26
+  ・DiscoFeed機能を使用して、設置しているSPに対応したIdPにリストを予め絞り込む事が可能
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-37
+  ・Escキーで、入力欄のクリア
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-38
+  ・IdP一覧に入りきれないIdP名がある場合、横スクロールを表示
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-39
+  ・TABキーにてテキストボックスから移動した場合、IdPリストを非表示にする
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-48
+  ・Embedded DSで表示されるIdPリストの縦の長さをSP側の設定ファイルで設定可能とする
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-50
+
+【SWITCHwayfの変更】
+  ・フェデレーション外IdP選択時に作成されるCookieのpathがSP側の設定ファイルで設定できるように変更
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-32
+  ・SP側で設定する再認証時画面表示設定のデフォルト値変更（IdPリスト選択可能とする）
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-36
+  ・SP側の設定ファイルにあるembedded-wayf.js参照方法をキャッシュされないような記述に変更
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-42
+
+
+【以下は、追加・変更を行ったソースファイルについて】
 ##############################################################################################################
 ＜変更ファイル＞
 ################################################################################
