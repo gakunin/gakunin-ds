@@ -1,0 +1,1473 @@
+拡張機能や設定変更について 2011.09.12
+
+【本拡張機能の設定】
+  ・リファラチェックとインクリメンタルサーチをサーバ側の設定で可能とする
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-11
+
+【リファラチェックによるIdP情報の送信可否】
+  ・Embededd DS画面表示時にDSサーバ側でリファラを確認し、メタデータに存在しないSPの場合、
+    前回選択したIdP情報を渡さない。
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-6
+  ・リファラチェック時にリファラが取得できない場合、画面に！マークを表示し、マウスオーバー
+    にて注意メッセージを表示する。
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-1
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-8
+  ・リファラチェックを行い取得できなかった場合は、SP側Cookieを作成し、次回以降そのIdP情報を
+    参照して表示する。	
+
+【インクリメンタルサーチによるIdP検索機能】
+  ・0.5秒のインターバルをおき入力チェックする方法で実装
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-12
+  ・矢印キーでIdPリスト内から選択でき、EnterキーでIdPに遷移
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-14
+  ・テキストボックスをクリアするリセット機能をリンクとして配置
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-17
+  ・インクリメンタルサーチでIdPが1件に絞れた場合、自動的に選択
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-18
+  ・JavaSciprt OFF時にCentral DSにアクセスした際の対応
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-19
+  ・IdP一覧へのマウスカーソルhover時の動作
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-20
+  ・リストの表示/非表示が行える矢印マークを追加
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-26
+  ・DiscoFeed機能を使用して、設置しているSPに対応したIdPにリストを予め絞り込む事が可能
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-37
+  ・Escキーで、入力欄のクリア
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-38
+  ・IdP一覧に入りきれないIdP名がある場合、横スクロールを表示
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-39
+  ・TABキーにてテキストボックスから移動した場合、IdPリストを非表示にする
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-48
+  ・Embedded DSで表示されるIdPリストの縦の長さをSP側の設定ファイルで設定可能とする
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-50
+
+【SWITCHwayfの変更】
+  ・フェデレーション外IdP選択時に作成されるCookieのpathがSP側の設定ファイルで設定できるように変更
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-32
+  ・SP側で設定する再認証時画面表示設定のデフォルト値変更（IdPリスト選択可能とする）
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-36
+  ・SP側の設定ファイルにあるembedded-wayf.js参照方法をキャッシュされないような記述に変更
+    →https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-42
+
+
+【以下は、追加・変更を行ったソースファイルについて】
+##############################################################################################################
+＜変更ファイル＞
+################################################################################
+ファイル：default-embedded-wayf.php
+変更内容：SP側で設定する設定値についての変更
+          ・再認証時にリストを非表示としないようにデフォルト値を変更
+          ・DiscoFeed機能でJSONファイル取得するURLの変数追加
+          ・フェデレーション外のIdPを選択した時に作成されるCookieのpathの変数追加
+          ・インクリメンタルサーチのIdPリストの長さ（高さ）の変数追加
+          ・embedded-wayf.jsはキャッシュされないように修正
+===================================================================
+@@ -89,8 +91,8 @@
+ // could be authenticated, which is the default case when Shibboleth is used.
+ // For other Service Provider implementations have a look at the setting
+ // wayf_check_login_state_function that allows you to customize this
+-// [Optional, default: true]
+-var wayf_hide_after_login = true;
++// [Optional, default: false]
++var wayf_hide_after_login = false;
+ 
+ // Whether or not to show the categories in the drop-down list
+ // Possible values are: true or false
+@@ -213,7 +216,23 @@
+ //        SAML1SSOurl:"https://other.univ.edu/shibboleth-idp/SSO"},
+ // ];
+ 
++// The list which is the target of incremental search is extracted to IdP acquired by DiscpFeed
++// URL of DiscpFeed is set up
++// var wayf_discofeed_url = "https://point.switch.ch/Shibboleth.sso/DiscoFeed";
++// [Optional, commented out by default]
++// var wayf_discofeed_url = "";
+ 
++// The path of Cookie created by SP is set. As for default configuration, 
++// the path of an access place is set.
++// var wayf_sp_cookie_path = "/";
++// [Optional, commented out by default]
++// var wayf_sp_cookie_path = "";
++
++// Height of the embedded WAYF IdP List in pixels
++// [Optional, default: 150]
++// var wayf_list_height = 150;
++
++
+ //////////////////// ADDITIONAL CSS CUSTOMIZATIONS ////////////////////
+ 
+ // To further customize the appearance of the Embedded WAYF you could
+@@ -238,7 +257,10 @@
+ //-->
+ </script>
+ 
+-<script type="text/javascript" src="https://<?php echo $host ?><?php echo $path ?>/embedded-wayf.js"></script>
++<script type="text/javascript" charset="UTF-8"><!--
++    document.write('<script type="text/javascript" src="https://<?php echo $host ?><?php echo $path ?>/embedded-wayf.js?' + (new Date().getTime()) + '"></scr'+'ipt>');
++//-->
++</script>
+ 
+ <noscript>
+   <!-- 
+
+
+################################################################################
+ファイル：IDProvider.conf.php
+変更内容：IdPの追加やカテゴリの変更
+===================================================================
+@@ -79,12 +79,12 @@
+ );
+
+ //
+-// 関西
+-$IDProviders['kansai'] = array (
++// 近畿
++$IDProviders['kinki'] = array (
+                'Type' => 'category',
+-               'en' => array ('Name' => 'Kansai'),
+-               'ja' => array ('Name' => '関西'),
+-               'Name' => 'Kansai',
++               'en' => array ('Name' => 'Kinki'),
++               'ja' => array ('Name' => '近畿'),
++               'Name' => 'Kinki',
+                'Index' => '005',
+ );
+
+@@ -152,15 +152,15 @@
+ // 京都大学
+ $IDProviders['https://authidp1.iimc.kyoto-u.ac.jp/idp/shibboleth'] =
+   array (
+-    'Type' => 'kansai',
+-    'Index' => '',
++    'Type' => 'kinki',
++    'Index' => 'PI0005JP',
+ );
+
+ // 広島大学
+ $IDProviders['https://idp.hiroshima-u.ac.jp/idp/shibboleth'] =
+   array (
+     'Type' => 'chugoku',
+-    'Index' => 'PI0005JP',
++    'Index' => 'PI0006JP',
+ );
+
+ // 金沢大学
+@@ -215,7 +215,7 @@
+ // 三重大学
+ $IDProviders['https://fed.mie-u.ac.jp/idp'] =
+   array (
+-    'Type' => 'kansai',
++    'Type' => 'kinki',
+     'Index' => 'PI0014JP',
+ );
+
+@@ -247,4 +247,74 @@
+     'Index' => 'PI0018JP',
+ );
+
++//九州工業大学
++$IDProviders['https://idp.isc.kyutech.ac.jp/idp/shibboleth'] =
++  array (
++    'Type' => 'kyusyu',
++    'Index' => 'PI0019JP',
++);
++
++// 京都産業大学
++$IDProviders['https://gakunin.kyoto-su.ac.jp/idp'] =
++  array (
++    'Type' => 'kinki',
++    'Index' => 'PI0020JP',
++);
++
++// 立教大学
++$IDProviders['https://upki-idp.rikkyo.ac.jp/idp/shibboleth'] =
++  array (
++    'Type' => 'kanto',
++    'Index' => 'PI0021JP',
++);
++
++// 九州大学
++$IDProviders['https://idp.kyushu-u.ac.jp/idp/shibboleth'] =
++  array (
++    'Type' => 'kyusyu',
++    'Index' => 'PI0022JP',
++);
++
++// 明治大学図書館
++$IDProviders['https://servs.lib.meiji.ac.jp/idp/shibboleth'] =
++  array (
++    'Type' => 'kanto',
++    'Index' => 'PI0023JP',
++);
++
++// 神戸大学
++$IDProviders['https://fed.center.kobe-u.ac.jp/idp/shibboleth'] =
++  array (
++    'Type' => 'kinki',
++    'Index' => 'PI0024JP',
++);
++
++// 学認
++$IDProviders['https://idp.gakunin.nii.ac.jp/idp/shibboleth'] =
++  array (
++    'Type' => 'kanto',
++    'Index' => 'PI0025JP',
++);
++
++// 信州大学
++$IDProviders['https://gakunin.ealps.shinshu-u.ac.jp/idp/shibboleth'] =
++  array (
++    'Type' => 'chubu',
++    'Index' => 'PI0026JP',
++);
++
++// 自治医科大学
++$IDProviders['https://ws1.jichi.ac.jp/idp/shibboleth'] =
++  array (
++    'Type' => 'kanto',
++    'Index' => 'PI0027JP',
++);
++
++// 名古屋工業大学
++$IDProviders['https://gknidp.ict.nitech.ac.jp/idp/shibboleth'] =
++  array (
++    'Type' => 'chubu',
++    'Index' => 'PI0028JP',
++);
++
+ ?>
+
+
+################################################################################
+ファイル：IDProvider.metadata.php
+変更内容：所属機関の追加
+===================================================================
+@@ -251,5 +251,96 @@
+       'Name' => '九州工業大学',
+     ),
+   ),
++  'https://gakunin.kyoto-su.ac.jp/idp' => 
++  array (
++    'SSO' => 'https://gakunin.kyoto-su.ac.jp/idp/profile/Shibboleth/SSO',
++    'Name' => '京都産業大学',
++    'en' => 
++    array (
++      'Name' => 'Kyoto Sangyo University',
++    ),
++    'ja' => 
++    array (
++      'Name' => '京都産業大学',
++    ),
++  ),
++  'https://upki-idp.rikkyo.ac.jp/idp/shibboleth' => 
++  array (
++    'SSO' => 'https://upki-idp.rikkyo.ac.jp/idp/profile/Shibboleth/SSO',
++    'Name' => '立教大学',
++    'en' => 
++    array (
++      'Name' => 'Rikkyo University',
++    ),
++    'ja' => 
++    array (
++      'Name' => '立教大学',
++    ),
++  ),
++  'https://idp.kyushu-u.ac.jp/idp/shibboleth' => 
++  array (
++    'SSO' => 'https://idp.kyushu-u.ac.jp/idp/profile/Shibboleth/SSO',
++    'Name' => '九州大学',
++    'en' => 
++    array (
++      'Name' => 'Kyushu University',
++    ),
++    'ja' => 
++    array (
++      'Name' => '九州大学',
++    ),
++  ),
++  'https://servs.lib.meiji.ac.jp/idp/shibboleth' => 
++  array (
++    'SSO' => 'https://servs.lib.meiji.ac.jp/idp/profile/Shibboleth/SSO',
++    'Name' => '明治大学',
++    'en' => 
++    array (
++      'Name' => 'Meiji University',
++    ),
++    'ja' => 
++    array (
++      'Name' => '明治大学',
++    ),
++  ),
++  'https://fed.center.kobe-u.ac.jp/idp/shibboleth' => 
++  array (
++    'SSO' => 'https://fed.center.kobe-u.ac.jp/idp/profile/Shibboleth/SSO',
++    'Name' => '神戸大学',
++    'en' => 
++    array (
++      'Name' => 'Kobe University',
++    ),
++    'ja' => 
++    array (
++      'Name' => '神戸大学',
++    ),
++  ),
++  'https://idp.gakunin.nii.ac.jp/idp/shibboleth' => 
++  array (
++    'SSO' => 'https://idp.gakunin.nii.ac.jp/idp/profile/Shibboleth/SSO',
++    'Name' => '学認',
++    'en' => 
++    array (
++      'Name' => 'GakuNin',
++    ),
++    'ja' => 
++    array (
++      'Name' => '学認',
++    ),
++  ),
++  'https://gakunin.ealps.shinshu-u.ac.jp/idp/shibboleth' => 
++  array (
++    'SSO' => 'https://gakunin.ealps.shinshu-u.ac.jp/idp/profile/Shibboleth/SSO',
++    'Name' => '信州大学',
++    'en' => 
++    array (
++      'Name' => 'Shinshu University',
++    ),
++    'ja' => 
++    array (
++      'Name' => '信州大学',
++    ),
++  ),
+ )
+ ?>
+
+
+################################################################################
+ファイル：index.php
+処理内容：config.phpのuseAutocompleteIdPがtrueの場合にEmbededd DSをインクリメンタル
+          サーチ対応の画面で表示。
+===================================================================
+@@ -18,6 +17,7 @@
+ require_once('templates.php');
+ require_once('functions.php');
+ require_once('languages.php');
++require_once('incsearch/printEmbeddedWAYFScript-incsearch.php');
+
+ header('P3P: CP="NOI CUR DEVa OUR IND COM NAV PRE"');
+
+@@ -535,8 +548,44 @@
+        // Set JavaScript content type
+        header('Content-type: text/javascript;charset="utf-8"');
+
++       $safekind = 0;
++
++       // Is Embedded WAYF data protection feature enabled?
++       if (
++                  isset($useEmbeddedWAYFPrivacyProtection)
++               && $useEmbeddedWAYFPrivacyProtection == true
++               ){
++               $selectedIDP = '-';
++               $safekind = 3;
++       } else {
++               if (isset($useRefererForPrivacyProtection) && $useRefererForPrivacyProtection == true){
++                       // Referer Check
++                       if (isset($_SERVER["HTTP_REFERER"]) && ($_SERVER["HTTP_REFERER"] != '')){
++                               $referer_url = parse_url($_SERVER["HTTP_REFERER"]);
++                               $safekind = 1;
++                               foreach ($SProviders as $key => $SProvider){
++                                       $sp_url = parse_url($key);
++                                       if ($referer_url['host'] == $sp_url['host']){
++                                               $safekind = 0;
++                                               break;
++                                       }
++                               }
++                       } else {
++                               $safekind = 2;
++                       }
++
++                       if ($safekind > 0){
++                               $selectedIDP = '-';
++                       }
++               }
++       }
++
+        // Generate JavaScript code
+-       printEmbeddedWAYFScript();
++       if (isset($useAutocompleteIdP) && $useAutocompleteIdP == true){
++               printEmbeddedWAYFScript_IncSearch();
++       } else {
++               printEmbeddedWAYFScript();
++       }
+
+        exit;
+
+
+################################################################################
+ファイル：config.php
+処理内容：DS側で設定する設定を追加
+          ・インクリメンタルサーチ表示にするか、しないか
+          ・リファラ―チェックをするか、しないか
+          ・インクリメンタルサーチのJavascript、スタイルシートのURL
+          ・インクリメンタルサーチ対応画面で表示する↓↑イメージのURL
+          ・ajaxライブラリ（Javascript）のURL
+===================================================================
+@@ -105,10 +109,16 @@
+ // if you know what you are doing!
+ $exportPreselectedIdP = false;
+
++// Incremental Search
++$useAutocompleteIdP = true;
+
+-// Look&feel settings
+-//*******************
++// Referer Check
++$useRefererForPrivacyProtection = true;
+
++
++// 4. Look and feel settings
++//**************************
++
+ // Name of the federation
+ //$federationName = 'SWITCHaai Federation';
+ $federationName = 'GakuNin';
+@@ -131,9 +141,19 @@
+ //$smallLogoURL = $imageURL.'/switch-aai-transparent-small.png';
+ $smallLogoURL = $imageURL.'/gakunin-seal.png';
+
++$alertURL = $imageURL.'/alert.gif';
++$dropdownUpURL = $imageURL.'/dropdown_up.png';
++$dropdownDnURL = $imageURL.'/dropdown_down.png';
+
+-// Involved files settings
+-//************************
++$incsearchURL = 'https://ds.gakunin.nii.ac.jp/WAYF2/incsearch';
++$incsearchLibURL = $incsearchURL.'/suggest.js';
++$incsearchCssURL = $incsearchURL.'/suggest.css';
++$ajaxLibURL = $incsearchURL.'/jquery.js';
+
+
+################################################################################
+ファイル：custom-languages.php
+処理内容：インクリメンタルサーチ内の名称やリファラチェックのメッセージを設定
+          ・リセットボタンの表示名の設定
+          ・リファラチェックでの！イメージにマウスを乗せた場合に表示する注意
+            メッセージ設定。
+          ・↓↑イメージ上にマウスを乗せた時のメッセージ設定。
+          ・テキストボックスのタイトルと選択ボタンの表示名を設定。
+===================================================================
+@@ -45,6 +45,10 @@
+ 'most_used' => 'Most often used Home Organisations',
+ 'invalid_return_url' => 'The return URL <tt>\'%s\'</tt> is not a valid URL.',
+ 'unverified_return_url' => 'The return URL <tt>\'%s\'</tt> could not be verified for Service Provider <tt>\'%s\'</tt>.',
+ 'unknown_sp' => 'The Service Provider <tt>\'%s\'</tt> could not be found in metadata and is therefore unknown.',
++'clear_button' => 'Reset',
++'alert_sp' => 'Alert SP!',
++'dropdown' => 'Display/non-display of IdP list',
+ );
+
+
+@@ -239,20 +244,24 @@
+ 'remember_selection' => 'ブラウザ起動中は自動ログイン',
+ 'switch_description' => '<a href="http://www.gakunin.jp/" target="_blank">GakuNin</a>は，学術認証フェデレーションの略です．',
+ 'invalid_user_idp' => '入力したIdPの情報（<tt>\'%s\'</tt>）に誤りがあります<br>以下の値のみが入力可能です:',
+-'contact_assistance' => '問い合わせ先：<a href="mailto:upki-office@nii.ac.jp">upki-office@nii.ac.jp</a>',
++'contact_assistance' => '問い合わせ先：<a href="mailto:gakunin-office@nii.ac.jp">gakunin-office@nii.ac.jp</a>',
+ 'no_arguments' => '引数が送られてきませんでした',
+ 'arguments_missing' => 'ブラウザが無効なクエリを受付ました．いくつかの必要な引数が不足しています．<br>以下の引数を受けつけました．:',
+ 'valid_request_description' => '有効なリクエストでは少なくとも，<tt>shire</tt>と<tt>target</tt>の適正な値を必要とします．オプショナルな引数である<tt>providerID</tt>，<tt>origin</tt>や<tt>redirect</tt>を送信することにより，ウェブブラウザを所属機関にIdPに自動的にリダイレクトさせることができます．',
+ 'valid_saml2_request_description' => '有効なSAML2のリクエストでは少なくとも，<tt>entityID</tt>と<tt>return</tt>の適正な値を必要とします．オプショナルな引数である<tt>isPassive</tt>, <tt>policy</tt>や<tt>returnIDParam</tt>を送信することにより，ウェブブラウザを所属機関にIdPに自動的にリダイレクトさせることができます．',
+ 'invalid_query' => 'エラー: 無効なクエリです',
+ 'select_button' => '選択',
+-'login' => 'ログイン',
+-'login_with' => 'ログイン:',
++'login' => '選択',
++'login_with' => '所属機関:',
+ 'other_federation' => '他のフェデレーションから',
+ 'logged_in' => '認証済',
+ 'most_used' => 'Most often used Home Organisations',
+ 'invalid_return_url' => 'The return URL <tt>\'%s\'</tt> is not a valid URL.',
+ 'unverified_return_url' => 'The return URL <tt>\'%s\'</tt> could not be verified for Service Provider <tt>\'%s\'</tt>.',
+ 'unknown_sp' => 'The Service Provider <tt>\'%s\'</tt> could not be found in metadata and is therefore unknown.',
++'clear_button' => 'リセット',
++'alert_sp' => '注意:リファラ遮断のためDSから所属IdP情報を取得できません',
++'dropdown' => 'IdPリストの表示/非表示',
+ );
+
+ ?>
+
+
+################################################################################
+ファイル：templates.php
+変更内容：config.php内のuseAutocompleteIdPの設定値によりEmbededd DSやCentral DSを
+          インクリメンタルサーチ対応とするかの分岐を入れています。
+===================================================================
+@@ -21,13 +22,23 @@
+ function printHeader(){
+
+        global $langStrings, $language, $imageURL, $logoURL;
++       global $selectedIDP, $language, $IDProviders;
++       global $useAutocompleteIdP, $selIdP, $incsearchCssURL, $incsearchLibURL, $dropdownUpURL, $dropdownDnURL, $ajaxLibURL;
+
+        // Check if custom header template exists
+        if(file_exists('custom-header.php')){
+-               include('custom-header.php');
++               if (isset($useAutocompleteIdP) && $useAutocompleteIdP == true){
++                       include('incsearch/custom-header-incsearch.php');
++               } else {
++                       include('custom-header.php');
++               }
+        } else {
+-               // Use default code
+-               include('default-header.php');
++               if (isset($useAutocompleteIdP) && $useAutocompleteIdP == true){
++                       include('incsearch/default-header-incsearch.php');
++               } else {
++                       // Use default code
++                       include('default-header.php');
++               }
+        }
+ }
+
+@@ -37,6 +48,7 @@
+ function printWAYF(){
+
+        global $selectedIDP, $language, $IDProviders, $redirectCookieName, $imageURL, $redirectStateCookieName, $showPermanentSetting;
++       global $useAutocompleteIdP, $selIdP;
+
+        if (!isset($showPermanentSetting)){
+                $showPermanentSetting = false;
+@@ -60,10 +72,18 @@
+
+        // Check if custom header template exists
+        if(file_exists('custom-body.php')){
+-               include('custom-body.php');
++               if (isset($useAutocompleteIdP) && $useAutocompleteIdP == true){
++                       include('incsearch/custom-body-incsearch.php');
++               } else {
++                       include('custom-body.php');
++               }
+        } else {
+-               // Use default code
+-               include('default-body.php');
++               if (isset($useAutocompleteIdP) && $useAutocompleteIdP == true){
++                       include('incsearch/default-body-incsearch.php');
++               } else {
++                       // Use default code
++                       include('default-body.php');
++               }
+        }
+ }
+
+@@ -213,7 +233,7 @@
+ function printEmbeddedWAYFScript(){
+
+        global $langStrings, $language, $imageURL, $logoURL, $smallLogoURL, $federationURL;
+-       global $selectedIDP, $IDProviders, $redirectCookieName, $redirectStateCookieName, $federationName;
++       global $selectedIDP, $IDProviders, $redirectCookieName, $redirectStateCookieName, $federationName, $cookieSecure;
+
+        // Get some values that are used in the script
+        $loginWithString = getLocalString('login_with');
+@@ -656,7 +695,7 @@
+                typeof(wayf_hide_after_login) == "undefined"
+                || typeof(wayf_hide_after_login) != "boolean"
+                ){
+-               wayf_hide_after_login = true;
++               wayf_hide_after_login = false;
+        }
+
+        if(typeof(wayf_logged_in_messsage) == "undefined"){
+
+
+##############################################################################################################
+＜追加ファイル＞
+################################################################################
+ファイル：images/alert.gif
+処理内容：リファラチェックでリファラが取得できなかった場合の画面に表示する
+          ！マークイメージ。
+
+################################################################################
+ファイル：images/dropdown_down.png
+処理内容：インクリメンタルサーチの下矢印（↓）イメージ画像。
+
+################################################################################
+ファイル：images/dropdown_up.png
+処理内容：インクリメンタルサーチの上矢印（↑）イメージ画像。
+
+################################################################################
+ファイル：incsearch/suggest.css
+処理内容：インクリメンタルサーチのスタイルシート
+          ・IdPリスト表示用のDIVスタイル
+          ・IdPリスト表示時のアニメーション用（ゆっくり表示）のDIVスタイル
+          ・IdPリストのスクロール表示用DIVスタイル
+          ・IdPリストにIdPを表示するDIVスタイル
+          ・IdPリスト内のIdP名表示用のDIVスタイル
+          ・IdPリストのIdPを十字キーで選択した時のスタイル
+          ・IdPリストのIdPにマウスをのせた時のスタイル
+          ・IdPリスト内のグループ名（カテゴリ）のスタイル
+          ・IdPリスト内のIdP名のスタイル
+          ・矢印イメージのスタイル
+          ・クリアリンクのスタイル
+          ・クリアリンクの通常時色のスタイル
+          ・クリアリンクのアクティブ時色のスタイル
+
+
+################################################################################
+ファイル名：incsearch/suggest.js
+          ・インクリメンタルサーチ機能
+          ・テキストボックス空白時の初期表示文字列の設定
+          ・キーイベント処理（十字キー、TABキー、Enterキー）
+          ・IdPリストのアニメーション（ゆっくり）表示
+          ・クリアリンク処理
+          ・矢印イメージのアップ、ダウン時の処理
+          ・ブラウザ毎のテキストボックス幅の設定処理
+
+
+################################################################################
+ファイル名：incsearch/jquery.js
+          ajaxのライブラリより以下のような箇所で使用しています。
+          ・アニメーション表示
+          ・テキストボックス、IdPリスト表示箇所の幅取得
+          ・スタイルシート（クラス）の設定
+          ・JSONファイル取得機能
+
+
+################################################################################
+ファイル：incsearch/default-header-incsearch.php
+変更内容：default-header.phpファイルをインクリメンタルサーチ対応として新規に作成。
+          custom-header.phpがなく、config.phpのuseAutocompleteIdPがtrueの場合に
+          Central DSとして表示。
+          インクリメンタルサーチ用のスタイルシートとJavascript、ajaxのJavascript
+          ファイル参照を追加。
+          また、インクリメンタルサーチ用のIdPリストの作成スクリプトの追加。
+===================================================================
+[root@shib-sample trunk]# diff -b default-header.php incsearch/default-header-incsearch.php
+131a132,224
+> <link rel="stylesheet" href="<?php echo $incsearchCssURL ?>" type="text/css" />
+> <script type="text/javascript" src="<?php echo $incsearchLibURL ?>"></script>
+> <script type="text/javascript" src="<?php echo $ajaxLibURL ?>"></script>
+> <script type="text/javascript" language="javascript">
+> <!--
+>
+> <?php
+>       $selIdP = '';
+>       $IncSearchArray = array();
+>
+>       foreach ($IDProviders as $key => $IDProvider){
+>
+>               // Get IdP Name
+>               if (isset($IDProvider[$language]['Name'])){
+>                       $IdPName = addslashes($IDProvider[$language]['Name']);
+>               } else {
+>                       $IdPName = addslashes($IDProvider['Name']);
+>               }
+>               if ($selIdP == ''){
+>                       $selIdP = ($selectedIDP == $key) ? $IdPName : '' ;
+>               }
+>               $IdPType = isset($IDProviders[$key]['Type']) ? $IDProviders[$key]['Type'] : '';
+>
+>               // Skip non-IdP entries
+>               if ($IdPType == '' || $IdPType == 'category'){
+>                       continue;
+>               }
+>
+>               $IDProviders2 = $IDProviders;
+>               $IdPType2 = $IdPType;
+>               if ($IdPType2 != ''){
+>                       foreach ($IDProviders2 as $key2 => $IDProvider2){
+>                               $incsearchIdPType = isset($IDProviders2[$key2]['Type']) ? $IDProviders2[$key2]['Type'] : '';
+>                               // Skip non-Category
+>                               if ($incsearchIdPType != 'category'){
+>                                       continue;
+>                               }
+>                               if ($IdPType == $key2){
+>                                       // Get IdP Category Name
+>                                       if (isset($IDProvider2[$language]['Name'])){
+>                                               $IdPType2 = addslashes($IDProvider2[$language]['Name']);
+>                                       } else {
+>                                               $IdPType2 = addslashes($IDProvider2['Name']);
+>                                       }
+>                                       break;
+>                               }
+>                       }
+>               }
+>
+>               $SearchIdPName = '';
+>               foreach ($IDProvider as $attr => $value){
+>                       if ($attr != 'SSO'
+>                                       && $attr != 'Name'
+>                                       && $attr != 'Type'
+>                                       && $attr != 'IP'
+>                                       && $attr != 'Index'
+>                                       && $attr != 'Realm'){
+>                               $SearchIdPName = $SearchIdPName.', "'.addslashes($value['Name']).'"';
+>                       }
+>               }
+>               if (empty($SearchIdPName)){
+>                       $SearchIdPName = ', "'.$IdPName.'"';
+>               }
+>
+>               $IncSearchArray[] = <<<ENTRY
+>
+>       [
+>               "{$key}", "{$IdPType2}", "{$IdPName}"{$SearchIdPName}
+>       ]
+> ENTRY;
+>
+>
+>       }
+>       $IncSearchList = join(',', $IncSearchArray);
+>       $selIdP = ($selIdP == '') ? getLocalString('select_idp') : $selIdP ;
+> ?>
+>
+> var inc_search_list = [ <?php echo $IncSearchList ?> ];
+> var initdisp = '<?php echo getLocalString('select_idp') ?>';
+> var dispDefault = '<?php echo $selIdP ?>';
+> var dispidp = '';
+> var hiddenKeyText = '';
+> var dropdown_up = '<?php echo $dropdownUpURL ?>';
+> var dropdown_down = '<?php echo $dropdownDnURL ?>';
+> if (dispDefault == ''){
+>       dispidp = initdisp;
+> } else {
+>       dispidp = dispDefault;
+> }
+>
+> -->
+> </script>
+>
+133c226
+< <body bgcolor="#ffffff" onLoad="if (top != self) {top.location = self.location;};if (document.IdPList && document.IdPList.Select) document.IdPList.Select.focus()">
+---
+> <body bgcolor="#ffffff" onLoad="if (top != self) {top.location = self.location;};if (document.IdPList && document.IdPList.Select && !document.IdPList.Select.disabled) document.IdPList.Select.focus()">
+135a229,250
+> /* Central DS: Selection IdP check */
+> function checkSelectIdP(){
+>
+>       var idp_name = document.getElementById('keytext').value.toLowerCase();
+>       var chkFlg = false;
+>       if (hiddenKeyText != '') idp_name = hiddenKeyText.toLowerCase();
+>
+>       if (initdisp != idp_name) {
+>               for (var i = 0, len = inc_search_list.length; i < len; i++) {
+>                       for (var j = 3, len2 = inc_search_list[i].length; j < len2; j++) {
+>                               var list_idp_name = inc_search_list[i][j].toLowerCase();
+>                               if (idp_name == list_idp_name) {
+>                                       document.getElementById('user_idp').value = inc_search_list[i][0];
+>                                       chkFlg = true;
+>                                       break;
+>                               }
+>                       }
+>               }
+>       }
+>       return chkFlg;
+> }
+>
+142c257,261
+<       if(document.IdPList.user_idp && document.IdPList.user_idp.selectedIndex == 0){
+---
+>
+>       var chkFlg = false;
+>
+>       chkFlg = checkSelectIdP();
+>       if (!chkFlg){
+
+
+################################################################################
+ファイル：incsearch/default-body-incsearch.php
+変更内容：default-body.phpファイルをインクリメンタルサーチ対応として新規に作成。
+          custom-body.phpがなく、config.phpのuseAutocompleteIdPがtrueの場合に
+          Central DSとして表示。
+          また、インクリメンタルサーチを使用するように設定していてもJavascriptが
+          使えない場合、通常のドロップダウンリストが表示される。
+===================================================================
+[root@shib-sample trunk]# diff -b default-body.php incsearch/default-body-incsearch.php
+8d7
+<
+10c9,42
+<       <p>
+---
+>
+> <script language="JavaScript" type="text/javascript">
+> <!--
+>    document.write('<input id="user_idp" type="hidden" name="user_idp" value=""/>');
+>    document.write('<table border="0" cellpadding="0" cellspacing="0">');
+>    document.write('   <tr>');
+>    document.write('           <td style="width:100%;">');
+>    document.write('                   <input id="keytext" type="text" name="pattern" value="" autocomplete="off" size="60" tabindex="5" style="width:100%; display:block;" />');
+>    document.write('                   <div id="view_incsearch_base">');
+>    document.write('                           <div id="view_incsearch_animate">');
+>    document.write('                                   <div id="view_incsearch_scroll">');
+>    document.write('                                           <div id="view_incsearch"></div>');
+>    document.write('                                   </div>');
+>    document.write('                           </div>');
+>    document.write('                   </div>');
+>    document.write('           </td>');
+>    document.write('           <td>');
+>    document.write('                   <img id="dropdown_img" src="" title="<?php echo getLocalString('dropdown') ?>" tabindex=6 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
+>    document.write('           </td>');
+>    document.write('           <td>&nbsp;</td>');
+>    document.write('           <td>');
+>    document.write('                   <input id="wayf_submit_button" type="submit" name="Select" accesskey="s" tabindex="10" value="<?php echo getLocalString('select_button') ?>" ');
+>    if (dispidp == initdisp) {
+>      document.write('disabled >');
+>    } else {
+>      document.write('>');
+>    }
+>    document.write('           </td>');
+> -->
+> </script>
+> <noscript>
+> <table border="0" cellpadding="0" cellspacing="0">
+>       <tr>
+>               <td colspan="2">
+14a47,49
+>               </td>
+>               <td>&nbsp;</td>
+>               <td>
+16c51,56
+<       </p>
+---
+>               </td>
+> </noscript>
+>               <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+>       </tr>
+>       <tr>
+>               <td colspan="3">
+25a66,79
+>               </td>
+>               <td style="vertical-align:text-top; text-align:center;">
+> <script language="JavaScript" type="text/javascript">
+> <!--
+>    document.write('                   <div id="clear_a" class="default" tabindex=11><?php echo getLocalString('clear_button') ?></div>');
+> -->
+> </script>
+> <noscript>
+>                       &nbsp;
+> </noscript>
+>               </td>
+>               <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+>       </tr>
+> </table>
+
+
+################################################################################
+ファイル：incsearch/custom-header-incsearch.php
+変更内容：custom-header.phpファイルをインクリメンタルサーチ対応として新規に作成。
+          custom-header.phpが存在し、config.phpのuseAutocompleteIdPがtrueの場合に
+          Central DSとして表示。
+          インクリメンタルサーチ用のスタイルシートとJavascript、ajaxのJavascript
+          ファイル参照を追加。
+          また、インクリメンタルサーチ用のIdPリストの作成スクリプトの追加。
+===================================================================
+[root@shib-sample trunk]# diff -b custom-header.php incsearch/custom-header-incsearch.php
+129a130,222
+> <link rel="stylesheet" href="<?php echo $incsearchCssURL ?>" type="text/css" />
+> <script type="text/javascript" src="<?php echo $incsearchLibURL ?>"></script>
+> <script type="text/javascript" src="<?php echo $ajaxLibURL ?>"></script>
+> <script type="text/javascript" language="javascript">
+> <!--
+>
+> <?php
+>       $selIdP = '';
+>       $IncSearchArray = array();
+>
+>       foreach ($IDProviders as $key => $IDProvider){
+>
+>               // Get IdP Name
+>               if (isset($IDProvider[$language]['Name'])){
+>                       $IdPName = addslashes($IDProvider[$language]['Name']);
+>               } else {
+>                       $IdPName = addslashes($IDProvider['Name']);
+>               }
+>               if ($selIdP == ''){
+>                       $selIdP = ($selectedIDP == $key) ? $IdPName : '' ;
+>               }
+>               $IdPType = isset($IDProviders[$key]['Type']) ? $IDProviders[$key]['Type'] : '';
+>
+>               // Skip non-IdP entries
+>               if ($IdPType == '' || $IdPType == 'category'){
+>                       continue;
+>               }
+>
+>               $IDProviders2 = $IDProviders;
+>               $IdPType2 = $IdPType;
+>               if ($IdPType2 != ''){
+>                       foreach ($IDProviders2 as $key2 => $IDProvider2){
+>                               $incsearchIdPType = isset($IDProviders2[$key2]['Type']) ? $IDProviders2[$key2]['Type'] : '';
+>                               // Skip non-Category
+>                               if ($incsearchIdPType != 'category'){
+>                                       continue;
+>                               }
+>                               if ($IdPType == $key2){
+>                                       // Get IdP Category Name
+>                                       if (isset($IDProvider2[$language]['Name'])){
+>                                               $IdPType2 = addslashes($IDProvider2[$language]['Name']);
+>                                       } else {
+>                                               $IdPType2 = addslashes($IDProvider2['Name']);
+>                                       }
+>                                       break;
+>                               }
+>                       }
+>               }
+>
+>               $SearchIdPName = '';
+>               foreach ($IDProvider as $attr => $value){
+>                       if ($attr != 'SSO'
+>                                       && $attr != 'Name'
+>                                       && $attr != 'Type'
+>                                       && $attr != 'IP'
+>                                       && $attr != 'Index'
+>                                       && $attr != 'Realm'){
+>                               $SearchIdPName = $SearchIdPName.', "'.addslashes($value['Name']).'"';
+>                       }
+>               }
+>               if (empty($SearchIdPName)){
+>                       $SearchIdPName = ', "'.$IdPName.'"';
+>               }
+>
+>               $IncSearchArray[] = <<<ENTRY
+>
+>       [
+>               "{$key}", "{$IdPType2}", "{$IdPName}"{$SearchIdPName}
+>       ]
+> ENTRY;
+>
+>
+>       }
+>       $IncSearchList = join(',', $IncSearchArray);
+>       $selIdP = ($selIdP == '') ? getLocalString('select_idp') : $selIdP ;
+> ?>
+>
+> var inc_search_list = [ <?php echo $IncSearchList ?> ];
+> var initdisp = '<?php echo getLocalString('select_idp') ?>';
+> var dispDefault = '<?php echo $selIdP ?>';
+> var dispidp = '';
+> var hiddenKeyText = '';
+> var dropdown_up = '<?php echo $dropdownUpURL ?>';
+> var dropdown_down = '<?php echo $dropdownDnURL ?>';
+> if (dispDefault == ''){
+>       dispidp = initdisp;
+> } else {
+>       dispidp = dispDefault;
+> }
+>
+> -->
+> </script>
+>
+131c224
+< <body bgcolor="#ffffff" onLoad="if (top != self) {top.location = self.location;};if (document.IdPList && document.IdPList.Select) document.IdPList.Select.focus()">
+---
+> <body bgcolor="#ffffff" onLoad="if (top != self) {top.location = self.location;};if (document.IdPList && document.IdPList.Select && !document.IdPList.Select.disabled) document.IdPList.Select.focus()">
+133a227,248
+> /* Central DS: Selection IdP check */
+> function checkSelectIdP(){
+>
+>       var idp_name = document.getElementById('keytext').value.toLowerCase();
+>       var chkFlg = false;
+>       if (hiddenKeyText != '') idp_name = hiddenKeyText.toLowerCase();
+>
+>       if (initdisp != idp_name) {
+>               for (var i = 0, len = inc_search_list.length; i < len; i++) {
+>                       for (var j = 3, len2 = inc_search_list[i].length; j < len2; j++) {
+>                               var list_idp_name = inc_search_list[i][j].toLowerCase();
+>                               if (idp_name == list_idp_name) {
+>                                       document.getElementById('user_idp').value = inc_search_list[i][0];
+>                                       chkFlg = true;
+>                                       break;
+>                               }
+>                       }
+>               }
+>       }
+>       return chkFlg;
+> }
+>
+140c255,259
+<       if(document.IdPList.user_idp && document.IdPList.user_idp.selectedIndex == 0){
+---
+>
+>       var chkFlg = false;
+>
+>       chkFlg = checkSelectIdP();
+>       if (!chkFlg){
+
+
+################################################################################
+ファイル：incsearch/custom-body-incsearch.php
+変更内容：custom-body.phpファイルをインクリメンタルサーチ対応として新規に作成。
+          custom-body.phpが存在し、config.phpのuseAutocompleteIdPがtrueの場合に
+          Central DSとして表示。
+          また、インクリメンタルサーチを使用するように設定していてもJavascriptが
+          使えない場合、通常のドロップダウンリストが表示される。
+===================================================================
+[root@shib-sample trunk]# diff -b custom-body.php incsearch/custom-body-incsearch.php
+6d5
+<
+8c7,40
+<       <p>
+---
+>
+> <script language="JavaScript" type="text/javascript">
+> <!--
+>    document.write('<input id="user_idp" type="hidden" name="user_idp" value=""/>');
+>    document.write('<table border="0" cellpadding="0" cellspacing="0">');
+>    document.write('   <tr>');
+>    document.write('           <td style="width:100%;">');
+>    document.write('                   <input id="keytext" type="text" name="pattern" value="" autocomplete="off" size="60" tabindex="5" style="width:100%; display:block;" />');
+>    document.write('                   <div id="view_incsearch_base">');
+>    document.write('                           <div id="view_incsearch_animate">');
+>    document.write('                                   <div id="view_incsearch_scroll">');
+>    document.write('                                           <div id="view_incsearch"></div>');
+>    document.write('                                   </div>');
+>    document.write('                           </div>');
+>    document.write('                   </div>');
+>    document.write('           </td>');
+>    document.write('           <td>');
+>    document.write('                   <img id="dropdown_img" src="" title="<?php echo getLocalString('dropdown') ?>" tabindex=6 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
+>    document.write('           </td>');
+>    document.write('           <td>&nbsp;</td>');
+>    document.write('           <td>');
+>    document.write('                   <input id="wayf_submit_button" type="submit" name="Select" accesskey="s" tabindex="10" value="<?php echo getLocalString('select_button') ?>" ');
+>    if (dispidp == initdisp) {
+>      document.write('disabled >');
+>    } else {
+>      document.write('>');
+>    }
+>    document.write('           </td>');
+> -->
+> </script>
+> <noscript>
+> <table border="0" cellpadding="0" cellspacing="0">
+>       <tr>
+>               <td colspan="2">
+12a45,47
+>               </td>
+>               <td>&nbsp;</td>
+>               <td>
+14c49,54
+<       </p>
+---
+>               </td>
+> </noscript>
+>               <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+>       </tr>
+>       <tr>
+>               <td colspan="3">
+23a64,77
+>               </td>
+>               <td style="vertical-align:text-top; text-align:center;">
+> <script language="JavaScript" type="text/javascript">
+> <!--
+>    document.write('                   <div id="clear_a" class="default" tabindex=11><?php echo getLocalString('clear_button') ?></div>');
+> -->
+> </script>
+> <noscript>
+>                       &nbsp;
+> </noscript>
+>               </td>
+>               <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+>       </tr>
+> </table>
+
+
+################################################################################
+ファイル：incsearch/printEmbeddedWAYFScript-incsearch.php
+変更内容：templates.phpファイルのprintEmbeddedWAYFScript()をインクリメンタルサーチ
+          対応として新規に作成。
+          また、インクリメンタルサーチ以外に余白などの画面レイアウトを変更。
+          リファラチェック時にリファラが取得できなかった場合、！イメージを表示する。
+          インクリメンタルサーチ用のスタイルシートとJavascript、ajaxのJavascript
+          ファイル参照を追加。
+          default-embedded-wayf.phpに新規追加したSP側Cookieのパス、DiscoFeedのURL、
+          IdPリストの長さ（高さ）の値初期設定。
+          インクリメンタルサーチ用のIdPリストの作成スクリプトの追加。
+===================================================================
+[root@shib-sample trunk]# diff -b ~/[templates.phpファイルのprintEmbeddedWAYFScript()] incsearch/printEmbeddedWAYFScript-incsearch.php
+2a9
+>       global $safekind, $selIdP, $incsearchLibURL, $incsearchCssURL, $alertURL, $dropdownUpURL, $dropdownDnURL, $ajaxLibURL;
+15a23,28
+>       $clearString = addslashes(getLocalString('clear_button'));
+>       $alertSP = addslashes(getLocalString('alert_sp'));
+>       $dropdownString = addslashes(getLocalString('dropdown'));
+>
+>       $selIdP = '';
+>       $IncSearchArray = array();
+18a32
+>
+28,29c42,44
+<               // Set selected attribute
+<               $selected = ($selectedIDP == $key) ? ' selected="selected"' : '' ;
+---
+>               if ($selIdP == ''){
+>                       $selIdP = ($selectedIDP == $key) ? $IdPName : '' ;
+>               }
+31a47,68
+>               $IDProviders2 = $IDProviders;
+>               $IdPType2 = $IdPType;
+>               if ($IdPType2 != ''){
+>                       foreach ($IDProviders2 as $key2 => $IDProvider2){
+>                               $incsearchIdPType = isset($IDProviders2[$key2]['Type']) ? $IDProviders2[$key2]['Type'] : '';
+>                               // Skip non-Category
+>                               if ($incsearchIdPType != 'category'){
+>                                       continue;
+>                               }
+>                               if ($IdPType == $key2){
+>                                       // Get IdP Category Name
+>                                       if (isset($IDProvider2[$language]['Name'])){
+>                                               $IdPType2 = addslashes($IDProvider2[$language]['Name']);
+>                                       } else {
+>                                               $IdPType2 = addslashes($IDProvider2['Name']);
+>                                       }
+>                                       break;
+>                               }
+>
+>                       }
+>               }
+>
+43a81,102
+>               $SearchIdPName = '';
+>               foreach ($IDProvider as $attr => $value){
+>                       if ($attr != 'SSO'
+>                                       && $attr != 'Name'
+>                                       && $attr != 'Type'
+>                                       && $attr != 'IP'
+>                                       && $attr != 'Index'
+>                                       && $attr != 'Realm'){
+>                               $SearchIdPName = $SearchIdPName.', "'.addslashes($value['Name']).'"';
+>                       }
+>               }
+>               if (empty($SearchIdPName)){
+>                       $SearchIdPName = ', "'.$IdPName.'"';
+>               }
+>
+>               $IncSearchArray[] = <<<ENTRY
+>
+>       [
+>               "{$key}", "{$IdPType2}", "{$IdPName}"{$SearchIdPName}
+>       ]
+> ENTRY;
+>
+52a112
+>       $IncSearchList = join(',', $IncSearchArray);
+53a114
+>       $InitDisp = getLocalString('select_idp');
+89a151,153
+> var wayf_discofeed_url;
+> var wayf_sp_cookie_path;
+> var wayf_list_height;
+94c158,166
+<
+---
+> var inc_search_list = [ {$IncSearchList} ];
+> var safekind = '{$safekind}';
+> var allIdPList = '';
+> var initdisp = '{$InitDisp}';
+> var dispDefault = '{$selIdP}';
+> var dispidp = '';
+> var hiddenKeyText = '';
+> var dropdown_up = '{$dropdownUpURL}';
+> var dropdown_down = '{$dropdownDnURL}';
+98c170,190
+<       if (document.IdPList.user_idp && document.IdPList.user_idp.selectedIndex == 0){
+---
+>       var NonFedEntityID;
+>       var idp_name = document.getElementById('keytext').value.toLowerCase();
+>       var chkFlg = false;
+>       if (hiddenKeyText != '') idp_name = hiddenKeyText.toLowerCase();
+>
+>       for (var i=0; i<inc_search_list.length; i++){
+>               for (var j = 3, len2 = inc_search_list[i].length; j < len2; j++) {
+>                       var list_idp_name = inc_search_list[i][j].toLowerCase();
+>                       if (idp_name == list_idp_name){
+>                               NonFedEntityID = inc_search_list[i][0];
+>                               document.getElementById('user_idp').value = inc_search_list[i][0];
+>                               chkFlg = true;
+>                               if (safekind > 0 && safekind != 3){
+>                                       // Store SAML domain cookie for this foreign IdP
+>                                       setCookie('_saml_idp', encodeBase64(inc_search_list[i][0]) , 100);
+>                               }
+>                               break;
+>                       }
+>               }
+>         }
+>         if (!chkFlg){
+107,109c199
+<               wayf_additional_idps.length > 0
+<               && document.IdPList.user_idp
+<               && document.IdPList.user_idp.selectedIndex >= (document.IdPList.user_idp.options.length - wayf_additional_idps.length)){
+---
+>                 i >= (inc_search_list.length - wayf_additional_idps.length)){
+111d200
+<               var NonFedEntityID = wayf_additional_idps[document.IdPList.user_idp[document.IdPList.user_idp.selectedIndex].value].entityID;
+150d238
+<
+210c298,299
+<       ((expiredays==null) ? "" : "; expires=" + exdate.toGMTString())
+---
+>       ((expiredays==null) ? "" : "; expires=" + exdate.toGMTString()) +
+>       ((wayf_sp_cookie_path=="") ? "" : "; path=" + wayf_sp_cookie_path)
+375a465,478
+>       if(typeof(wayf_discofeed_url) == "undefined"){
+>               wayf_discofeed_url = '';
+>       }
+>
+>       if(typeof(wayf_sp_cookie_path) == "undefined"){
+>               wayf_sp_cookie_path = '';
+>       }
+>
+>       if((typeof(wayf_list_height) == "undefined") || (wayf_list_height < 0)){
+>               wayf_list_height = "150px";
+>       } else if (typeof(wayf_width) == "number"){
+>               wayf_list_height += 'px';
+>       }
+>
+547c650
+<               writeHTML('<div id="wayf_div" style="background:' + wayf_background_color + ';border-style: solid;border-color: ' + wayf_border_color + ';border-width: 1px;padding: 10px; height: auto;width: ' + wayf_width + ';text-align: left;overflow: hidden;">');
+---
+>               writeHTML('<div id="wayf_div" style="background:' + wayf_background_color + ';border-style: solid;border-color: ' + wayf_border_color + ';border-width: 1px;padding-top: 10px;padding-bottom: 0px;padding-left: 10px;padding-right: 10px;height: auto;width: ' + wayf_width + ';text-align: left;overflow: hidden;">');
+549c652
+<               writeHTML('<div id="wayf_div" style="background:' + wayf_background_color + ';border-style: solid;border-color: ' + wayf_border_color + ';border-width: 1px;padding: 10px; height: ' + wayf_height + ';width: ' + wayf_width + ';text-align: left;overflow: hidden;">');
+---
+>               writeHTML('<div id="wayf_div" style="background:' + wayf_background_color + ';border-style: solid;border-color: ' + wayf_border_color + ';border-width: 1px;padding-top: 10px;padding-bottom: 0px;padding-left: 10px;padding-right: 10px;height: ' + wayf_height + ';width: ' + wayf_width + ';text-align: left;">');
+551a655
+>
+556c660
+<               writeHTML('<div id="wayf_logo_div" style="float: right;"><a href="$federationURL" target="_blank" style="border:0px">');
+---
+>               writeHTML('<div id="wayf_logo_div" style="float: right;margin-bottom: 5px;"><a href="$federationURL" target="_blank" style="border:0px">');
+583c687
+<                       writeHTML('<label for="user_idp" id="wayf_intro_label" style="float:left; min-width:80px; font-size:' + wayf_font_size + 'px;color:' + wayf_font_color + ';">{$loginWithString}</label>');
+---
+>                       writeHTML('<label for="user_idp" id="wayf_intro_label" style="float:left; min-width:80px; font-size:' + wayf_font_size + 'px;color:' + wayf_font_color + ';margin-top: 7px;">{$loginWithString}</label>');
+585c689
+<                       writeHTML('<label for="user_idp" id="wayf_intro_label" style="float:left; min-width:80px; font-size:' + wayf_font_size + 'px;color:' + wayf_font_color + ';">' + wayf_overwrite_intro_text + '</label>');
+---
+>                       writeHTML('<label for="user_idp" id="wayf_intro_label" style="float:left; min-width:80px; font-size:' + wayf_font_size + 'px;color:' + wayf_font_color + ';margin-top: 7px;">' + wayf_overwrite_intro_text + '</label>');
+598c702
+<                       form_start = '<form id="IdPList" name="IdPList" method="post" target="_parent" action="' + wayf_authReq_URL + '">';
+---
+>                       form_start = '<form id="IdPList" name="IdPList" method="post" target="_parent" onSubmit="return submitForm()" action="' + wayf_authReq_URL + '">';
+606c710
+<                       form_start = '<form id="IdPList" name="IdPList" method="post" target="_parent" action="' + wayf_authReq_URL + '&amp;time={$utcTime}'
+---
+>                       form_start = '<form id="IdPList" name="IdPList" method="post" target="_parent" onSubmit="return submitForm()" action="' + wayf_authReq_URL + '&amp;time={$utcTime}'
+639a744,747
+>               writeHTML('<link rel="stylesheet" href="{$incsearchCssURL}" type="text/css" />');
+>               writeHTML('<script type="text/javascript" src="{$incsearchLibURL}"></script>');
+>               writeHTML('<script type="text/javascript" src="{$ajaxLibURL}"></script>');
+>
+642c750,751
+<               writeHTML('<select id="user_idp" name="user_idp" style="margin-top: 15px;margin-bottom: 10px; width: 100%;">');
+---
+>               writeHTML('<input id="user_idp" name="user_idp" type="hidden" value="">');
+>
+655,676d763
+<
+<               // Add first entry: "Select your IdP..."
+<               writeHTML('<option value="-">{$selectIdPString} ...</option>');
+<
+<               // Favourites
+<               if (wayf_most_used_idps.length > 0){
+<                       if(typeof(wayf_overwrite_most_used_idps_text) == "undefined"){
+<                               writeHTML('<optgroup label="{$mostUsedIdPsString}">');
+<                       } else {
+<                               writeHTML('<optgroup label="' + wayf_overwrite_most_used_idps_text + '">');
+<                       }
+<
+<                       // Show additional IdPs in the order they are defined
+<                       for ( var i=0; i < wayf_most_used_idps.length; i++){
+<                               if (wayf_idps[wayf_most_used_idps[i]]){
+<                                       writeHTML('<option value="' + wayf_most_used_idps[i] + '">' + wayf_idps[wayf_most_used_idps[i]].name + '</option>');
+<                               }
+<                       }
+<
+<                       writeHTML('</optgroup>');
+<               }
+<
+678a766
+>
+692,707c780
+<
+<                       // Check if entry is a category
+<                       if (isset($IDProvider['Type']) && $IDProvider['Type'] == 'category'){
+<
+<                               echo <<<SCRIPT
+<
+<               if (isAllowedCategory('{$key}')){
+< SCRIPT;
+<
+<                               if (!empty($optgroup)){
+<                                       echo <<<SCRIPT
+<
+<                       if (wayf_show_categories == true){
+<                               writeHTML('</optgroup>');
+<                       }
+< SCRIPT;
+---
+>                       continue;
+710c783
+<                               // Add another category
+---
+>               // Set selected attribute
+712,715c785,786
+<
+<                       if (wayf_show_categories == true){
+<                               writeHTML('<optgroup label="{$IdPName}">');
+<                       }
+---
+>               if (last_idp == '{$key}'){
+>                       dispDefault = '{$IdPName}';
+718,722d788
+<                               $optgroup = $key;
+<                       }
+<
+<                       continue;
+<               }
+724,725d789
+<               // Set selected attribute
+<               $selected = ($selectedIDP == $key) ? ' selected="selected"' : '' ;
+729d792
+<
+736,739c799
+<                               writeHTML('<option value="{$key}" selected="selected">{$IdPName}</option>');
+<                       } else {
+<                               // Let central WAYF choose
+<                               writeHTML('<option value="{$key}" {$selected}>{$IdPName}</option>');
+---
+>                               dispDefault = '{$IdPName}';
+745,754d804
+<       // Add last optgroup if that was used
+<       if (!empty($optgroup)){
+<               echo <<<SCRIPT
+<
+<               if (wayf_show_categories == true){
+<                       writeHTML('</optgroup>');
+<               }
+< SCRIPT;
+<       }
+<
+757,760c807
+<
+<                       if (wayf_show_categories == true){
+<                               writeHTML('<optgroup label="{$otherFederationString}">');
+<                       }
+---
+>                       var listcnt = inc_search_list.length;
+770c817,823
+<                                               writeHTML('<option value="' + i + '" selected="selected">' + wayf_additional_idps[i].name  + '</option>');
+---
+>                                               dispDefault = wayf_additional_idps[i].name;
+>                                               inc_search_list[listcnt] = new Array();
+>                                               inc_search_list[listcnt][0] = wayf_additional_idps[i].entityID;
+>                                                 inc_search_list[listcnt][1] = "{$otherFederationString}";
+>                                               inc_search_list[listcnt][2] = wayf_additional_idps[i].name;
+>                                               inc_search_list[listcnt][3] = wayf_additional_idps[i].name;
+>                                               listcnt++;
+778c831,837
+<                                               writeHTML('<option value="' + i + '" selected="selected">' + wayf_additional_idps[i].name  + '</option>');
+---
+>                                               dispDefault = wayf_additional_idps[i].name;
+>                                               inc_search_list[listcnt] = new Array();
+>                                               inc_search_list[listcnt][0] = wayf_additional_idps[i].entityID;
+>                                                 inc_search_list[listcnt][1] = "{$otherFederationString}";
+>                                               inc_search_list[listcnt][2] = wayf_additional_idps[i].name;
+>                                               inc_search_list[listcnt][3] = wayf_additional_idps[i].name;
+>                                               listcnt++;
+780c839,844
+<                                               writeHTML('<option value="' + i + '">' + wayf_additional_idps[i].name  + '</option>');
+---
+>                                               inc_search_list[listcnt] = new Array();
+>                                               inc_search_list[listcnt][0] = wayf_additional_idps[i].entityID;
+>                                                 inc_search_list[listcnt][1] = "{$otherFederationString}";
+>                                               inc_search_list[listcnt][2] = wayf_additional_idps[i].name;
+>                                               inc_search_list[listcnt][3] = wayf_additional_idps[i].name;
+>                                               listcnt++;
+785,786d848
+<                       if (wayf_show_categories == true){
+<                               writeHTML('</optgroup>');
+787a850,857
+>               writeHTML('<br/>');
+>               writeHTML('<table border="0" cellpadding="0" cellspacing="0" style="width: 100%;">');
+>               writeHTML('<tr>');
+>               writeHTML('<td id="keytext_td" style="width: 100%;">');
+>               if (dispDefault == ''){
+>                       dispidp = initdisp;
+>               } else {
+>                       dispidp = dispDefault;
+788a859
+>               writeHTML('<input id="keytext" type="text" name="pattern" value="" autocomplete="off" size="60" tabindex=5 style="width: 100%; display: block"/>');
+790c861,868
+<               writeHTML('</select>');
+---
+>               writeHTML('<div id="view_incsearch_base">');
+>               writeHTML('<div id="view_incsearch_animate" style="height:' + wayf_list_height + ';">');
+>               writeHTML('<div id="view_incsearch_scroll" style="height:' + wayf_list_height + ';">');
+>               writeHTML('<div id="view_incsearch"></div>');
+>               writeHTML('</div>');
+>               writeHTML('</div>');
+>               writeHTML('</div>');
+>               writeHTML('</td>');
+792,793c870,888
+<               // Draw checkbox
+<               writeHTML('<div id="wayf_remember_checkbox_div" style="float: left;margin-top: 0px;margin-bottom:10px;">');
+---
+>               writeHTML('<td>');
+>               writeHTML('<img id="dropdown_img" src="{$dropdownDnURL}" title="{$dropdownString}" tabindex=6 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
+>               writeHTML('</td>');
+>
+>               writeHTML('<td>');
+>               if (last_idp == "" && safekind == 2) {
+>                       writeHTML('<img src="{$alertURL}" title="{$alertSP}" style="border:0px; width:20px; height:20px;">&nbsp;');
+>               } else {
+>                       writeHTML('&nbsp;');
+>               }
+>               writeHTML('</td>');
+>
+>               writeHTML('<td>');
+>               // Do we have to display custom text?
+>               if(typeof(wayf_overwrite_submit_button_text) == "undefined"){
+>                       writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="{$loginString}" tabindex="10" ');
+>               } else {
+>                       writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="' + wayf_overwrite_submit_button_text + '" tabindex="10" ');
+>               }
+794a890,903
+>               if (dispidp == initdisp) {
+>                       writeHTML('disabled >');
+>               } else {
+>                       writeHTML('>');
+>               }
+>
+>               writeHTML('</td>');
+>               writeHTML('</tr>');
+>
+>
+>               writeHTML('<tr>');
+>               writeHTML('<td colspan="3">');
+>               // Draw checkbox
+>               writeHTML('<div id="wayf_remember_checkbox_div" style="float: left;margin-top: 0px;margin-bottom:0px; width: 100%;">');
+800c909
+<                               writeHTML('<input id="wayf_remember_checkbox" type="checkbox" name="session_dummy" value="true" checked="checked" disabled="disabled" >&nbsp;');
+---
+>                               writeHTML('<input id="wayf_remember_checkbox" type="checkbox" name="session_dummy" value="true" tabindex=8 checked="checked" disabled="disabled" >&nbsp;');
+804c913
+<                               writeHTML('<input id="wayf_remember_checkbox" type="checkbox" name="session" value="true" {$checkedBool}>&nbsp;');
+---
+>                               writeHTML('<input id="wayf_remember_checkbox" type="checkbox" name="session" value="true" tabindex=8 {$checkedBool}>&nbsp;');
+817a927
+>               writeHTML('</td>');
+819,826c929,933
+<               writeHTML('</div>');
+<
+<               // Do we have to display custom text?
+<               if(typeof(wayf_overwrite_submit_button_text) == "undefined"){
+<                       writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="{$loginString}" style="float: right;" onClick="javascript:return submitForm();">');
+<               } else {
+<                       writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="' + wayf_overwrite_submit_button_text + '" style="float: right;" onClick="javascript:return submitForm();">');
+<               }
+---
+>               writeHTML('<td style="vertical-align:middle; text-align:center;">');
+>               writeHTML('<div id="clear_a" class="default" tabindex=11>{$clearString}</div>');
+>               writeHTML('</td>');
+>               writeHTML('</tr>');
+>               writeHTML('</table>');
+
+
+
