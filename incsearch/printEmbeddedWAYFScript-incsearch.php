@@ -687,10 +687,27 @@ function decodeBase64(input) {
 		
 		//Do we have to draw custom text? or any text at all?
 		if(typeof(wayf_overwrite_intro_text) == "undefined"){
-			writeHTML('<label for="user_idp" id="wayf_intro_label" style="float:left; min-width:80px; font-size:' + wayf_font_size + 'px;color:' + wayf_font_color + ';margin-top: 7px;">{$loginWithString}</label>');
+			writeHTML('<label for="user_idp" id="wayf_intro_label" style="float:left; min-width:80px; font-size:' + wayf_font_size + 'px;color:' + wayf_font_color + ';margin-top: 5px;">{$loginWithString}');
 		} else if (wayf_overwrite_intro_text != "") {
-			writeHTML('<label for="user_idp" id="wayf_intro_label" style="float:left; min-width:80px; font-size:' + wayf_font_size + 'px;color:' + wayf_font_color + ';margin-top: 7px;">' + wayf_overwrite_intro_text + '</label>');
+			writeHTML('<label for="user_idp" id="wayf_intro_label" style="float:left; min-width:80px; font-size:' + wayf_font_size + 'px;color:' + wayf_font_color + ';margin-top: 5px;">' + wayf_overwrite_intro_text);
 		}
+		
+		// Get local cookie
+		var saml_idp = getCookie('_saml_idp');
+		var last_idp = '';
+		var last_idps = new Array();
+		
+		if (saml_idp && saml_idp.length > 0){
+			last_idps = saml_idp.split('+')
+			if (last_idps[0] && last_idps[0].length > 0){
+				last_idp = decodeBase64(last_idps[0]);
+			}
+		}
+
+		if (last_idp == "" && safekind == 2) {
+			writeHTML('<img src="{$alertURL}" title="{$alertSP}" style="vertical-align:text-bottom; border:0px; width:20px; height:20px;">');
+		}
+		writeHTML('</label>');
 		
 		var wayf_authReq_URL = '';
 		var form_start = '';
@@ -753,17 +770,6 @@ SCRIPT;
 		writeHTML('<input id="user_idp" name="user_idp" type="hidden" value="">');
 
 		
-		// Get local cookie
-		var saml_idp = getCookie('_saml_idp');
-		var last_idp = '';
-		var last_idps = new Array();
-		
-		if (saml_idp && saml_idp.length > 0){
-			last_idps = saml_idp.split('+')
-			if (last_idps[0] && last_idps[0].length > 0){
-				last_idp = decodeBase64(last_idps[0]);
-			}
-		}
 SCRIPT;
 
 
@@ -875,11 +881,7 @@ SCRIPT;
 		writeHTML('</td>');
 		
 		writeHTML('<td>');
-		if (last_idp == "" && safekind == 2) {
-			writeHTML('<img src="{$alertURL}" title="{$alertSP}" style="border:0px; width:20px; height:20px;">&nbsp;');
-		} else {
-			writeHTML('&nbsp;');
-		}
+		writeHTML('&nbsp;');
 		writeHTML('</td>');
 		
 		writeHTML('<td>');
