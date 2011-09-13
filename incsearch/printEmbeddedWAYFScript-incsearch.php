@@ -473,9 +473,9 @@ function decodeBase64(input) {
 		wayf_sp_cookie_path = '';
 	}
 	
-	if((typeof(wayf_list_height) == "undefined") || (wayf_list_height < 0)){
-		wayf_list_height = "150px";
-	} else if (typeof(wayf_width) == "number"){
+	if((typeof(wayf_list_height) != "number") || (wayf_list_height < 0)){
+		wayf_list_height = '150px';
+	} else {
 		wayf_list_height += 'px';
 	}
 
