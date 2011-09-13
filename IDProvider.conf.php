@@ -317,4 +317,11 @@ $IDProviders['https://gknidp.ict.nitech.ac.jp/idp/shibboleth'] =
     'Index' => 'PI0028JP',
 );
 
+// 山梨大学
+$IDProviders['https://idp.yamanashi.ac.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'chubu',
+    'Index' => 'PI0029JP',
+);
+
 ?>

@@ -319,14 +319,14 @@ $metadataIDProviders = array (
   'https://idp.gakunin.nii.ac.jp/idp/shibboleth' => 
   array (
     'SSO' => 'https://idp.gakunin.nii.ac.jp/idp/profile/Shibboleth/SSO',
-    'Name' => '学認',
+    'Name' => '学認IdP',
     'en' => 
     array (
-      'Name' => 'GakuNin',
+      'Name' => 'GakuNin IdP',
     ),
     'ja' => 
     array (
-      'Name' => '学認',
+      'Name' => '学認IdP',
     ),
   ),
   'https://gakunin.ealps.shinshu-u.ac.jp/idp/shibboleth' => 
@@ -340,6 +340,45 @@ $metadataIDProviders = array (
     'ja' => 
     array (
       'Name' => '信州大学',
+    ),
+  ),
+  'https://ws1.jichi.ac.jp/idp/shibboleth' => 
+  array (
+    'SSO' => 'https://ws1.jichi.ac.jp/idp/profile/Shibboleth/SSO',
+    'Name' => '自治医科大学',
+    'en' => 
+    array (
+      'Name' => 'Jichi Medical University',
+    ),
+    'ja' => 
+    array (
+      'Name' => '自治医科大学',
+    ),
+  ),
+  'https://gknidp.ict.nitech.ac.jp/idp/shibboleth' => 
+  array (
+    'SSO' => 'https://gknidp.ict.nitech.ac.jp/idp/profile/Shibboleth/SSO',
+    'Name' => '名古屋工業大学',
+    'en' => 
+    array (
+      'Name' => 'Nagoya Institute of Technology',
+    ),
+    'ja' => 
+    array (
+      'Name' => '名古屋工業大学',
+    ),
+  ),
+  'https://idp.yamanashi.ac.jp/idp/shibboleth' => 
+  array (
+    'SSO' => 'https://idp.yamanashi.ac.jp/idp/profile/Shibboleth/SSO',
+    'Name' => '山梨大学',
+    'en' => 
+    array (
+      'Name' => 'University of Yamanashi',
+    ),
+    'ja' => 
+    array (
+      'Name' => '山梨大学',
     ),
   ),
 )
