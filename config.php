@@ -126,7 +126,7 @@ $federationName = 'GakuNin';
 // URL to send user to when clicking on federation logo
 //$federationURL = 'http://www.switch.ch/aai/';
 //$federationURL = 'https://upki-portal.nii.ac.jp/docs/fed';
-$federationURL = 'https://www.gakunin.jp/docs/fed';
+$federationURL = 'https://www.gakunin.jp/';
 
 // Use an absolute URL in case you want to use the embedded WAYF
 //$imageURL = 'https://'.$_SERVER['SERVER_NAME'].'/SWITCHaai/images';
