@@ -1,0 +1,60 @@
+Version GakuNin1.0 (2011-09-12)
+----------------------------------------------------------------------------------------------------
+[Settings of the Extension]
+  * Referer check and incremental search are made available on a server's settings.
+    - https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-11
+
+
+[Releasing and Not Releasing the Information about Selected IdP by Using Referer Check]
+  * When a DS server checks a referer while an Embedded DS screen is displayed, and the referer does 
+    not exist within metadata, the Embedded DS does not release information about the last selected 
+    IdP. 
+    - https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-6
+  * When a referer cannot be obtained during a referer check, "!" sign will be displayed on the 
+    screen and a warning message will be displayed by hovering a mouseover.
+    - https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-1
+    - https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-8
+  * When a referer cannot be obtained during a referer check, a DS server creates SP cookies, and 
+    information about the IdP will be referred to and displayed from the next time.
+
+
+[IdP Search Functions by Using Incremental Search]
+  * To implement by means of input check at intervals of 0.5 second
+    - https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-12 
+  * To select an IdP from an IdP list by using an arrow key and transit to an IdP by pressing 
+    Enter key
+    - https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-14
+  * To allocate a reset function as a link to clear the textbox
+    - https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-17
+  * To select an IdP automatically when it narrows down to one option by an incremental search
+    - https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-18
+  * To handle access to a Central DS when Javascript is off
+    - https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-19
+  * Behavior of hovering the mouse cursor to an IdP list
+    - https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-20
+  * To add an arrow sign that enables display/hide an IdP list 
+    - https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-26
+  * To enable narrowing down to an IdP list compatible with set-up SPs by using DiscoFeed functions
+    - https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-37
+  * To clear an entry field by pressing Escape key    
+    - https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-38
+  * To display a horizontal scroll bar when there are more IdP names than can be listed in an IdP list
+    - https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-39
+  * To hide an IdP list when transferred from a textbox by pressing a Tab key
+    - https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-48
+  * To enable a SP's setting file to set up the vertical length of an IdP list displayed by an 
+    Embedded DS
+    - https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-50
+
+
+[Modification of SWITCHwayf]
+  * To modify a SP's setting file so that it can set up a path of cookies created by selecting an 
+    IdP outside of the Federation
+    - https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-32
+  * To modify the default value of a screen display setting for re-authentication set by a SP 
+    (i.e. to enable the selection of an IdP list)
+    - https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-36
+  * To modify the snippet.html so that embedded-wayf.js is not allowed to be casehed 
+    - https://forge.gakunin.nii.ac.jp/jira/browse/DISCOVERY-42
+
+----------------------------------------------------------------------------------------------------
