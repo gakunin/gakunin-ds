@@ -118,6 +118,16 @@ $IDProviders['kyusyu'] = array (
 		'Index' => '008',
 );
 
+//
+// その他
+$IDProviders['others'] = array (
+		'Type' => 'category',
+		'en' => array ('Name' => 'Others'),
+		'ja' => array ('Name' => 'その他'),
+		'Name' => 'Others',
+		'Index' => '009',
+);
+
 
 // IDP entries
 
@@ -215,7 +225,7 @@ $IDProviders['https://upki.toho-u.ac.jp/idp/shibboleth'] =
 // 三重大学
 $IDProviders['https://fed.mie-u.ac.jp/idp'] = 
   array (
-    'Type' => 'kinki',
+    'Type' => 'chubu',
     'Index' => 'PI0014JP',
 );
 
@@ -292,7 +302,7 @@ $IDProviders['https://fed.center.kobe-u.ac.jp/idp/shibboleth'] =
 // 学認
 $IDProviders['https://idp.gakunin.nii.ac.jp/idp/shibboleth'] =
   array (
-    'Type' => 'kanto',
+    'Type' => 'others',
     'Index' => 'PI0025JP',
 );
 
