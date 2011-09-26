@@ -564,10 +564,37 @@ if (
 				$referer_url = parse_url($_SERVER["HTTP_REFERER"]);
 				$safekind = 1;
 				foreach ($SProviders as $key => $SProvider){
+					// SP EntityID
 					$sp_url = parse_url($key);
 					if ($referer_url['host'] == $sp_url['host']){
 						$safekind = 0;
 						break;
+					}
+					// Discovery Response URL(DSURL)
+					if (isset($SProvider['DSURL'])) {
+						foreach ($SProvider['DSURL'] as $url){
+							$sp_url = parse_url($url);
+							if ($referer_url['host'] == $sp_url['host']){
+								$safekind = 0;
+								break;
+							}
+						}
+						if ($safekind == 0) {
+							break;
+						}
+					}
+					// Assertion Consumer Service URL(ACURL)
+					if (isset($SProvider['ACURL'])) {
+						foreach ($SProvider['ACURL'] as $url){
+							$sp_url = parse_url($url);
+							if ($referer_url['host'] == $sp_url['host']){
+								$safekind = 0;
+								break;
+							}
+						}
+						if ($safekind == 0) {
+							break;
+						}
 					}
 				}
 			} else {
