@@ -236,6 +236,10 @@ function submitForm(){
                 // If input type button is used for submit, we must return false
                 return false;
         } else {
+		if (safekind == 0 || safekind == 3){
+			// delete local cookie
+			setCookie('_saml_idp', encodeBase64(inc_search_list[i][0]), -1);
+		}
                 // User chose federation IdP entry
                 document.IdPList.submit();
         }
