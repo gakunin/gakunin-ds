@@ -587,7 +587,7 @@ Suggest.Local.prototype = {
   },
 
   setStyleUnactive: function(element) {
-    element.className = '';
+    element.className = this.classIdPNm;
   },
 
   setStyleMouseOver: function(element) {
