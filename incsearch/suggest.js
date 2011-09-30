@@ -107,34 +107,6 @@ Suggest.Local.prototype = {
     this.checkDiscoFeed();
     this.checkNoMatch(this.oldText);
 
-    if ($('#keytext_td').size() > 0) { 
-      var inputWidth = Number($('#' + this.input.id).css('width').replace('px', ''));
-      var inputTdWidth = Number($('#keytext_td').css('width').replace('px', ''));
-      var deductWidth = 0;
-      if (inputWidth == inputTdWidth) {
-        $('#wayf_div').css('padding-bottom', '10px');
-        if (navigator.userAgent.indexOf("Mac",0)!=-1) {
-          deductWidth = 6;
-        } else {
-          if (navigator.userAgent.indexOf("MSIE",0)>1) {
-            deductWidth = 8;
-          } else if (window.opera) {
-            deductWidth = 6;
-          } else {
-            deductWidth = 4;
-          }
-        }
-      } else if ((navigator.userAgent.indexOf("MSIE",0)>1) &&
-                 (inputWidth - 2 == inputTdWidth)) {
-        $('#wayf_div').css('padding-bottom', '10px');
-        deductWidth = 4;
-      } else if (window.opera) {
-        $('#wayf_div').css('padding-bottom', '10px');
-      }
-      if (deductWidth > 0) {
-        $('#' + this.input.id).css('width', inputTdWidth - deductWidth + 'px');
-      }
-    }
   },
 
   // options
@@ -388,7 +360,7 @@ Suggest.Local.prototype = {
     $('#' + this.animateArea.id).slideDown(this.dispListTime);
     var scrollAreaWidth = Number($('#' + this.scrollArea.id).css('width').replace('px', ''));
     if (scrollAreaWidth > Number($('#' + this.suggestArea.id).css('width').replace('px', ''))) {
-      $('#' + this.suggestArea.id).css('width', scrollAreaWidth - 20 + 'px');
+      $('#' + this.suggestArea.id).css('width', scrollAreaWidth - 17 + 'px');
     }
   },
 
