@@ -654,9 +654,9 @@ function decodeBase64(input) {
 		wayf_hide_after_login 
 		&& user_logged_in
 	){
-		writeHTML('<div id="wayf_div" style="background:' + wayf_background_color + ';border-style: solid;border-color: ' + wayf_border_color + ';border-width: 1px;padding-top: 10px;padding-bottom: 0px;padding-left: 10px;padding-right: 10px;height: auto;width: ' + wayf_width + ';text-align: left;overflow: hidden;">');
+		writeHTML('<div id="wayf_div" style="background:' + wayf_background_color + ';border-style: solid;border-color: ' + wayf_border_color + ';border-width: 1px;padding: 10px;height: auto;width: ' + wayf_width + ';text-align: left;overflow: hidden;">');
 	} else {
-		writeHTML('<div id="wayf_div" style="background:' + wayf_background_color + ';border-style: solid;border-color: ' + wayf_border_color + ';border-width: 1px;padding-top: 10px;padding-bottom: 0px;padding-left: 10px;padding-right: 10px;height: ' + wayf_height + ';width: ' + wayf_width + ';text-align: left;">');
+		writeHTML('<div id="wayf_div" style="background:' + wayf_background_color + ';border-style: solid;border-color: ' + wayf_border_color + ';border-width: 1px;padding: 10px;height: ' + wayf_height + ';width: ' + wayf_width + ';text-align: left;">');
 	}
 
 	
@@ -860,7 +860,7 @@ SCRIPT;
 			}
 			
 		}
-		writeHTML('<br/>');
+		writeHTML('<div style="clear:both;"></div>');
 		writeHTML('<table border="0" cellpadding="0" cellspacing="0" style="width: 100%;">');
 		writeHTML('<tr>');
 		writeHTML('<td id="keytext_td" style="width: 100%;">');
@@ -869,8 +869,9 @@ SCRIPT;
 		} else {
 			dispidp = dispDefault;
 		}
-		writeHTML('<input id="keytext" type="text" name="pattern" value="" autocomplete="off" size="60" tabindex=5 style="width: 100%; display: block"/>');
+		writeHTML('<input id="keytext" type="text" name="pattern" value="" autocomplete="off" size="60" tabindex=5 style="float: left; width: 100%; display: block"/>');
 		
+		writeHTML('<div style="clear:both;"></div>');
 		writeHTML('<div id="view_incsearch_base">');
 		writeHTML('<div id="view_incsearch_animate" style="height:' + wayf_list_height + ';">');
 		writeHTML('<div id="view_incsearch_scroll" style="height:' + wayf_list_height + ';">');
