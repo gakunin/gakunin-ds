@@ -80,6 +80,7 @@ Suggest.Local.prototype = {
       '': this.getInputText();
     this.searchFlg = false;
     this.noMatch = true;
+    this.pcFlg = true;
 
     if (arguments[12]) this.setOptions(arguments[12]);
 
@@ -105,6 +106,7 @@ Suggest.Local.prototype = {
     this.clearSuggestArea();
     $('#' + this.animateArea.id).hide();
     this.checkDiscoFeed();
+    this.checkUserAgent();
     this.checkNoMatch(this.oldText);
 
   },
@@ -128,6 +130,17 @@ Suggest.Local.prototype = {
 
   setOptions: function(options) {
     Suggest.copyProperties(this, options);
+  },
+
+  checkUserAgent: function() {
+    if (navigator.userAgent.indexOf('iPhone') > 0 || 
+        navigator.userAgent.indexOf('iPad') > 0 ||
+        navigator.userAgent.indexOf('iPod') > 0 ||
+        navigator.userAgent.indexOf('Android') > 0) {
+      this.pcFlg = false;
+    } else {
+      this.pcFlg = true;
+    }
   },
 
   checkDiscoFeed: function() {
@@ -332,6 +345,7 @@ Suggest.Local.prototype = {
     this.suggestList = [];
     this.inputValueBackup = this.input.value;
 
+    $('#' + this.scrollArea.id).flickable('disable');
     var oldGroup = '';
     $('#' + this.suggestArea.id).css('width', '');
     for (var i = 0, length = resultList.length; i < length; i++) {
@@ -345,7 +359,11 @@ Suggest.Local.prototype = {
         
       var element = document.createElement(this.listTagName);
       element.className = this.classIdPNm;
-      element.innerHTML = resultList[i][2];
+      if (this.pcFlg) {
+        element.innerHTML = resultList[i][2];
+      } else {
+        element.innerHTML = '<a onclick="">' + resultList[i][2] + '</a>';
+      }
       this.suggestArea.appendChild(element);
 
       this._addEvent(element, 'click', this._bindEvent(this.listClick, i));
@@ -358,10 +376,23 @@ Suggest.Local.prototype = {
     this.scrollArea.scrollTop = 0;
     this.dnupImgElm.src = this.upImgURL;
     $('#' + this.animateArea.id).slideDown(this.dispListTime);
+    var scrollbarWidth = 0;
+    if (this.pcFlg) scrollbarWidth = 17;
     var scrollAreaWidth = Number($('#' + this.scrollArea.id).css('width').replace('px', ''));
     if (scrollAreaWidth > Number($('#' + this.suggestArea.id).css('width').replace('px', ''))) {
-      $('#' + this.suggestArea.id).css('width', scrollAreaWidth - 17 + 'px');
+      $('#' + this.suggestArea.id).css('width', scrollAreaWidth - scrollbarWidth + 'px');
     }
+    if (!this.pcFlg) {
+      this.touchScroll();
+    }
+  },
+
+  touchScroll: function() {
+    $('#' + this.scrollArea.id).flickable({
+      disabled: false,
+      elasticConstant: 0.2,
+      friction: 0.7
+    });
   },
 
   getInputText: function() {

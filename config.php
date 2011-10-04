@@ -149,6 +149,7 @@ $incsearchURL = 'https://ds.gakunin.nii.ac.jp/WAYF2/incsearch';
 $incsearchLibURL = $incsearchURL.'/suggest.js';
 $incsearchCssURL = $incsearchURL.'/suggest.css';
 $ajaxLibURL = $incsearchURL.'/jquery.js';
+$ajaxFlickLibURL = $incsearchURL.'/jquery.flickable.js';
 
 
 // 5. Files and path settings

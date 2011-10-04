@@ -6,7 +6,7 @@ function printEmbeddedWAYFScript_IncSearch(){
 
 	global $langStrings, $language, $imageURL, $logoURL, $smallLogoURL, $federationURL;
 	global $selectedIDP, $IDProviders, $redirectCookieName, $redirectStateCookieName, $federationName, $cookieSecure;
-	global $safekind, $selIdP, $incsearchLibURL, $incsearchCssURL, $alertURL, $dropdownUpURL, $dropdownDnURL, $ajaxLibURL;
+	global $safekind, $selIdP, $incsearchLibURL, $incsearchCssURL, $alertURL, $dropdownUpURL, $dropdownDnURL, $ajaxLibURL, $ajaxFlickLibURL;
 	
 	// Get some values that are used in the script
 	$loginWithString = getLocalString('login_with');
@@ -766,8 +766,9 @@ SCRIPT;
 	echo <<<SCRIPT
 
 		writeHTML('<link rel="stylesheet" href="{$incsearchCssURL}" type="text/css" />');
-		writeHTML('<script type="text/javascript" src="{$incsearchLibURL}"></script>');
 		writeHTML('<script type="text/javascript" src="{$ajaxLibURL}"></script>');
+		writeHTML('<script type="text/javascript" src="{$ajaxFlickLibURL}"></script>');
+		writeHTML('<script type="text/javascript" src="{$incsearchLibURL}"></script>');
 
 		writeHTML(form_start);
 		writeHTML('<input name="request_type" type="hidden" value="embedded">');
@@ -934,6 +935,7 @@ SCRIPT;
 			// Is the checkbox forced to be checked but hidden
 			writeHTML('<input id="wayf_remember_checkbox" type="hidden" name="session" value="true">&nbsp;');
 		}
+		writeHTML('</div>');
 		writeHTML('</td>');
 		
 		writeHTML('<td style="vertical-align:middle; text-align:center;">');
@@ -949,6 +951,7 @@ SCRIPT;
 	
 	// Close box
 	writeHTML('</div>');
+	writeHTML('<div style="clear:both;"></div>');
 	
 	// Now output HTML all at once
 	document.write(wayf_html);
