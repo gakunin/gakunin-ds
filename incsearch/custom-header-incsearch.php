@@ -128,8 +128,9 @@
 -->
 </style>
 <link rel="stylesheet" href="<?php echo $incsearchCssURL ?>" type="text/css" />
-<script type="text/javascript" src="<?php echo $incsearchLibURL ?>"></script>
 <script type="text/javascript" src="<?php echo $ajaxLibURL ?>"></script>
+<script type="text/javascript" src="<?php echo $ajaxFlickLibURL ?>"></script>
+<script type="text/javascript" src="<?php echo $incsearchLibURL ?>"></script>
 <script type="text/javascript" language="javascript">
 <!--
 
