@@ -108,6 +108,7 @@ Suggest.Local.prototype = {
     this.checkDiscoFeed();
     this.checkUserAgent();
     this.checkNoMatch(this.oldText);
+    this.touchScroll();
 
   },
 
@@ -345,7 +346,9 @@ Suggest.Local.prototype = {
     this.suggestList = [];
     this.inputValueBackup = this.input.value;
 
-    $('#' + this.scrollArea.id).flickable('disable');
+    if (!this.pcFlg) {
+      $('#' + this.scrollArea.id).flickable('disable');
+    }
     var oldGroup = '';
     $('#' + this.suggestArea.id).css('width', '');
     for (var i = 0, length = resultList.length; i < length; i++) {
@@ -383,7 +386,9 @@ Suggest.Local.prototype = {
       $('#' + this.suggestArea.id).css('width', scrollAreaWidth - scrollbarWidth + 'px');
     }
     if (!this.pcFlg) {
-      this.touchScroll();
+      $('#' + this.scrollArea.id).flickable('enable');
+      $('#' + this.scrollArea.id).flickable('disable');
+      $('#' + this.scrollArea.id).flickable('enable');
     }
   },
 
