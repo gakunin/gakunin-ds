@@ -579,5 +579,53 @@ $metadataSProviders = array (
       4 => 'https://meatwiki.nii.ac.jp/Shibboleth.sso/SAML/Artifact',
     ),
   ),
+  'https://openid.nii.ac.jp/shibboleth' => 
+  array (
+    'DSURL' => 
+    array (
+      0 => 'https://openid.nii.ac.jp/Shibboleth.sso/DS',
+    ),
+    'ACURL' => 
+    array (
+      0 => 'https://openid.nii.ac.jp/Shibboleth.sso/SAML2/POST',
+      1 => 'https://openid.nii.ac.jp/Shibboleth.sso/SAML2/POST-SimpleSign',
+      2 => 'https://openid.nii.ac.jp/Shibboleth.sso/SAML2/Artifact',
+      3 => 'https://openid.nii.ac.jp/Shibboleth.sso/SAML/POST',
+      4 => 'https://openid.nii.ac.jp/Shibboleth.sso/SAML/Artifact',
+    ),
+  ),
+  'https://shibosuke.net/shibboleth-sp' => 
+  array (
+    'DSURL' => 
+    array (
+      0 => 'https://shibosuke.net/Shibboleth.sso/DS',
+    ),
+    'ACURL' => 
+    array (
+      0 => 'https://shibosuke.net/Shibboleth.sso/SAML2/POST',
+      1 => 'https://shibosuke.net/Shibboleth.sso/SAML2/POST-SimpleSign',
+      2 => 'https://shibosuke.net/Shibboleth.sso/SAML2/Artifact',
+      3 => 'https://shibosuke.net/Shibboleth.sso/SAML/POST',
+      4 => 'https://shibosuke.net/Shibboleth.sso/SAML/Artifact',
+    ),
+  ),
+  'https://content.karger.com/shibboleth' => 
+  array (
+    'DSURL' => 
+    array (
+      0 => 'https://content.karger.com/Shibboleth.sso/DS',
+      1 => 'https://content.karger.com/Shibboleth.sso/dfn-aai',
+      2 => 'https://content.karger.com/Shibboleth.sso/gakunin-japan',
+    ),
+    'ACURL' => 
+    array (
+      0 => 'https://content.karger.com/Shibboleth.sso/SAML2/POST',
+      1 => 'https://content.karger.com/Shibboleth.sso/SAML2/POST-SimpleSign',
+      2 => 'https://content.karger.com/Shibboleth.sso/SAML2/Artifact',
+      3 => 'https://content.karger.com/Shibboleth.sso/SAML2/ECP',
+      4 => 'https://content.karger.com/Shibboleth.sso/SAML/POST',
+      5 => 'https://content.karger.com/Shibboleth.sso/SAML/Artifact',
+    ),
+  ),
 )
 ?>

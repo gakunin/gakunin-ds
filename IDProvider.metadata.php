@@ -381,5 +381,18 @@ $metadataIDProviders = array (
       'Name' => '山梨大学',
     ),
   ),
+  'https://fed.ipc.hiroshima-cu.ac.jp/shibboleth-idp' => 
+  array (
+    'SSO' => 'https://fed.ipc.hiroshima-cu.ac.jp/idp/profile/Shibboleth/SSO',
+    'Name' => '広島市立大学',
+    'en' => 
+    array (
+      'Name' => 'Hiroshima City University',
+    ),
+    'ja' => 
+    array (
+      'Name' => '広島市立大学',
+    ),
+  ),
 )
 ?>

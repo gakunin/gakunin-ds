@@ -334,4 +334,11 @@ $IDProviders['https://idp.yamanashi.ac.jp/idp/shibboleth'] =
     'Index' => 'PI0029JP',
 );
 
+// 広島市立大学
+$IDProviders['https://fed.ipc.hiroshima-cu.ac.jp/shibboleth-idp'] =
+  array (
+    'Type' => 'chugoku',
+    'Index' => 'PI0030JP',
+);
+
 ?>
