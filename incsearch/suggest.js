@@ -380,7 +380,7 @@ Suggest.Local.prototype = {
     this.dnupImgElm.src = this.upImgURL;
     $('#' + this.animateArea.id).slideDown(this.dispListTime);
     var scrollbarWidth = 0;
-    if (this.pcFlg) scrollbarWidth = 17;
+    if (this.pcFlg) scrollbarWidth = 18;
     var scrollAreaWidth = Number($('#' + this.scrollArea.id).css('width').replace('px', ''));
     if (scrollAreaWidth > Number($('#' + this.suggestArea.id).css('width').replace('px', ''))) {
       $('#' + this.suggestArea.id).css('width', scrollAreaWidth - scrollbarWidth + 'px');
