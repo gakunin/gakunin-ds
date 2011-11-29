@@ -25,7 +25,6 @@ function printEmbeddedWAYFScript_IncSearch(){
 	$dropdownString = addslashes(getLocalString('dropdown'));
 	
 	$selIdP = '';
-	$IncSearchArray = array();
 
 	// Generate list of Identity Providers
 	$JSONIdPArray = array();
@@ -86,18 +85,19 @@ function printEmbeddedWAYFScript_IncSearch(){
 					&& $attr != 'IP' 
 					&& $attr != 'Index' 
 					&& $attr != 'Realm'){
-				$SearchIdPName = $SearchIdPName.', "'.addslashes($value['Name']).'"';
+				if (empty($SearchIdPName)){
+					$SearchIdPName = '"'.addslashes($value['Name']).'"';
+				} else {
+					$SearchIdPName = $SearchIdPName.', "'.addslashes($value['Name']).'"';
+				}
 			}
 		}
 		if (empty($SearchIdPName)){
-			$SearchIdPName = ', "'.$IdPName.'"';
+			$SearchIdPName = '"'.$IdPName.'"';
 		}
-		
-		$IncSearchArray[] = <<<ENTRY
 
-	[
-		"{$key}", "{$IdPType2}", "{$IdPName}"{$SearchIdPName}
-	]
+		$IncSearchIDP = <<<ENTRY
+"{$key}", "{$IdPType2}", "{$IdPName}", {$SearchIdPName}
 ENTRY;
 
 		$JSONIdPArray[] = <<<ENTRY
@@ -105,11 +105,11 @@ ENTRY;
 	"{$key}":{
 		type:"{$IdPType}",
 		name:"{$IdPName}",
+		search:[{$IncSearchIDP}],
 		SAML1SSOurl:"{$IdPSSO}"
 		}
 ENTRY;
 	}
-	$IncSearchList = join(',', $IncSearchArray);
 	$JSONIdPList = join(',', $JSONIdPArray);
 	$InitDisp = getLocalString('select_idp');
 	
@@ -155,7 +155,9 @@ var wayf_sp_samlDSURL;
 var wayf_sp_samlACURL;
 var wayf_html = "";
 var wayf_idps = { {$JSONIdPList} };
-var inc_search_list = [ {$IncSearchList} ];
+var inc_search_list = [];
+var favorite_list = [];
+var submit_check_list = [];
 var safekind = '{$safekind}';
 var allIdPList = '';
 var initdisp = '{$InitDisp}';
@@ -164,6 +166,7 @@ var dispidp = '';
 var hiddenKeyText = '';
 var dropdown_up = '{$dropdownUpURL}';
 var dropdown_down = '{$dropdownDnURL}';
+var favorite_idp_group = "{$mostUsedIdPsString}";
 // Define functions
 function submitForm(){
 
@@ -171,17 +174,23 @@ function submitForm(){
 	var idp_name = document.getElementById('keytext').value.toLowerCase();
 	var chkFlg = false;
 	if (hiddenKeyText != '') idp_name = hiddenKeyText.toLowerCase();
+
+	if (favorite_list.length > 0) {
+		submit_check_list = favorite_list.concat(inc_search_list);
+	} else {
+		submit_check_list = inc_search_list;
+	}
 	
-	for (var i=0; i<inc_search_list.length; i++){
-		for (var j = 3, len2 = inc_search_list[i].length; j < len2; j++) {
-			var list_idp_name = inc_search_list[i][j].toLowerCase();
+	for (var i=0; i<submit_check_list.length; i++){
+		for (var j = 3, len2 = submit_check_list[i].length; j < len2; j++) {
+			var list_idp_name = submit_check_list[i][j].toLowerCase();
 			if (idp_name == list_idp_name){
-				NonFedEntityID = inc_search_list[i][0];
-				document.getElementById('user_idp').value = inc_search_list[i][0];
+				NonFedEntityID = submit_check_list[i][0];
+				document.getElementById('user_idp').value = submit_check_list[i][0];
 				chkFlg = true;
 				if (safekind > 0 && safekind != 3){
 					// Store SAML domain cookie for this foreign IdP
-					setCookie('_saml_idp', encodeBase64(inc_search_list[i][0]) , 100);
+					setCookie('_saml_idp', encodeBase64(submit_check_list[i][0]) , 100);
 				}
 				break;
                 	}
@@ -199,7 +208,7 @@ function submitForm(){
         // TODO: FIX windows error
         // 4 >= (8 - 3/4)
         if (
-                i >= (inc_search_list.length - wayf_additional_idps.length)){
+                i >= (submit_check_list.length - wayf_additional_idps.length)){
 
                 var redirect_url;
 
@@ -238,7 +247,7 @@ function submitForm(){
         } else {
 		if (safekind == 0 || safekind == 3){
 			// delete local cookie
-			setCookie('_saml_idp', encodeBase64(inc_search_list[i][0]), -1);
+			setCookie('_saml_idp', encodeBase64(submit_check_list[i][0]), -1);
 		}
                 // User chose federation IdP entry
                 document.IdPList.submit();
@@ -248,6 +257,10 @@ function submitForm(){
 
 function writeHTML(a){
 	wayf_html += a;
+}
+
+function pushIncSearchList(IdP){
+        inc_search_list.push(wayf_idps[IdP].search.slice());
 }
 
 function isAllowedType(IdP, type){
@@ -774,12 +787,25 @@ SCRIPT;
 		writeHTML('<input name="request_type" type="hidden" value="embedded">');
 		writeHTML('<input id="user_idp" name="user_idp" type="hidden" value="">');
 
-		
+		// Favourites
+		if (wayf_most_used_idps.length > 0){
+			if(typeof(wayf_overwrite_most_used_idps_text) != "undefined"){
+				favorite_idp_group = wayf_overwrite_most_used_idps_text;
+			}
+
+			// Show additional IdPs in the order they are defined
+			for ( var i=0; i < wayf_most_used_idps.length; i++){
+				if (wayf_idps[wayf_most_used_idps[i]]){
+					favorite_list.push(wayf_idps[wayf_most_used_idps[i]].search.slice());
+					favorite_list[favorite_list.length - 1][1] = favorite_idp_group;
+				}
+			}
+		}
+
 SCRIPT;
 
 
 	// Generate drop-down list
-	$optgroup = '';
 	foreach ($IDProviders as $key => $IDProvider){
 		
 		// Get IdP Name
@@ -812,6 +838,7 @@ SCRIPT;
 				){
 				dispDefault = '{$IdPName}';
 			}
+			pushIncSearchList('{$key}');
 		}
 SCRIPT;
 	}

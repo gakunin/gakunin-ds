@@ -21,6 +21,7 @@ function start() {
         "view_incsearch_animate", // element id of IdP list display animate area
         "view_incsearch_scroll",  // element id of IdP list display scroll area
         inc_search_list,          // IdP list
+        favorite_list,            // IdP list (Favorite)
         "dropdown_img",           // element id of dropdown image
         "wayf_submit_button",     // element id of select button
         "clear_a",                // element id of clear
@@ -28,7 +29,8 @@ function start() {
         dispDefault,              // Select IdP display of input area
         dropdown_down,            // URL of deropdown down image 
         dropdown_up,              // URL of deropdown up image
-        {dispMax: 500});          // option
+        favorite_idp_group,       // favorite idp list group
+        {dispMax: 500, showgrp: wayf_show_categories}); // option
 }
 
 window.addEventListener ?
@@ -60,14 +62,15 @@ Suggest.Local = function() {
   this.initialize.apply(this, arguments);
 };
 Suggest.Local.prototype = {
-  initialize: function(input, suggestArea, animateArea, scrollArea, candidateList,
-                       dnupImgElm, selectElm, clearElm, initDisp, dispDefault, dnImgURL, upImgURL) {
+  initialize: function(input, suggestArea, animateArea, scrollArea, candidateList, favoriteList,
+                       dnupImgElm, selectElm, clearElm, initDisp, dispDefault, dnImgURL, upImgURL, favoriteIdpGroup) {
 
     this.input = this._getElement(input);
     this.suggestArea = this._getElement(suggestArea);
     this.animateArea = this._getElement(animateArea);
     this.scrollArea = this._getElement(scrollArea);
     this.candidateList = candidateList;
+    this.favoriteList = favoriteList;
     this.dnupImgElm = this._getElement(dnupImgElm);
     this.selectElm = this._getElement(selectElm);
     this.clearElm = this._getElement(clearElm);
@@ -75,6 +78,7 @@ Suggest.Local.prototype = {
     this.dispDefault = dispDefault;
     this.dnImgURL = dnImgURL;
     this.upImgURL = upImgURL;
+    this.favoriteIdpGroup = favoriteIdpGroup;
     this.setInputText(dispidp);
     this.oldText = (this.initDisp == this.getInputText()) ?
       '': this.getInputText();
@@ -82,7 +86,14 @@ Suggest.Local.prototype = {
     this.noMatch = true;
     this.pcFlg = true;
 
-    if (arguments[12]) this.setOptions(arguments[12]);
+    if (this.candidateList.length > 0) {
+      // favorite IdP List
+      if (this.favoriteList.length > 0) {
+        this.candidateList = this.favoriteList.concat(this.candidateList);
+      }
+    }
+
+    if (arguments[14]) this.setOptions(arguments[14]);
 
     // reg event
     this._addEvent(this.input, 'focus', this._bind(this.tabFocus));
@@ -126,7 +137,10 @@ Suggest.Local.prototype = {
   classActive: 'active',
   classGroup: 'list_group',
   classIdPNm: 'list_idp',
+  classGroupFavorite: 'list_group_favorite',
+  classIdPNmFavorite: 'list_idp_favorite',
   dispListTime: 300,
+  showgrp: true,
   hookBeforeSearch: function(){},
 
   setOptions: function(options) {
@@ -192,9 +206,14 @@ Suggest.Local.prototype = {
       }
     }
 
-    if (this.suggestList && this.suggestList.length == 1) {
-      this.setStyleActive(this.suggestList[0]);
-      hiddenKeyText = this.candidateList[this.suggestIndexList[0]][2];
+    var search_cnt = 0;
+    if (this.suggestList){
+      search_cnt = this.suggestList.length - this.favoriteList.length;
+    }
+    if (search_cnt == 1) {
+      this.setStyleActive(this.suggestList[this.favoriteList.length]);
+      hiddenKeyText = this.candidateList[this.suggestIndexList[this.favoriteList.length]][2];
+      this.activePosition = this.favoriteList.length;
       flg = false;
     }
 
@@ -304,7 +323,9 @@ Suggest.Local.prototype = {
 
     for (var i = 0, length = this.candidateList.length; i < length; i++) {
       for (var j = 3, length2 = this.candidateList[i].length; j < length2; j++) {
-        if (text == '' || this.isMatch(this.candidateList[i][j], text) != null) {
+        if (text == '' ||
+             this.isMatch(this.candidateList[i][j], text) != null ||
+             this.candidateList[i][1] == this.favoriteIdpGroup) {
           resultList.push(this.candidateList[i]);
           this.suggestIndexList.push(i);
           break;
@@ -352,16 +373,25 @@ Suggest.Local.prototype = {
     var oldGroup = '';
     $('#' + this.suggestArea.id).css('width', '');
     for (var i = 0, length = resultList.length; i < length; i++) {
-      if (oldGroup != resultList[i][1]) {
+      if (this.showgrp && oldGroup != resultList[i][1]) {
         var element = document.createElement(this.listTagName);
-        element.className = this.classGroup;
-        element.innerHTML = resultList[i][1];
+        if (resultList[i][1] == this.favoriteIdpGroup) {
+          element.className = this.classGroupFavorite;
+          element.innerHTML = '&nbsp;' + this.favoriteIdpGroup;
+        } else {
+          element.className = this.classGroup;
+          element.innerHTML = '&nbsp;' + resultList[i][1];
+        }
         this.suggestArea.appendChild(element);
         oldGroup = resultList[i][1];
       }
         
       var element = document.createElement(this.listTagName);
-      element.className = this.classIdPNm;
+      if (resultList[i][1] == this.favoriteIdpGroup) {
+        element.className = this.classIdPNmFavorite;
+      } else {
+        element.className = this.classIdPNm;
+      }
       if (this.pcFlg) {
         element.innerHTML = resultList[i][2];
       } else {
@@ -545,7 +575,7 @@ Suggest.Local.prototype = {
     if (this.suggestList != null 
         && this.suggestList.length > 0
         && this.activePosition != null) {
-      this.setStyleUnactive(this.suggestList[this.activePosition]);
+      this.setStyleUnactive(this.suggestList[this.activePosition], this.activePosition);
     }
   },
 
@@ -576,7 +606,7 @@ Suggest.Local.prototype = {
     if (index == this.activePosition) {
       this.setStyleActive(element);
     }else{
-      this.setStyleUnactive(element);
+      this.setStyleUnactive(element, index);
     }
   },
 
@@ -594,8 +624,12 @@ Suggest.Local.prototype = {
     }
   },
 
-  setStyleUnactive: function(element) {
-    element.className = this.classIdPNm;
+  setStyleUnactive: function(element, index) {
+    if (this.favoriteList.length > 0 && index < this.favoriteList.length){
+      element.className = this.classIdPNmFavorite;
+    } else {
+      element.className = this.classIdPNm;
+    }
   },
 
   setStyleMouseOver: function(element) {

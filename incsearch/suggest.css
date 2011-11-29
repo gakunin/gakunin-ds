@@ -73,6 +73,24 @@ div.list_idp {
 	text-align: left;
 }
 
+/* IdP list favorite: group title */
+div.list_group_favorite {
+	color: white;
+	background-color: forestgreen;
+	font-weight: bold;
+	font-size: 75%;
+	text-align: left;
+}
+
+/* IdP list favorite: IdP name */
+div.list_idp_favorite {
+	color: black;
+	background-color: #EEFFDD;
+	font-weight: normal;
+	font-size: 100%;
+	text-align: left;
+}
+
 /* dropdown image */
 #dropdown_img {
 	cursor: pointer;
