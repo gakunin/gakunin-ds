@@ -187,17 +187,21 @@
 					&& $attr != 'IP'
 					&& $attr != 'Index'
 					&& $attr != 'Realm'){
-				$SearchIdPName = $SearchIdPName.', "'.addslashes($value['Name']).'"';
+				if (empty($SearchIdPName)){
+					$SearchIdPName = '"'.addslashes($value['Name']).'"';
+				} else {
+					$SearchIdPName = $SearchIdPName.', "'.addslashes($value['Name']).'"';
+				}
 			}
 		}
 		if (empty($SearchIdPName)){
-			$SearchIdPName = ', "'.$IdPName.'"';
+			$SearchIdPName = '"'.$IdPName.'"';
 		}
 
 		$IncSearchArray[] = <<<ENTRY
 
 	[
-		"{$key}", "{$IdPType2}", "{$IdPName}"{$SearchIdPName}
+		"{$key}", "{$IdPType2}", "{$IdPName}", {$SearchIdPName}
 	]
 ENTRY;
 
@@ -208,12 +212,15 @@ ENTRY;
 ?>
 
 var inc_search_list = [ <?php echo $IncSearchList ?> ];
+var favorite_list = [];
 var initdisp = '<?php echo getLocalString('select_idp') ?>';
 var dispDefault = '<?php echo $selIdP ?>';
 var dispidp = '';
 var hiddenKeyText = '';
 var dropdown_up = '<?php echo $dropdownUpURL ?>';
 var dropdown_down = '<?php echo $dropdownDnURL ?>';
+var favorite_idp_group = '';
+var wayf_show_categories = true;
 if (dispDefault == ''){
 	dispidp = initdisp;
 } else {
