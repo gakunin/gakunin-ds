@@ -115,6 +115,15 @@ $useAutocompleteIdP = true;
 // Referer Check
 $useRefererForPrivacyProtection = true;
 
+// mduiHint IP Address
+$useMduiHintIP = true;
+
+// mduiHint DomainName
+$useMduiHintDomain = true;
+
+// mduiHint Max Display (default 2)
+$useMduiHintMax = 5;
+
 
 // 4. Look and feel settings
 //**************************

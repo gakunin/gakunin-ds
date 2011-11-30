@@ -22,6 +22,7 @@ function start() {
         "view_incsearch_scroll",  // element id of IdP list display scroll area
         inc_search_list,          // IdP list
         favorite_list,            // IdP list (Favorite)
+	hint_list,                // IdP list (Hint IP, Domain)
         "dropdown_img",           // element id of dropdown image
         "wayf_submit_button",     // element id of select button
         "clear_a",                // element id of clear
@@ -30,6 +31,7 @@ function start() {
         dropdown_down,            // URL of deropdown down image 
         dropdown_up,              // URL of deropdown up image
         favorite_idp_group,       // favorite idp list group
+	hint_idp_group,           // hint idp list group
         {dispMax: 500, showgrp: wayf_show_categories}); // option
 }
 
@@ -62,8 +64,8 @@ Suggest.Local = function() {
   this.initialize.apply(this, arguments);
 };
 Suggest.Local.prototype = {
-  initialize: function(input, suggestArea, animateArea, scrollArea, candidateList, favoriteList,
-                       dnupImgElm, selectElm, clearElm, initDisp, dispDefault, dnImgURL, upImgURL, favoriteIdpGroup) {
+  initialize: function(input, suggestArea, animateArea, scrollArea, candidateList, favoriteList, hintList,
+                       dnupImgElm, selectElm, clearElm, initDisp, dispDefault, dnImgURL, upImgURL, favoriteIdpGroup, hintIdpGroup) {
 
     this.input = this._getElement(input);
     this.suggestArea = this._getElement(suggestArea);
@@ -71,6 +73,7 @@ Suggest.Local.prototype = {
     this.scrollArea = this._getElement(scrollArea);
     this.candidateList = candidateList;
     this.favoriteList = favoriteList;
+    this.hintList = hintList;
     this.dnupImgElm = this._getElement(dnupImgElm);
     this.selectElm = this._getElement(selectElm);
     this.clearElm = this._getElement(clearElm);
@@ -79,6 +82,7 @@ Suggest.Local.prototype = {
     this.dnImgURL = dnImgURL;
     this.upImgURL = upImgURL;
     this.favoriteIdpGroup = favoriteIdpGroup;
+    this.hintIdpGroup = hintIdpGroup;
     this.setInputText(dispidp);
     this.oldText = (this.initDisp == this.getInputText()) ?
       '': this.getInputText();
@@ -91,9 +95,13 @@ Suggest.Local.prototype = {
       if (this.favoriteList.length > 0) {
         this.candidateList = this.favoriteList.concat(this.candidateList);
       }
+      // hint(IP, Domain) IdP List
+      if (this.hintList.length > 0) {
+        this.candidateList = this.hintList.concat(this.candidateList);
+      }
     }
 
-    if (arguments[14]) this.setOptions(arguments[14]);
+    if (arguments[16]) this.setOptions(arguments[16]);
 
     // reg event
     this._addEvent(this.input, 'focus', this._bind(this.tabFocus));
@@ -139,6 +147,8 @@ Suggest.Local.prototype = {
   classIdPNm: 'list_idp',
   classGroupFavorite: 'list_group_favorite',
   classIdPNmFavorite: 'list_idp_favorite',
+  classGroupHint: 'list_group_hint',
+  classIdPNmHint: 'list_idp_hint',
   dispListTime: 300,
   showgrp: true,
   hookBeforeSearch: function(){},
@@ -208,12 +218,12 @@ Suggest.Local.prototype = {
 
     var search_cnt = 0;
     if (this.suggestList){
-      search_cnt = this.suggestList.length - this.favoriteList.length;
+      search_cnt = this.suggestList.length - this.hintList.length - this.favoriteList.length;
     }
     if (search_cnt == 1) {
-      this.setStyleActive(this.suggestList[this.favoriteList.length]);
-      hiddenKeyText = this.candidateList[this.suggestIndexList[this.favoriteList.length]][2];
-      this.activePosition = this.favoriteList.length;
+      this.setStyleActive(this.suggestList[this.hintList.length + this.favoriteList.length]);
+      hiddenKeyText = this.candidateList[this.suggestIndexList[this.hintList.length + this.favoriteList.length]][2];
+      this.activePosition = this.hintList.length + this.favoriteList.length;
       flg = false;
     }
 
@@ -325,6 +335,7 @@ Suggest.Local.prototype = {
       for (var j = 3, length2 = this.candidateList[i].length; j < length2; j++) {
         if (text == '' ||
              this.isMatch(this.candidateList[i][j], text) != null ||
+             this.candidateList[i][1] == this.hintIdpGroup ||
              this.candidateList[i][1] == this.favoriteIdpGroup) {
           resultList.push(this.candidateList[i]);
           this.suggestIndexList.push(i);
@@ -375,7 +386,10 @@ Suggest.Local.prototype = {
     for (var i = 0, length = resultList.length; i < length; i++) {
       if (this.showgrp && oldGroup != resultList[i][1]) {
         var element = document.createElement(this.listTagName);
-        if (resultList[i][1] == this.favoriteIdpGroup) {
+        if (resultList[i][1] == this.hintIdpGroup) {
+          element.className = this.classGroupHint;
+          element.innerHTML = '&nbsp;' + this.hintIdpGroup;
+        } else if (resultList[i][1] == this.favoriteIdpGroup) {
           element.className = this.classGroupFavorite;
           element.innerHTML = '&nbsp;' + this.favoriteIdpGroup;
         } else {
@@ -387,7 +401,9 @@ Suggest.Local.prototype = {
       }
         
       var element = document.createElement(this.listTagName);
-      if (resultList[i][1] == this.favoriteIdpGroup) {
+      if (resultList[i][1] == this.hintIdpGroup) {
+        element.className = this.classIdPNmHint;
+      } else if (resultList[i][1] == this.favoriteIdpGroup) {
         element.className = this.classIdPNmFavorite;
       } else {
         element.className = this.classIdPNm;
@@ -466,6 +482,7 @@ Suggest.Local.prototype = {
       }
       // key move
       if (this.suggestList && this.suggestList.length != 0) {
+	hiddenKeyText = '';
         this._stopEvent(event);
         this.keyEventMove(event.keyCode);
       } 
@@ -625,8 +642,12 @@ Suggest.Local.prototype = {
   },
 
   setStyleUnactive: function(element, index) {
-    if (this.favoriteList.length > 0 && index < this.favoriteList.length){
-      element.className = this.classIdPNmFavorite;
+    if (index < this.hintList.length + this.favoriteList.length){
+      if (this.hintList.length > 0 && index < this.hintList.length){
+        element.className = this.classIdPNmHint;
+      } else {
+        element.className = this.classIdPNmFavorite;
+      }
     } else {
       element.className = this.classIdPNm;
     }

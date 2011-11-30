@@ -91,6 +91,24 @@ div.list_idp_favorite {
 	text-align: left;
 }
 
+/* IdP list hint: group title */
+div.list_group_hint {
+        color: white;
+        background-color: chocolate;
+        font-weight: bold;
+        font-size: 75%;
+        text-align: left;
+}
+
+/* IdP list hint: IdP name */
+div.list_idp_hint {
+        color: black;
+        background-color: #FFFF99;
+        font-weight: normal;
+        font-size: 100%;
+        text-align: left;
+}
+
 /* dropdown image */
 #dropdown_img {
 	cursor: pointer;

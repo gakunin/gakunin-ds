@@ -7,6 +7,7 @@ function printEmbeddedWAYFScript_IncSearch(){
 	global $langStrings, $language, $imageURL, $logoURL, $smallLogoURL, $federationURL;
 	global $selectedIDP, $IDProviders, $redirectCookieName, $redirectStateCookieName, $federationName, $cookieSecure;
 	global $safekind, $selIdP, $incsearchLibURL, $incsearchCssURL, $alertURL, $dropdownUpURL, $dropdownDnURL, $ajaxLibURL, $ajaxFlickLibURL;
+	global $mduiHintIDPs;
 	
 	// Get some values that are used in the script
 	$loginWithString = getLocalString('login_with');
@@ -23,6 +24,7 @@ function printEmbeddedWAYFScript_IncSearch(){
 	$clearString = addslashes(getLocalString('clear_button'));
 	$alertSP = addslashes(getLocalString('alert_sp'));
 	$dropdownString = addslashes(getLocalString('dropdown'));
+	$hintIDPString = addslashes(getLocalString('hint_idp'));
 	
 	$selIdP = '';
 
@@ -83,6 +85,8 @@ function printEmbeddedWAYFScript_IncSearch(){
 					&& $attr != 'Name'  
 					&& $attr != 'Type' 
 					&& $attr != 'IP' 
+					&& $attr != 'IPHint'
+					&& $attr != 'DomainHint'
 					&& $attr != 'Index' 
 					&& $attr != 'Realm'){
 				if (empty($SearchIdPName)){
@@ -111,6 +115,14 @@ ENTRY;
 ENTRY;
 	}
 	$JSONIdPList = join(',', $JSONIdPArray);
+	$IdPHintList = '';
+	foreach ($mduiHintIDPs as $hintIDP){
+		if (empty($IdPHintList)) {
+			$IdPHintList = '"'.$hintIDP.'"';
+		} else {
+			$IdPHintList = $IdPHintList.', "'.$hintIDP.'"';
+		}
+	}
 	$InitDisp = getLocalString('select_idp');
 	
 	echo <<<SCRIPT
@@ -155,8 +167,10 @@ var wayf_sp_samlDSURL;
 var wayf_sp_samlACURL;
 var wayf_html = "";
 var wayf_idps = { {$JSONIdPList} };
+var wayf_hint_list = [ {$IdPHintList} ];
 var inc_search_list = [];
 var favorite_list = [];
+var hint_list = [];
 var submit_check_list = [];
 var safekind = '{$safekind}';
 var allIdPList = '';
@@ -167,6 +181,7 @@ var hiddenKeyText = '';
 var dropdown_up = '{$dropdownUpURL}';
 var dropdown_down = '{$dropdownDnURL}';
 var favorite_idp_group = "{$mostUsedIdPsString}";
+var hint_idp_group = '{$hintIDPString}';
 // Define functions
 function submitForm(){
 
@@ -175,10 +190,14 @@ function submitForm(){
 	var chkFlg = false;
 	if (hiddenKeyText != '') idp_name = hiddenKeyText.toLowerCase();
 
-	if (favorite_list.length > 0) {
-		submit_check_list = favorite_list.concat(inc_search_list);
-	} else {
+	if (inc_search_list.length > 0) {
 		submit_check_list = inc_search_list;
+	}
+	if (favorite_list.length > 0) {
+		submit_check_list = favorite_list.concat(submit_check_list);
+	}
+	if (hint_list.length > 0) {
+		submit_check_list = hint_list.concat(submit_check_list);
 	}
 	
 	for (var i=0; i<submit_check_list.length; i++){
@@ -260,7 +279,13 @@ function writeHTML(a){
 }
 
 function pushIncSearchList(IdP){
-        inc_search_list.push(wayf_idps[IdP].search.slice());
+	inc_search_list.push(wayf_idps[IdP].search.slice());
+	for(var i in wayf_hint_list){
+		if (wayf_hint_list[i] == IdP) {
+			hint_list.push(wayf_idps[IdP].search.slice());
+			hint_list[hint_list.length - 1][1] = hint_idp_group;
+		}
+	}
 }
 
 function isAllowedType(IdP, type){

@@ -16,6 +16,7 @@ Web site: http://www.switch.ch/aai/wayf
 require_once('config.php');
 require_once('templates.php');
 require_once('functions.php');
+require_once('incsearch/functions-incsearch.php');
 require_once('languages.php');
 require_once('incsearch/printEmbeddedWAYFScript-incsearch.php');
 
@@ -422,6 +423,22 @@ if ($hintedCookieIdP != '-'){
 	$selectedIDP = $hintedDomainIDP;
 } else {
 	$selectedIDP = '-';
+}
+
+/*------------------------------------------------*/
+// mduiHint Identity Providers
+/*------------------------------------------------*/
+$mduiHintIDPs = array();
+if (!isset($useMduiHintMax)) {
+	$useMduiHintMax = 2;
+}
+// IP address range hint
+if (isset($useMduiHintIP) && $useMduiHintIP) {
+	$mduiHintIDPs = getIPAdressHint_IncSearch($mduiHintIDPs);
+}
+// DomainName hint
+if (isset($useMduiHintDomain) && $useMduiHintDomain) {
+	$mduiHintIDPs = getDomainNameFromURIHint_IncSearch($mduiHintIDPs);
 }
 
 /*------------------------------------------------*/

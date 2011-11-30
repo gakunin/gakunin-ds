@@ -49,6 +49,7 @@ $langStrings['en'] = array (
 'clear_button' => 'Reset',
 'alert_sp' => 'Alert SP!',
 'dropdown' => 'Display/non-display of IdP list',
+'hint_idp' => ' Hint! IdP',
 );
 
 
@@ -262,6 +263,7 @@ $langStrings['ja'] = array (
 'clear_button' => 'リセット',
 'alert_sp' => '注意:リファラ遮断のためDSから所属IdP情報を取得できません',
 'dropdown' => 'IdPリストの表示/非表示',
+'hint_idp' => 'ヒント！所属機関',
 );
 
 ?>

@@ -327,6 +327,40 @@ function processIDPRoleDescriptor($IDPRoleDescriptorNode){
 		// Set entityID as Name if no organization is available
 		$IDP['Name'] = $IDPRoleDescriptorNode->parentNode->getAttribute('entityID');
 	}
+
+	// Get MDUI
+	$Extensions = $IDPRoleDescriptorNode->getElementsByTagName('Extensions')->item(0);
+	if ($Extensions){
+		$UIInfo = $Extensions->getElementsByTagName('UIInfo')->item(0);
+		if ($UIInfo){
+			$IPHint = $UIInfo->getElementsByTagName('IPHint')->item(0);
+			$DomainHint = $UIInfo->getElementsByTagName('DomainHint')->item(0);
+			$DisplayNames = $UIInfo->getElementsByTagNameNS('urn:oasis:names:tc:SAML:metadata:ui', 'DisplayName');
+			if ($IPHint && $IPHint->nodeValue != ''){
+				$IDP['IPHint'] = explode(' ', $IPHint->nodeValue);
+			}
+			if ($DomainHint && $DomainHint->nodeValue != ''){
+				$IDP['DomainHint'] = explode(' ', $DomainHint->nodeValue);
+			}
+			if ($DisplayNames){
+				foreach ($DisplayNames as $DisplayName){
+					$lang = $DisplayName->getAttributeNodeNS('http://www.w3.org/XML/1998/namespace', 'lang')->nodeValue;
+					if ($DisplayName->nodeValue != ''){
+						$IDP['Name'] = $DisplayName->nodeValue;
+						$IDP[$lang]['Name'] = $DisplayName->nodeValue;
+					}
+				}
+				// Set default mdui name
+				if (isset($IDP[$defaultLanguage]['Name'])){
+					$IDP['Name'] = $IDP[$defaultLanguage]['Name'];
+				} elseif (isset($IDP['en']['Name'])){
+					$IDP['Name'] = $IDP['en']['Name'];
+				} elseif (isset($DisplayNames->item(0)->nodeValue)) {
+					$IDP['Name'] = $DisplayNames->item(0)->nodeValue;
+				}
+			}
+		}
+	}
 	
 	return $IDP;
 }

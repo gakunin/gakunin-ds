@@ -139,6 +139,8 @@
 <?php
 	$selIdP = '';
 	$IncSearchArray = array();
+	$IncSearchHintArray = array();
+	$hintIDPString = addslashes(getLocalString('hint_idp'));
 
 	foreach ($IDProviders as $key => $IDProvider){
 
@@ -185,6 +187,8 @@
 					&& $attr != 'Name'
 					&& $attr != 'Type'
 					&& $attr != 'IP'
+					&& $attr != 'IPHint'
+					&& $attr != 'DomainHint'
 					&& $attr != 'Index'
 					&& $attr != 'Realm'){
 				if (empty($SearchIdPName)){
@@ -205,14 +209,26 @@
 	]
 ENTRY;
 
+		foreach ($mduiHintIDPs as $hintIDP) {
+			if ($key == $hintIDP) {
+				$IncSearchHintArray[] = <<<ENTRY
 
+	[
+		"{$key}", "{$hintIDPString}", "{$IdPName}", {$SearchIdPName}
+	]
+ENTRY;
+
+			}
+		}
 	}
 	$IncSearchList = join(',', $IncSearchArray);
+	$IncSearchHintList = join(',', $IncSearchHintArray);
 	$selIdP = ($selIdP == '') ? getLocalString('select_idp') : $selIdP ;
 ?>
 
 var inc_search_list = [ <?php echo $IncSearchList ?> ];
 var favorite_list = [];
+var hint_list = [ <?php echo $IncSearchHintList ?> ];
 var initdisp = '<?php echo getLocalString('select_idp') ?>';
 var dispDefault = '<?php echo $selIdP ?>';
 var dispidp = '';
@@ -220,6 +236,7 @@ var hiddenKeyText = '';
 var dropdown_up = '<?php echo $dropdownUpURL ?>';
 var dropdown_down = '<?php echo $dropdownDnURL ?>';
 var favorite_idp_group = '';
+var hint_idp_group = '<?php echo getLocalString('hint_idp') ?>';
 var wayf_show_categories = true;
 if (dispDefault == ''){
 	dispidp = initdisp;
