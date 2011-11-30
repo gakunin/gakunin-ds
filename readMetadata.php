@@ -328,7 +328,7 @@ function processIDPRoleDescriptor($IDPRoleDescriptorNode){
 		$IDP['Name'] = $IDPRoleDescriptorNode->parentNode->getAttribute('entityID');
 	}
 
-	// Get MDUI
+	// Get MDUI 
 	$Extensions = $IDPRoleDescriptorNode->getElementsByTagName('Extensions')->item(0);
 	if ($Extensions){
 		$UIInfo = $Extensions->getElementsByTagName('UIInfo')->item(0);
