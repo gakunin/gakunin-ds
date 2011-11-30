@@ -4,9 +4,11 @@
 // displayed for the WAYF/DS service based on the federation metadata.
 // Configuration parameters are specified in config.php.
 //
-// The list of Identity Providers can also be updated by running the script
+// The Category list of Identity Providers can also be updated by running the script
 // readCategory.php periodically as web server user, e.g. with a cron entry like:
-// 5 * * * * /usr/bin/php readCategory.php > /dev/null
+// 3 * * * * /usr/bin/php readCategory.php > /dev/null
+//
+// readCategory.php is performed before readMetadata.php.
 
 // Could be used for testing purposes or to facilitate startup confiduration.
 // Results are dumped in $IDPConfigFile (see config.php)
@@ -63,12 +65,6 @@ if(is_array($metadataIDProviders)){
 // Array(false, false) if error occurs while parsing metadata file
 function parseMetadata($metadataFile, $defaultLanguage){
 	
-	// mdui:Keywords
-	// data1,data2,cotegory:categoryKey,data3,data4,...
-	$splitCategory = 'category'; 
-	$splitChar1 = ','; 
-	$splitChar2 = ':'; 
-	
 	if(!file_exists($metadataFile)){
 		$errorMsg = 'File '.$metadataFile." does not exist"; 
 		echo $errorMsg."\n";
@@ -92,22 +88,19 @@ function parseMetadata($metadataFile, $defaultLanguage){
 	
 	$metadataIDProviders = Array();
 	foreach( $EntityDescriptors as $EntityDescriptor ){
+		$entityID = $EntityDescriptor->getAttribute('entityID');
+		$Index = $EntityDescriptor->getAttribute('ID');
+
 		foreach($EntityDescriptor->childNodes as $RoleDescriptor) {
 			$nodeName = $RoleDescriptor->nodeName;
 			$nodeName = preg_replace('/^(\w+\:)/', '', $nodeName);
 			switch($nodeName){
 				case 'IDPSSODescriptor':
-					$entityID = $EntityDescriptor->getAttribute('entityID');
-					$Index = $EntityDescriptor->getAttribute('ID');
-					$mduiKeywords = getMduiNodeValue($EntityDescriptor, 'keywords');
-					$IDP = Array();
+					$IDP = processIDPRoleDescriptor($RoleDescriptor);
 					if ($Index != '') {
 						$IDP['Index'] = $Index;
+						$metadataIDProviders[$entityID] = $IDP;
 					}
-					if ($mduiKeywords != '') {
-						$IDP['Type'] = strtolower($mduiKeywords);
-					}
-					$metadataIDProviders[$entityID] = $IDP;
 					break;
 				default:
 			}
@@ -124,54 +117,51 @@ function parseMetadata($metadataFile, $defaultLanguage){
 /******************************************************************************/
 // Processes an IDPRoleDescriptor XML node and returns an IDP entry or false if 
 // something went wrong
-function getMduiNodeValue($xmlNode, $targetNodeName){
-	// mdui:Keywords
-	// data1,data2,cotegory:categoryKey,data3,data4,...
+// mdui:Keywords = data1 data2 cotegory:categoryId data3 ...
+function processIDPRoleDescriptor($IDPRoleDescriptorNode){
 	$splitCategory = 'category'; 
-	$splitChar1 = ','; 
-	$splitChar2 = ':'; 
-	$ret = '';
+	$splitChar = ':'; 
 
-	$targetNodeName = strtolower($targetNodeName);
-	foreach($xmlNode->childNodes as $xmlChildNode) {
-		$nodeName = $xmlChildNode->nodeName;
-		$nodeName = preg_replace('/^(\w+\:)/', '', $nodeName);
-		$nodeName = strtolower($nodeName);
-		switch($nodeName){
-			case 'uiinfo':
-				foreach ($xmlChildNode->childNodes as $mduiNode){
-					$nodeName = $mduiNode->nodeName;
-					$nodeName = preg_replace('/^(\w+\:)/', '', $nodeName);
-					$nodeName = strtolower($nodeName);
-					if ($targetNodeName == $nodeName) {
-						$keywords = $mduiNode->nodeValue;
-						if ($keywords != '') {
-							$keywordsArray = explode($splitChar1, $keywords);
-							foreach($keywordsArray as $cols) {
-								$vals = explode($splitChar2, $cols);
-								if ($splitCategory == $vals[0]) {
-									$ret = $vals[1];
-									break;
-								}
-							}
-							if ($ret != '') {
-								break;
-							}
-						}
-					}
+	$IDP = Array();
+
+	$Extensions = $IDPRoleDescriptorNode->getElementsByTagName('Extensions')->item(0);
+	if (!$Extensions){
+		return $IDP;
+	}
+
+	// Get MDUI
+	$UIInfo = $Extensions->getElementsByTagName('UIInfo')->item(0);
+	if (!$UIInfo){
+		return $IDP;
+	}
+
+	// mdui:Keywords
+	$Keywords = $UIInfo->getElementsByTagNameNS('urn:oasis:names:tc:SAML:metadata:ui', 'Keywords');
+	if (!$Keywords){
+		return $IDP;
+	}
+
+	// Get Category ID
+	foreach ($Keywords as $Keyword){
+		$keywordsArray = explode(' ', $Keyword->nodeValue);
+		foreach($keywordsArray as $val) {
+			$val = strtolower($val);
+			$valArray = explode($splitChar, $val);
+			if ($splitCategory == $valArray[0]){
+				if ($valArray[1] != ''){
+					$IDP['Type'] = $valArray[1];
 				}
 				break;
-			case 'idpssodescriptor':
-			case 'extensions':
-				$ret = getMduiNodeValue($xmlChildNode, $targetNodeName);
-			default:
+			}
 		}
-		if ($ret != '') {
+		if (isset($IDP['Type'])){
 			break;
 		}
 	}
-	return $ret;	
+
+	return $IDP;
 }
+
 
 /******************************************************************************/
 // Dump variable to a file 
