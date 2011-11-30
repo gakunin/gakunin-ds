@@ -119,7 +119,8 @@ function parseMetadata($metadataFile, $defaultLanguage){
 // something went wrong
 // mdui:Keywords = data1 data2 cotegory:categoryId data3 ...
 function processIDPRoleDescriptor($IDPRoleDescriptorNode){
-	$splitCategory = 'category'; 
+	$splitCategory1 = 'category'; 
+	$splitCategory2 = 'location'; 
 	$splitChar = ':'; 
 
 	$IDP = Array();
@@ -147,9 +148,9 @@ function processIDPRoleDescriptor($IDPRoleDescriptorNode){
 		foreach($keywordsArray as $val) {
 			$val = strtolower($val);
 			$valArray = explode($splitChar, $val);
-			if ($splitCategory == $valArray[0]){
-				if ($valArray[1] != ''){
-					$IDP['Type'] = $valArray[1];
+			if ($splitCategory1 == $valArray[0] && $splitCategory2 == $valArray[1]){
+				if ($valArray[2] != ''){
+					$IDP['Type'] = $valArray[2];
 				}
 				break;
 			}
