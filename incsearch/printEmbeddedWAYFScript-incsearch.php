@@ -22,8 +22,9 @@ function printEmbeddedWAYFScript_IncSearch(){
 	$otherFederationString = addslashes(getLocalString('other_federation'));
 	$mostUsedIdPsString = addslashes(getLocalString('most_used'));
 	$clearString = addslashes(getLocalString('clear_button'));
-	$alertSP = addslashes(getLocalString('alert_sp'));
-	$dropdownString = addslashes(getLocalString('dropdown'));
+	$alertspTooltip = addslashes(getLocalString('alertsp_tooltip'));
+	$dropdownTooltip = addslashes(getLocalString('dropdown_tooltip'));
+	$clearTooltip = addslashes(getLocalString('clear_tooltip'));
 	$hintIDPString = addslashes(getLocalString('hint_idp'));
 	
 	$selIdP = '';
@@ -747,7 +748,7 @@ function decodeBase64(input) {
 		}
 
 		if (last_idp == "" && safekind == 2) {
-			writeHTML('<img src="{$alertURL}" title="{$alertSP}" style="vertical-align:text-bottom; border:0px; width:20px; height:20px;">');
+			writeHTML('<img src="{$alertURL}" title="{$alertspTooltip}" style="vertical-align:text-bottom; border:0px; width:20px; height:20px;">');
 		}
 		writeHTML('</label>');
 		
@@ -935,7 +936,7 @@ SCRIPT;
 		writeHTML('</td>');
 		
 		writeHTML('<td>');
-		writeHTML('<img id="dropdown_img" src="{$dropdownDnURL}" title="{$dropdownString}" tabindex=6 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
+		writeHTML('<img id="dropdown_img" src="{$dropdownDnURL}" title="{$dropdownTooltip}" tabindex=6 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
 		writeHTML('</td>');
 		
 		writeHTML('<td>');
@@ -991,7 +992,7 @@ SCRIPT;
 		writeHTML('</td>');
 		
 		writeHTML('<td style="vertical-align:middle; text-align:center;">');
-		writeHTML('<div id="clear_a" class="default" tabindex=11>{$clearString}</div>');
+		writeHTML('<div id="clear_a" class="default" title="{$clearTooltip}" tabindex=11>{$clearString}</div>');
 		writeHTML('</td>');
 		writeHTML('</tr>');
 		writeHTML('</table>');

@@ -47,8 +47,9 @@ $langStrings['en'] = array (
 'unverified_return_url' => 'The return URL <tt>\'%s\'</tt> could not be verified for Service Provider <tt>\'%s\'</tt>.',
 'unknown_sp' => 'The Service Provider <tt>\'%s\'</tt> could not be found in metadata and is therefore unknown.',
 'clear_button' => 'Reset',
-'alert_sp' => 'Alert SP!',
-'dropdown' => 'Display/non-display of IdP list',
+'clear_tooltip' => 'A search key is emptied and it is the list display of all the IdP(s).',
+'alertsp_tooltip' => 'Alert SP!',
+'dropdown_tooltip' => 'Display/non-display of IdP list',
 'hint_idp' => ' Hint! IdP',
 );
 
@@ -261,8 +262,9 @@ $langStrings['ja'] = array (
 'unverified_return_url' => 'The return URL <tt>\'%s\'</tt> could not be verified for Service Provider <tt>\'%s\'</tt>.',
 'unknown_sp' => 'The Service Provider <tt>\'%s\'</tt> could not be found in metadata and is therefore unknown.',
 'clear_button' => 'リセット',
-'alert_sp' => '注意:リファラ遮断のためDSから所属IdP情報を取得できません',
-'dropdown' => 'IdPリストの表示/非表示',
+'clear_tooltip' => '検索キーを空にして、全IdPリストの表示',
+'alertsp_tooltip' => '注意:リファラ遮断のためDSから所属IdP情報を取得できません',
+'dropdown_tooltip' => 'IdPリストの表示/非表示',
 'hint_idp' => 'ヒント！所属機関',
 );
 

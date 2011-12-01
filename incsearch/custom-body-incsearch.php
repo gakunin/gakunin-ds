@@ -21,7 +21,7 @@
    document.write('			</div>');
    document.write('		</td>');
    document.write('		<td>');
-   document.write('			<img id="dropdown_img" src="" title="<?php echo getLocalString('dropdown') ?>" tabindex=6 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
+   document.write('			<img id="dropdown_img" src="" title="<?php echo getLocalString('dropdown_tooltip') ?>" tabindex=6 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
    document.write('		</td>');
    document.write('		<td>&nbsp;</td>');
    document.write('		<td>');
@@ -65,7 +65,7 @@
 		<td style="vertical-align:text-top; text-align:center;">
 <script language="JavaScript" type="text/javascript">
 <!--
-   document.write('			<div id="clear_a" class="default" tabindex=11><?php echo getLocalString('clear_button') ?></div>');
+   document.write('			<div id="clear_a" class="default" title="<?php echo getLocalString('clear_tooltip') ?>" tabindex=11><?php echo getLocalString('clear_button') ?></div>');
 -->
 </script>
 <noscript>
