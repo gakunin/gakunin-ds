@@ -12,6 +12,33 @@ For details, see the web site:
 
 --------------------------------------------------------
 */
+function checkDiscofeedList(json, list){
+  var newList = new Array();
+  var index = 0;
+  var matchFlg = false;
+
+  for (var i in json) {
+    for (var j = 0, length = list.length; j < length; j++) {
+      if (json[i].entityID == list[j][0]) {
+        newList[index] = list[j];
+        matchFlg = true;
+        index++;
+        break;
+      }
+    }
+  }
+  if (!matchFlg){
+    newList = list;
+  }
+  return newList;
+}
+
+function setDiscofeedList(json){
+  if (!json) return;
+  inc_search_list = checkDiscofeedList(json, inc_search_list);
+  favorite_list = checkDiscofeedList(json, favorite_list);
+  hint_list = checkDiscofeedList(json, hint_list);
+}
 
 // It adds it to window event.
 function start() {
@@ -33,6 +60,29 @@ function start() {
         favorite_idp_group,       // favorite idp list group
 	hint_idp_group,           // hint idp list group
         {dispMax: 500, showgrp: wayf_show_categories}); // option
+}
+
+// DiscoFeed
+if (typeof(wayf_discofeed_url) != "undefined" && wayf_discofeed_url != ''){
+  var urldomain = wayf_discofeed_url.split('/')[2];
+  if(location.hostname != urldomain && window.XDomainRequest){
+    var xdr = new XDomainRequest();
+    xdr.onload = function(){
+        setDiscofeedList(eval("(" + xdr.responseText + ")"));
+    }
+    xdr.open("get", wayf_discofeed_url, false);
+    xdr.send( null );
+  } else {
+    $.ajax({
+      type: 'get',
+      url: wayf_discofeed_url,
+      dataType: 'json',
+      async: false,
+      success: function(json) {
+        setDiscofeedList(json);
+      }
+    });
+  }
 }
 
 window.addEventListener ?
@@ -89,6 +139,7 @@ Suggest.Local.prototype = {
     this.searchFlg = false;
     this.noMatch = true;
     this.pcFlg = true;
+    this.discofeedFlg = false;
 
     if (this.candidateList.length > 0) {
       // favorite IdP List
@@ -124,7 +175,6 @@ Suggest.Local.prototype = {
     // init
     this.clearSuggestArea();
     $('#' + this.animateArea.id).hide();
-    this.checkDiscoFeed();
     this.checkUserAgent();
     this.checkNoMatch(this.oldText);
     this.touchScroll();
@@ -165,37 +215,6 @@ Suggest.Local.prototype = {
       this.pcFlg = false;
     } else {
       this.pcFlg = true;
-    }
-  },
-
-  checkDiscoFeed: function() {
-    var nowList = this.candidateList;
-    var newList = null;
-    var index = 0;
-    var jsonFlg = false;
-    if (typeof(wayf_discofeed_url) == "undefined" || wayf_discofeed_url == '') return;
-    $.ajax({
-      type: 'post',
-      url: wayf_discofeed_url,
-      dataType: 'json',
-      async: false,
-      success: function(json) {
-        if (!json) return;
-        newList = new Array();
-        for (var i in json) {
-          for (var j = 0, length = nowList.length; j < length; j++) {
-            if (json[i].entityID == nowList[j][0]) {
-              newList[index] = nowList[j];
-              index++;
-              break;
-            }
-          }
-        }
-      }
-    });
-
-    if (newList && newList.length > 0) {
-      this.candidateList = newList;
     }
   },
 
@@ -313,6 +332,23 @@ Suggest.Local.prototype = {
     var text = this.getInputText();
 
     if (text == null || text == this.initDisp) return;
+
+    if (!this.discofeedFlg){
+      this.candidateList = inc_search_list;
+      this.favoriteList = favorite_list;
+      this.hintList = hint_list;
+      if (this.candidateList.length > 0) {
+        // favorite IdP List
+        if (this.favoriteList.length > 0) {
+          this.candidateList = this.favoriteList.concat(this.candidateList);
+        }
+        // hint(IP, Domain) IdP List
+        if (this.hintList.length > 0) {
+          this.candidateList = this.hintList.concat(this.candidateList);
+        }
+      }
+      this.discofeedFlg = true;
+    }
 
     this.hookBeforeSearch(text);
     var resultList = this._search(text);
