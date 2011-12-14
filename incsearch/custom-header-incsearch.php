@@ -181,20 +181,15 @@
 
 		$SearchIdPName = '';
 		foreach ($IDProvider as $attr => $value){
-			if ($attr != 'SSO'
-					&& $attr != 'Name'
-					&& $attr != 'Type'
-					&& $attr != 'IP'
-					&& $attr != 'IPHint'
-					&& $attr != 'DomainHint'
-					&& $attr != 'Index'
-					&& $attr != 'Realm'){
-				if (empty($SearchIdPName)){
-					$SearchIdPName = '"'.addslashes($value['Name']).'"';
-				} else {
-					$SearchIdPName = $SearchIdPName.', "'.addslashes($value['Name']).'"';
+			foreach($langStrings as $lang => $value2){
+				if ($attr == $lang){
+					if (empty($SearchIdPName)){
+						$SearchIdPName = '"'.addslashes($value['Name']).'"';
+					} else {
+						$SearchIdPName = $SearchIdPName.', "'.addslashes($value['Name']).'"';
+					}
+					break;
 				}
-
 			}
 		}
 		if (empty($SearchIdPName)){
