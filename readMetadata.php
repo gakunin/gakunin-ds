@@ -354,14 +354,27 @@ function processIDPRoleDescriptor($IDPRoleDescriptorNode){
 		}
 		$DiscoHints = $Extensions->getElementsByTagName('DiscoHints')->item(0);
 		if ($DiscoHints){
-			$IPHint = $DiscoHints->getElementsByTagName('IPHint')->item(0);
-			if ($IPHint && $IPHint->nodeValue != ''){
-				$IDP['IPHint'] = explode(' ', $IPHint->nodeValue);
+			$IPHints = $DiscoHints->getElementsByTagNameNS('urn:oasis:names:tc:SAML:2.0:metadata:ui', 'IPHint');
+			if ($IPHints){
+				foreach ($IPHints as $IPHint){
+					if ($IPHint->nodeValue != ''){
+						if (empty($IDP['IPHint'])){
+							$IDP['IPHint'] = array();
+						}
+						$IDP['IPHint'] = array_merge($IDP['IPHint'], explode(' ', $IPHint->nodeValue));
+					}
+				}
 			}
-
-			$DomainHint = $DiscoHints->getElementsByTagName('DomainHint')->item(0);
-			if ($DomainHint && $DomainHint->nodeValue != ''){
-				$IDP['DomainHint'] = explode(' ', $DomainHint->nodeValue);
+			$DomainHints = $DiscoHints->getElementsByTagNameNS('urn:oasis:names:tc:SAML:2.0:metadata:ui', 'DomainHint');
+			if ($DomainHints){
+				foreach ($DomainHints as $DomainHint){
+					if ($DomainHint->nodeValue != ''){
+						if (empty($IDP['DomainHint'])){
+							$IDP['DomainHint'] = array();
+						}
+						$IDP['DomainHint'] = array_merge($IDP['DomainHint'], explode(' ', $DomainHint->nodeValue));
+					}
+				}
 			}
 		}
 	}
