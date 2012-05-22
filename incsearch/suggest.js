@@ -1,3 +1,5 @@
+jQuery.noConflict();
+jQuery(document).ready(function($){
 /*
 --------------------------------------------------------
 suggest.js - Input Suggest
@@ -817,3 +819,4 @@ Suggest.LocalMulti.prototype.setInputText = function(text) {
 Suggest.LocalMulti.prototype.getLastTokenPos = function() {
   return this.input.value.lastIndexOf(this.delim);
 };
+});
