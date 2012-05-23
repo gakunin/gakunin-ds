@@ -110,11 +110,11 @@ $IDProviders['shikoku'] = array (
 
 //
 // 九州
-$IDProviders['kyusyu'] = array (
+$IDProviders['kyushu'] = array (
 		'Type' => 'category',
-		'en' => array ('Name' => 'Kyusyu'),
+		'en' => array ('Name' => 'Kyushu'),
 		'ja' => array ('Name' => '九州'),
-		'Name' => 'Kyusyu',
+		'Name' => 'Kyushu',
 		'Index' => '008',
 );
 
@@ -176,7 +176,7 @@ $IDProviders['https://idp.hiroshima-u.ac.jp/idp/shibboleth'] =
 // 金沢大学
 $IDProviders['https://auth-sso.db.kanazawa-u.ac.jp/idp/shibboleth'] = 
   array (
-    'Type' => 'chubu',
+    'Type' => 'others',
     'Index' => 'PI0007JP',
 );
 
@@ -197,7 +197,7 @@ $IDProviders['https://idp.account.tsukuba.ac.jp/idp/shibboleth'] =
 // 佐賀大学
 $IDProviders['https://ssoidp.cc.saga-u.ac.jp/idp/shibboleth'] = 
   array (
-    'Type' => 'kyusyu',
+    'Type' => 'kyushu',
     'Index' => 'PI0010JP',
 );
 
@@ -260,7 +260,7 @@ $IDProviders['https://odidp.cc.okayama-u.ac.jp/idp/shibboleth'] =
 //九州工業大学
 $IDProviders['https://idp.isc.kyutech.ac.jp/idp/shibboleth'] =
   array (
-    'Type' => 'kyusyu',
+    'Type' => 'kyushu',
     'Index' => 'PI0019JP',
 );
 
@@ -281,7 +281,7 @@ $IDProviders['https://upki-idp.rikkyo.ac.jp/idp/shibboleth'] =
 // 九州大学
 $IDProviders['https://idp.kyushu-u.ac.jp/idp/shibboleth'] =
   array (
-    'Type' => 'kyusyu',
+    'Type' => 'kyushu',
     'Index' => 'PI0022JP',
 );
 
@@ -332,6 +332,97 @@ $IDProviders['https://idp.yamanashi.ac.jp/idp/shibboleth'] =
   array (
     'Type' => 'chubu',
     'Index' => 'PI0029JP',
+);
+
+// 広島市立大学
+$IDProviders['https://fed.ipc.hiroshima-cu.ac.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'chugoku',
+    'Index' => 'PI0030JP',
+);
+
+// 大阪大学
+$IDProviders['https://gknin.auth.osaka-u.ac.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'kinki',
+    'Index' => 'PI0031JP',
+);
+
+// 宮崎大学
+$IDProviders['https://um-idp.cc.miyazaki-u.ac.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'kyushu',
+    'Index' => 'PI0032JP',
+);
+
+// 横浜国立大学
+$IDProviders['https://gakunin-idp.ynu.ac.jp/'] =
+  array (
+    'Type' => 'kanto',
+    'Index' => 'PI0033JP',
+);
+
+// 放射線医学総合研究所
+$IDProviders['https://idp.nirs.go.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'kanto',
+    'Index' => 'PI0034JP',
+);
+
+// 釧路工業高等専門学校
+$IDProviders['https://idp.msls.kushiro-ct.ac.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'hokkaido',
+    'Index' => 'PI0035JP',
+);
+
+// 北見工業大学
+$IDProviders['https://shibboleth.lib.kitami-it.ac.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'hokkaido',
+    'Index' => 'PI0036JP',
+);
+
+// 広島工業大学
+$IDProviders['https://idp.it-hiroshima.ac.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'chugoku',
+    'Index' => 'PI0037JP',
+);
+
+// 金沢大学
+$IDProviders['https://gakunin-idp.cis.kanazawa-u.ac.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'chubu',
+    'Index' => 'PI0038JP',
+);
+
+// 愛媛大学
+$IDProviders['https://idp.cc.ehime-u.ac.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'shikoku',
+    'Index' => 'PI0039JP',
+);
+
+// 鈴鹿工業高等専門学校
+$IDProviders['https://idp.suzuka-ct.ac.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'chubu',
+    'Index' => 'PI0040JP',
+);
+
+// 奈良先端科学技術大学院大学 
+$IDProviders['https://idp.naist.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'kinki',
+    'Index' => 'PI0041JP',
+);
+
+// 奈良教育大学
+$IDProviders['https://shib-idp.nara-edu.ac.jp/idp/shibboleth'] =
+  array (
+    'Type' => 'kinki',
+    'Index' => 'PI0042JP',
 );
 
 ?>

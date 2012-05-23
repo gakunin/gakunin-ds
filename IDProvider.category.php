@@ -110,11 +110,11 @@ $IDProviders['shikoku'] = array (
 
 //
 // 九州
-$IDProviders['kyusyu'] = array (
+$IDProviders['kyushu'] = array (
 		'Type' => 'category',
-		'en' => array ('Name' => 'Kyusyu'),
+		'en' => array ('Name' => 'Kyushu'),
 		'ja' => array ('Name' => '九州'),
-		'Name' => 'Kyusyu',
+		'Name' => 'Kyushu',
 		'Index' => '008',
 );
 

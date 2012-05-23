@@ -140,7 +140,7 @@ $federationURL = 'https://www.gakunin.jp/';
 // Use an absolute URL in case you want to use the embedded WAYF
 //$imageURL = 'https://'.$_SERVER['SERVER_NAME'].'/SWITCHaai/images';
 //$imageURL = 'https://upki-test-ds.nii.ac.jp/DS2/images';
-$imageURL = 'https://ds.gakunin.nii.ac.jp/WAYF2/images';
+$imageURL = 'https://ds.gakunin.nii.ac.jp/GakuNinDS/images';
 
 // URL to the logo that shall be displayed
 //$logoURL = $imageURL.'/switch-aai-transparent.png'; 
@@ -154,7 +154,7 @@ $alertURL = $imageURL.'/alert.gif';
 $dropdownUpURL = $imageURL.'/dropdown_up.png';
 $dropdownDnURL = $imageURL.'/dropdown_down.png';
 
-$incsearchURL = 'https://ds.gakunin.nii.ac.jp/WAYF2/incsearch';
+$incsearchURL = 'https://ds.gakunin.nii.ac.jp/GakuNinDS/incsearch';
 $incsearchLibURL = $incsearchURL.'/suggest.js';
 $incsearchCssURL = $incsearchURL.'/suggest.css';
 $ajaxLibURL = $incsearchURL.'/jquery.js';
