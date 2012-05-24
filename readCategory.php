@@ -99,8 +99,8 @@ function parseMetadata($metadataFile, $defaultLanguage){
 					$IDP = processIDPRoleDescriptor($RoleDescriptor);
 					if ($Index != '') {
 						$IDP['Index'] = $Index;
-						$metadataIDProviders[$entityID] = $IDP;
 					}
+					$metadataIDProviders[$entityID] = $IDP;
 					break;
 				default:
 			}
