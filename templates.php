@@ -350,7 +350,7 @@ function submitForm(){
 		
 		// Redirect user to SP handler
 		if (wayf_use_discovery_service){
-			redirect_url = wayf_sp_samlDSURL + '?entityID=' 
+			redirect_url = wayf_sp_samlDSURL + (wayf_sp_samlDSURL.indexOf('?')>=0?'&':'?')+'entityID=' 
 			+ encodeURIComponent(NonFedEntityID)
 			+ '&target=' + encodeURIComponent(wayf_return_url);
 			
@@ -827,7 +827,7 @@ function decodeBase64(input) {
 		var form_start = '';
 		
 		if (wayf_use_discovery_service == true){
-			var return_url = wayf_sp_samlDSURL + '?SAMLDS=1&target=' + encodeURIComponent(wayf_return_url);
+			var return_url = wayf_sp_samlDSURL + (wayf_sp_samlDSURL.indexOf('?')>=0?'&':'?')+'SAMLDS=1&target=' + encodeURIComponent(wayf_return_url);
 			
 			wayf_authReq_URL = wayf_URL 
 			+ '?entityID=' + encodeURIComponent(wayf_sp_entityID)
