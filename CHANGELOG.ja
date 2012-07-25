@@ -1,3 +1,17 @@
+Version 2.0 (2012-07-19)
+新機能:
+- DISCOVERY-22: IdPメタデータから地域データを取得する
+- DISCOVERY-24: IPアドレスによるヒントに対応
+- DISCOVERY-25: ドメイン名のヒント対応
+- DISCOVERY-49: クロスドメイン対応DiscoFeed
+改善:
+- DISCOVERY-9: リファラチェックに使うホスト名の拡大
+- DISCOVERY-28: mdui:DisplayNameを優先する
+- DISCOVERY-57: 「リセット」にtooltipを付ける
+バグ修正:
+- DISCOVERY-81: メタデータのEntityDescriptorにIDがないとreadCategory.phpで分類されない
+
+
 Version GakuNin1.0 (2011-09-12)
 ----------------------------------------------------------------------------------------------------
 【本拡張機能の設定】
