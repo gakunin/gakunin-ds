@@ -333,7 +333,7 @@ function processIDPRoleDescriptor($IDPRoleDescriptorNode){
 	if ($Extensions){
 		$UIInfo = $Extensions->getElementsByTagName('UIInfo')->item(0);
 		if ($UIInfo){
-			$DisplayNames = $UIInfo->getElementsByTagNameNS('urn:oasis:names:tc:SAML:2.0:metadata:ui', 'DisplayName');
+			$DisplayNames = $UIInfo->getElementsByTagNameNS('urn:oasis:names:tc:SAML:metadata:ui', 'DisplayName');
 			if ($DisplayNames){
 				foreach ($DisplayNames as $DisplayName){
 					$lang = $DisplayName->getAttributeNodeNS('http://www.w3.org/XML/1998/namespace', 'lang')->nodeValue;
@@ -354,7 +354,7 @@ function processIDPRoleDescriptor($IDPRoleDescriptorNode){
 		}
 		$DiscoHints = $Extensions->getElementsByTagName('DiscoHints')->item(0);
 		if ($DiscoHints){
-			$IPHints = $DiscoHints->getElementsByTagNameNS('urn:oasis:names:tc:SAML:2.0:metadata:ui', 'IPHint');
+			$IPHints = $DiscoHints->getElementsByTagNameNS('urn:oasis:names:tc:SAML:metadata:ui', 'IPHint');
 			if ($IPHints){
 				foreach ($IPHints as $IPHint){
 					if ($IPHint->nodeValue != ''){
@@ -365,7 +365,7 @@ function processIDPRoleDescriptor($IDPRoleDescriptorNode){
 					}
 				}
 			}
-			$DomainHints = $DiscoHints->getElementsByTagNameNS('urn:oasis:names:tc:SAML:2.0:metadata:ui', 'DomainHint');
+			$DomainHints = $DiscoHints->getElementsByTagNameNS('urn:oasis:names:tc:SAML:metadata:ui', 'DomainHint');
 			if ($DomainHints){
 				foreach ($DomainHints as $DomainHint){
 					if ($DomainHint->nodeValue != ''){
