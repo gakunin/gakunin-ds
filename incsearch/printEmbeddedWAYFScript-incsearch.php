@@ -1,13 +1,14 @@
-<?php // Copyright (c) 2011, SWITCH - Serving Swiss Universities
+<?php // Copyright (c) 2012, SWITCH - Serving Swiss Universities
 
 /******************************************************************************/
-
+// Prints the JavaScript that renders the Embedded WAYF
 function printEmbeddedWAYFScript_IncSearch(){
 
 	global $langStrings, $language, $imageURL, $logoURL, $smallLogoURL, $federationURL;
-	global $selectedIDP, $IDProviders, $redirectCookieName, $redirectStateCookieName, $federationName, $cookieSecure;
+	global $selectedIDP, $IDProviders, $redirectCookieName, $redirectStateCookieName, $federationName;
+	global $cookieSecurity;
 	global $safekind, $selIdP, $incsearchLibURL, $incsearchCssURL, $alertURL, $dropdownUpURL, $dropdownDnURL, $ajaxLibURL, $ajaxFlickLibURL;
-	global $mduiHintIDPs;
+	global $mduiHintIDPs, $useMduiHintMax, $geolocationOffURL, $geolocationOnURL, $geolocationMapURL;
 	
 	// Get some values that are used in the script
 	$loginWithString = getLocalString('login_with');
@@ -22,9 +23,14 @@ function printEmbeddedWAYFScript_IncSearch(){
 	$otherFederationString = addslashes(getLocalString('other_federation'));
 	$mostUsedIdPsString = addslashes(getLocalString('most_used'));
 	$clearString = addslashes(getLocalString('clear_button'));
+	$mapString = addslashes(getLocalString('map_button'));
+	$regString = addslashes(getLocalString('reg_button'));
 	$alertspTooltip = addslashes(getLocalString('alertsp_tooltip'));
 	$dropdownTooltip = addslashes(getLocalString('dropdown_tooltip'));
 	$clearTooltip = addslashes(getLocalString('clear_tooltip'));
+	$mapTooltip = addslashes(getLocalString('map_tooltip'));
+	$regTooltip = addslashes(getLocalString('reg_tooltip'));
+	$geolocationTooltip = addslashes(getLocalString('geolocation_tooltip'));
 	$hintIDPString = addslashes(getLocalString('hint_idp'));
 	
 	$selIdP = '';
@@ -80,6 +86,36 @@ function printEmbeddedWAYFScript_IncSearch(){
 			continue;
 		}
 
+		// Get IdP Logo URL and Size
+		$IdPLogoURL    = '';
+		$IdPLogoHeight = '';
+		$IdPLogoWidth  = '';
+		if (isset($IDProvider[$language]['Logo'])){
+			$IdPLogoURL    = $IDProvider[$language]['Logo']['url'];
+			$IdPLogoHeight = $IDProvider[$language]['Logo']['height'];
+			$IdPLogoWidth  = $IDProvider[$language]['Logo']['width'];
+		} elseif (isset($IDProvider['Logo'])) {
+			$IdPLogoURL    = $IDProvider['Logo']['url'];
+			$IdPLogoHeight = $IDProvider['Logo']['height'];
+			$IdPLogoWidth  = $IDProvider['Logo']['width'];
+		}
+
+		// Get GeolocationHint latitude and longitude 
+		$IdPGeolocationHint = '';
+		if (isset($IDProvider['GeolocationHint'])){
+			foreach($IDProvider['GeolocationHint'] as $geolocation){
+				if (empty($IdPGeolocationHint)){
+					$IdPGeolocationHint = $geolocation;
+				} else {
+					$IdPGeolocationHint = $IdPGeolocationHint.';'.$geolocation;
+				}
+			}
+		}
+
+		// Get Registration URL
+		$IdPRegistrationURL = isset($IDProvider['RegistrationURL']) ? $IDProvider['RegistrationURL'] : '';
+
+		// Get IdP Name
 		$SearchIdPName = '';
 		foreach ($IDProvider as $attr => $value){
 			foreach($langStrings as $lang => $value2){
@@ -98,7 +134,7 @@ function printEmbeddedWAYFScript_IncSearch(){
 		}
 
 		$IncSearchIDP = <<<ENTRY
-"{$key}", "{$IdPType2}", "{$IdPName}", {$SearchIdPName}
+"{$key}", "{$IdPType2}", "{$IdPName}", "{$IdPLogoURL}", "{$IdPLogoHeight}", "{$IdPLogoWidth}", "{$IdPGeolocationHint}", "{$IdPRegistrationURL}", "", "", {$SearchIdPName}
 ENTRY;
 
 		$JSONIdPArray[] = <<<ENTRY
@@ -162,6 +198,8 @@ var wayf_sp_cookie_path;
 var wayf_list_height;
 var wayf_sp_samlDSURL;
 var wayf_sp_samlACURL;
+var wayf_use_disco_feed;
+var wayf_discofeed_url;
 var wayf_html = "";
 var wayf_idps = { {$JSONIdPList} };
 var wayf_hint_list = [ {$IdPHintList} ];
@@ -177,8 +215,11 @@ var dispidp = '';
 var hiddenKeyText = '';
 var dropdown_up = '{$dropdownUpURL}';
 var dropdown_down = '{$dropdownDnURL}';
+var geolocation_off = '{$geolocationOffURL}';
+var geolocation_on = '{$geolocationOnURL}';
 var favorite_idp_group = "{$mostUsedIdPsString}";
 var hint_idp_group = '{$hintIDPString}';
+var hintmax = '{$useMduiHintMax}';
 
 // Define functions
 function submitForm(){
@@ -199,7 +240,7 @@ function submitForm(){
 	}
 	
 	for (var i=0; i<submit_check_list.length; i++){
-		for (var j = 3, len2 = submit_check_list[i].length; j < len2; j++) {
+		for (var j = 10, len2 = submit_check_list[i].length; j < len2; j++) {
 			var list_idp_name = submit_check_list[i][j].toLowerCase();
 			if (idp_name == list_idp_name){
 				NonFedEntityID = submit_check_list[i][0];
@@ -222,8 +263,6 @@ function submitForm(){
         }
 
         // User chose non-federation IdP
-        // TODO: FIX windows error
-        // 4 >= (8 - 3/4)
         if (
                 i >= (submit_check_list.length - wayf_additional_idps.length)){
 
@@ -234,10 +273,21 @@ function submitForm(){
 
                 // Redirect user to SP handler
                 if (wayf_use_discovery_service){
-                        redirect_url = wayf_sp_samlDSURL + (wayf_sp_samlDSURL.indexOf('?')>=0?'&':'?')+'entityID='
-                        + encodeURIComponent(NonFedEntityID)
-                        + '&target=' + encodeURIComponent(wayf_return_url);
-
+			
+/*
+			var entityIDGETParam = getGETArgument("entityID");
+			var returnGETParam = getGETArgument("return");
+			if (entityIDGETParam != "" && returnGETParam != ""){
+				redirect_url = returnGETParam;
+			} else {
+				redirect_url = wayf_sp_samlDSURL;
+				redirect_url += getGETArgumentSeparator(redirect_url) + 'target=' + encodeURIComponent(wayf_return_url);
+			}
+*/
+			redirect_url = wayf_sp_samlDSURL + '?entityID='
+			+ encodeURIComponent(NonFedEntityID)
+			+ '&target=' + encodeURIComponent(wayf_return_url);
+			
                         // Make sure the redirect always is being done in parent window
                         if (window.parent){
                                 window.parent.location = redirect_url;
@@ -341,7 +391,7 @@ function setCookie(c_name, value, expiredays){
 	((expiredays==null) ? "" : "; expires=" + exdate.toGMTString()) +
 	((wayf_sp_cookie_path=="") ? "" : "; path=" + wayf_sp_cookie_path)
 SCRIPT;
-	if( isset($cookieSecure) )
+	if( isset($cookieSecurity) )
 	{
 		echo <<<SCRIPT
  + "; secure";
@@ -365,8 +415,7 @@ function getCookie(check_name){
 	var cookie_name = '';
 	var cookie_value = '';
 	
-	for ( var i = 0; i < a_all_cookies.length; i++ )
-	{
+	for ( var i = 0; i < a_all_cookies.length; i++ ){
 		// now we'll split apart each name=value pair
 		a_temp_cookie = a_all_cookies[i].split( '=' );
 		
@@ -417,6 +466,78 @@ function isCookie(check_name){
 	
 	// Shibboleth session cookie has not been found
 	return false;
+}
+
+// Query Shibboleth Session handler and process response afterwards
+// This method has to be used because HttpOnly prevents reading 
+// the shib session cookies via JavaScript
+function isShibbolethSession(url){
+	var xmlhttp;
+	if (window.XMLHttpRequest){
+		xmlhttp = new XMLHttpRequest();
+	}  else {
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	
+	// Send request
+	try {
+		xmlhttp.open("GET", url, false);
+		xmlhttp.send();
+	} catch (e) {
+		// Something went wrong, send back false
+		return false;
+	} 
+	
+	// Check response code
+	if (xmlhttp.readyState != 4 || xmlhttp.status != 200 ){
+		return false;
+	}
+	
+	// Return true if session handler shows valid session
+	if (
+		xmlhttp.responseText.search(/Authentication Time/i) > 0){
+		return true;
+	}
+	
+	return false;
+}
+
+// Sorts Discovery feed entries 
+function sortEntities(a, b){
+	var nameA = a.name.toLowerCase();
+	var nameB = b.name.toLowerCase();
+	
+	if (nameA < nameB){
+		return -1;
+	}
+	
+	if (nameA > nameB){
+		return 1;
+	}
+	
+	return 0;
+}
+
+// Returns true if user is logged in
+function isUserLoggedIn(){
+	
+	if (
+		   typeof(wayf_check_login_state_function) != "undefined"
+		&& typeof(wayf_check_login_state_function) == "function" ){
+		
+		// Use custom function
+		return wayf_check_login_state_function();
+	
+	} else {
+		// Check if Shibboleth session cookie exists
+		var shibSessionCookieExists = isCookie('shibsession');
+		
+		// Check if Shibboleth session handler 
+		var shibSessionHandlerShowsSession = isShibbolethSession(wayf_sp_handlerURL + '/Session');
+		
+		// Return true if one of these checks is succsesful
+		return (shibSessionCookieExists || shibSessionHandlerShowsSession);
+	}
 }
 
 function encodeBase64(input) {
@@ -478,9 +599,34 @@ function decodeBase64(input) {
 	return output;
 }
 
+function getGETArgument(name){
+	name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+	var regexString = "[\\?&]"+name+"=([^&#]*)";
+	var regex = new RegExp(regexString);
+	var results = regex.exec(window.location.href);
+	
+	if( results == null ){
+		return "";
+	} else {
+		return decodeURIComponent(results[1]);
+	}
+}
+
+function getGETArgumentSeparator(url){
+	if (url.indexOf('?') >=0 ){
+		return '&';
+	} else {
+		return '?';
+	}
+}
+
 (function() {
 	
 	var config_ok = true; 
+	
+	// Get GET parameters that maybe are set by Shibboleth
+	var returnGETParam = getGETArgument("return");
+	var entityIDGETParam = getGETArgument("entityID");
 	
 	// First lets make sure properties are available
 	if(
@@ -490,50 +636,80 @@ function decodeBase64(input) {
 		wayf_use_discovery_service = true;
 	}
 	
-	if(typeof(wayf_sp_entityID) == "undefined"){
+	
+	// Overwrite entityID with GET argument if present
+	var entityIDGETParam = getGETArgument("entityID");
+	if (entityIDGETParam != ""){
+		wayf_sp_entityID = entityIDGETParam;
+	}
+	
+	if(
+		typeof(wayf_sp_entityID) == "undefined"
+		|| typeof(wayf_sp_entityID) != "string"
+		){
 		alert('The mandatory parameter \'wayf_sp_entityID\' is missing. Please add it as a javascript variable on this page.');
 		config_ok = false;
 	}
 	
-	if(typeof(wayf_URL) == "undefined"){
+	if(
+		typeof(wayf_URL) == "undefined"
+		|| typeof(wayf_URL) != "string"
+		){
 		alert('The mandatory parameter \'wayf_URL\' is missing. Please add it as a javascript variable on this page.');
 		config_ok = false;
 	}
 	
-	if(typeof(wayf_return_url) == "undefined"){
+	if(
+		typeof(wayf_return_url) == "undefined"
+		|| typeof(wayf_return_url) != "string"
+		){
 		alert('The mandatory parameter \'wayf_return_url\' is missing. Please add it as a javascript variable on this page.');
 		config_ok = false;
 	}
 
-	if(typeof(wayf_discofeed_url) == "undefined"){
-		wayf_discofeed_url = '';
-	}
-
-	if(typeof(wayf_sp_cookie_path) == "undefined"){
+	if(
+		typeof(wayf_sp_cookie_path)  == "undefined"  
+		|| typeof(wayf_sp_cookie_path) != "string"
+		){
 		wayf_sp_cookie_path = '';
 	}
 	
-	if((typeof(wayf_list_height) != "number") || (wayf_list_height < 0)){
+	if(
+		typeof(wayf_list_height) == "undefined" 
+		|| typeof(wayf_list_height) != "number"
+	){
 		wayf_list_height = '150px';
 	} else {
 		wayf_list_height += 'px';
 	}
-
-	if(wayf_use_discovery_service == false && typeof(wayf_sp_handlerURL) == "undefined"){
+	
+	if(
+		wayf_use_discovery_service == false 
+		&& typeof(wayf_sp_handlerURL) == "undefined"
+		){
 		alert('The mandatory parameter \'wayf_sp_handlerURL\' is missing. Please add it as a javascript variable on this page.');
 		config_ok = false;
 	}
 	
-	if(wayf_use_discovery_service == true && typeof(wayf_sp_samlDSURL) == "undefined"){
+	if(
+		wayf_use_discovery_service == true 
+		&& typeof(wayf_sp_samlDSURL) == "undefined"
+		){
 		// Set to default DS handler
 		wayf_sp_samlDSURL = wayf_sp_handlerURL + "/DS";
 	}
 	
-	if (typeof(wayf_sp_samlACURL) == "undefined"){
+	if (
+		typeof(wayf_sp_samlACURL) == "undefined"
+		|| typeof(wayf_sp_samlACURL) != "string"
+		){
 		wayf_sp_samlACURL = wayf_sp_handlerURL + '/SAML/POST';
 	}
 	
-	if(typeof(wayf_font_color) == "undefined"){
+	if(
+		typeof(wayf_font_color) == "undefined"
+		|| typeof(wayf_font_color) != "string"
+		){
 		wayf_font_color = 'black';
 	}
 	
@@ -544,12 +720,18 @@ function decodeBase64(input) {
 		wayf_font_size = 12;
 	}
 	
-	if(typeof(wayf_border_color) == "undefined"){
-		wayf_border_color = '#00247D';
+	if(
+		typeof(wayf_border_color) == "undefined"
+		|| typeof(wayf_border_color) != "string"
+		){
+		wayf_border_color = '#848484';
 	}
 	
-	if(typeof(wayf_background_color) == "undefined"){
-		wayf_background_color = '#F4F7F7';
+	if(
+		typeof(wayf_background_color) == "undefined"
+		|| typeof(wayf_background_color) != "string"
+		){
+		wayf_background_color = '#F0F0F0';
 	}
 	
 	if(
@@ -566,15 +748,21 @@ function decodeBase64(input) {
 		wayf_hide_logo = false;
 	}
 	
-	if(typeof(wayf_width) == "undefined"){
+	if(
+		typeof(wayf_width) == "undefined" 
+		|| typeof(wayf_width) != "number"
+	){
 		wayf_width = "auto";
-	} else if (typeof(wayf_width) == "number"){
+	} else {
 		wayf_width += 'px';
 	}
 	
-	if(typeof(wayf_height) == "undefined"){
+	if(
+		typeof(wayf_height) == "undefined" 
+		|| typeof(wayf_height) != "number"
+		){
 		wayf_height = "auto";
-	} else if (typeof(wayf_height) == "number"){
+	} else {
 		wayf_height += "px";
 	}
 	
@@ -606,8 +794,11 @@ function decodeBase64(input) {
 		wayf_hide_after_login = false;
 	}
 	
-	if(typeof(wayf_logged_in_messsage) == "undefined"){
-		wayf_logged_in_messsage = "{$loggedInString}";
+	if(
+		typeof(wayf_logged_in_messsage) == "undefined"
+		|| typeof(wayf_logged_in_messsage) != "string"
+		){
+		wayf_logged_in_messsage = "{$loggedInString}".replace(/%s/, wayf_return_url);
 	}
 	
 	if(
@@ -657,21 +848,27 @@ function decodeBase64(input) {
 		wayf_additional_idps = [];
 	}
 	
+	if(
+		typeof(wayf_use_disco_feed) == "undefined"
+		|| typeof(wayf_use_disco_feed) != "boolean"
+		){
+		wayf_use_disco_feed = true;
+	}
+	
+	if(
+		typeof(wayf_discofeed_url) == "undefined"
+		|| typeof(wayf_discofeed_url) != "string"
+		){
+		wayf_discofeed_url = "";
+	}
+	
 	// Exit without outputting html if config is not ok
 	if (config_ok != true){
 		return;
 	}
 	
 	// Check if user is logged in already:
-	var user_logged_in = false;
-	if (typeof(wayf_check_login_state_function) == "undefined"
-		|| typeof(wayf_check_login_state_function) != "function" ){
-		// Use default Shibboleth Service Provider login check
-		user_logged_in = isCookie('shibsession');
-	} else {
-		// Use custom function
-		user_logged_in = wayf_check_login_state_function();
-	}
+	var user_logged_in = isUserLoggedIn();
 	
 	// Check if user is authenticated already and 
 	// whether something has to be drawn
@@ -753,23 +950,31 @@ function decodeBase64(input) {
 		var form_start = '';
 		
 		if (wayf_use_discovery_service == true){
-			var return_url = wayf_sp_samlDSURL + (wayf_sp_samlDSURL.indexOf('?')>=0?'&':'?')+'SAMLDS=1&target=' + encodeURIComponent(wayf_return_url);
+			// New SAML Discovery Service protocol
 			
 			wayf_authReq_URL = wayf_URL 
-			+ '?entityID=' + encodeURIComponent(wayf_sp_entityID)
-			+ '&amp;return=' + encodeURIComponent(return_url);
 			
-			form_start = '<form id="IdPList" name="IdPList" method="post" target="_parent" onSubmit="return submitForm()" action="' + wayf_authReq_URL + '">';
+			// Use GET arguments or use configuration parameters
+			if (entityIDGETParam != "" && returnGETParam != ""){
+				wayf_authReq_URL += '?entityID=' + encodeURIComponent(entityIDGETParam);
+				wayf_authReq_URL += '&amp;return=' + encodeURIComponent(returnGETParam);
+			} else {
+				var return_url = wayf_sp_samlDSURL + getGETArgumentSeparator(wayf_sp_samlDSURL);
+				return_url += 'SAMLDS=1&target=' + encodeURIComponent(wayf_return_url);
+				wayf_authReq_URL += '?entityID=' + encodeURIComponent(wayf_sp_entityID);
+				wayf_authReq_URL += '&amp;return=' + encodeURIComponent(return_url);
+			}
 		} else {
-			
-			wayf_authReq_URL = wayf_URL 
-			+ '?providerId=' + encodeURIComponent(wayf_sp_entityID)
-			+ '&amp;shire=' + encodeURIComponent(wayf_sp_samlACURL)
-			+ '&amp;target=' + encodeURIComponent(wayf_return_url);
-			
-			form_start = '<form id="IdPList" name="IdPList" method="post" target="_parent" onSubmit="return submitForm()" action="' + wayf_authReq_URL + '&amp;time={$utcTime}'
-			+ '">';
+			// Old Shibboleth WAYF protocol
+			wayf_authReq_URL = wayf_URL;
+			wayf_authReq_URL += '?providerId=' + encodeURIComponent(wayf_sp_entityID);
+			wayf_authReq_URL += '&amp;target=' + encodeURIComponent(wayf_return_url);
+			wayf_authReq_URL += '&amp;shire=' + encodeURIComponent(wayf_sp_samlACURL);
+			wayf_authReq_URL += '&amp;time={$utcTime}';
 		}
+		
+		// Add form element
+		form_start = '<form id="IdPList" name="IdPList" method="post" target="_parent" action="' + wayf_authReq_URL + '">';
 		
 SCRIPT;
 	
@@ -800,7 +1005,6 @@ SCRIPT;
 	}
 	
 	echo <<<SCRIPT
-
 		writeHTML('<link rel="stylesheet" href="{$incsearchCssURL}" type="text/css" />');
 		writeHTML('<script type="text/javascript" src="{$ajaxLibURL}"></script>');
 		writeHTML('<script type="text/javascript" src="{$ajaxFlickLibURL}"></script>');
@@ -826,8 +1030,7 @@ SCRIPT;
 		}
 
 SCRIPT;
-
-
+	
 	// Generate drop-down list
 	foreach ($IDProviders as $key => $IDProvider){
 		
@@ -870,7 +1073,10 @@ SCRIPT;
 		if (wayf_additional_idps.length > 0){
 			var listcnt = inc_search_list.length;
 			
-			// Show additional IdPs in the order they are defined
+			// Sort Array
+			wayf_additional_idps.sort(sortEntities)
+			
+			// Show additional IdPs
 			for ( var i=0; i < wayf_additional_idps.length ; i++){
 				if (wayf_additional_idps[i]){
 					// Last used IdP is known because of local _saml_idp cookie
@@ -883,7 +1089,34 @@ SCRIPT;
 						inc_search_list[listcnt][0] = wayf_additional_idps[i].entityID;
                                                 inc_search_list[listcnt][1] = "{$otherFederationString}";
 						inc_search_list[listcnt][2] = wayf_additional_idps[i].name;
-						inc_search_list[listcnt][3] = wayf_additional_idps[i].name;
+						if (wayf_additional_idps[i].LogoURL){
+							inc_search_list[listcnt][3] = wayf_additional_idps[i].LogoURL;
+						} else {
+							inc_search_list[listcnt][3] = '';
+						}
+						if (wayf_additional_idps[i].LogoHeight){
+							inc_search_list[listcnt][4] = wayf_additional_idps[i].LogoHeight;
+						} else {
+							inc_search_list[listcnt][4] = '';
+						}
+						if (wayf_additional_idps[i].LogoWidth){
+							inc_search_list[listcnt][5] = wayf_additional_idps[i].LogoWidth;
+						} else {
+							inc_search_list[listcnt][5] = '';
+						}
+						if (wayf_additional_idps[i].GeolocationHint){
+							inc_search_list[listcnt][6] = wayf_additional_idps[i].GeolocationHint;
+						} else {
+							inc_search_list[listcnt][6] = '';
+						}
+						if (wayf_additional_idps[i].RegistrationURL){
+							inc_search_list[listcnt][7] = wayf_additional_idps[i].RegistrationURL;
+						} else {
+							inc_search_list[listcnt][7] = '';
+						}
+						inc_search_list[listcnt][8] = '';
+						inc_search_list[listcnt][9] = '';
+						inc_search_list[listcnt][10] = wayf_additional_idps[i].name;
 						listcnt++;
 					}
 					// If no IdP is known but the default IdP matches, use this entry
@@ -897,14 +1130,68 @@ SCRIPT;
 						inc_search_list[listcnt][0] = wayf_additional_idps[i].entityID;
                                                 inc_search_list[listcnt][1] = "{$otherFederationString}";
 						inc_search_list[listcnt][2] = wayf_additional_idps[i].name;
-						inc_search_list[listcnt][3] = wayf_additional_idps[i].name;
+						if (wayf_additional_idps[i].LogoURL){
+							inc_search_list[listcnt][3] = wayf_additional_idps[i].LogoURL;
+						} else {
+							inc_search_list[listcnt][3] = '';
+						}
+						if (wayf_additional_idps[i].LogoHeight){
+							inc_search_list[listcnt][4] = wayf_additional_idps[i].LogoHeight;
+						} else {
+							inc_search_list[listcnt][4] = '';
+						}
+						if (wayf_additional_idps[i].LogoWidth){
+							inc_search_list[listcnt][5] = wayf_additional_idps[i].LogoWidth;
+						} else {
+							inc_search_list[listcnt][5] = '';
+						}
+						if (wayf_additional_idps[i].GeolocationHint){
+							inc_search_list[listcnt][6] = wayf_additional_idps[i].GeolocationHint;
+						} else {
+							inc_search_list[listcnt][6] = '';
+						}
+						if (wayf_additional_idps[i].RegistrationURL){
+							inc_search_list[listcnt][7] = wayf_additional_idps[i].RegistrationURL;
+						} else {
+							inc_search_list[listcnt][7] = '';
+						}
+						inc_search_list[listcnt][8] = '';
+						inc_search_list[listcnt][9] = '';
+						inc_search_list[listcnt][10] = wayf_additional_idps[i].name;
 						listcnt++;
 					} else if (wayf_additional_idps[i].name) {
 						inc_search_list[listcnt] = new Array();
 						inc_search_list[listcnt][0] = wayf_additional_idps[i].entityID;
                                                 inc_search_list[listcnt][1] = "{$otherFederationString}";
 						inc_search_list[listcnt][2] = wayf_additional_idps[i].name;
-						inc_search_list[listcnt][3] = wayf_additional_idps[i].name;
+						if (wayf_additional_idps[i].LogoURL){
+							inc_search_list[listcnt][3] = wayf_additional_idps[i].LogoURL;
+						} else {
+							inc_search_list[listcnt][3] = '';
+						}
+						if (wayf_additional_idps[i].LogoHeight){
+							inc_search_list[listcnt][4] = wayf_additional_idps[i].LogoHeight;
+						} else {
+							inc_search_list[listcnt][4] = '';
+						}
+						if (wayf_additional_idps[i].LogoWidth){
+							inc_search_list[listcnt][5] = wayf_additional_idps[i].LogoWidth;
+						} else {
+							inc_search_list[listcnt][5] = '';
+						}
+						if (wayf_additional_idps[i].GeolocationHint){
+							inc_search_list[listcnt][6] = wayf_additional_idps[i].GeolocationHint;
+						} else {
+							inc_search_list[listcnt][6] = '';
+						}
+						if (wayf_additional_idps[i].RegistrationURL){
+							inc_search_list[listcnt][7] = wayf_additional_idps[i].RegistrationURL;
+						} else {
+							inc_search_list[listcnt][7] = '';
+						}
+						inc_search_list[listcnt][8] = '';
+						inc_search_list[listcnt][9] = '';
+						inc_search_list[listcnt][10] = wayf_additional_idps[i].name;
 						listcnt++;
 					}
 				}
@@ -914,7 +1201,7 @@ SCRIPT;
 		writeHTML('<div style="clear:both;"></div>');
 		writeHTML('<table border="0" cellpadding="0" cellspacing="0" style="width: 100%;">');
 		writeHTML('<tr>');
-		writeHTML('<td id="keytext_td" style="width: 100%;">');
+		writeHTML('<td id="keytext_td" colspan="1" style="width: 100%;">');
 		if (dispDefault == ''){
 			dispidp = initdisp;
 		} else {
@@ -937,15 +1224,19 @@ SCRIPT;
 		writeHTML('</td>');
 		
 		writeHTML('<td>');
+		writeHTML('<img id="geolocation_img" src="{$geolocationOffURL}" title="{$geolocationTooltip}" tabindex=7 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
+		writeHTML('</td>');
+		
+		writeHTML('<td>');
 		writeHTML('&nbsp;');
 		writeHTML('</td>');
 		
 		writeHTML('<td>');
 		// Do we have to display custom text?
 		if(typeof(wayf_overwrite_submit_button_text) == "undefined"){
-			writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="{$loginString}" tabindex="10" ');
+			writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="{$loginString}" tabindex="11" onClick="javascript:return submitForm();" ');
 		} else {
-			writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="' + wayf_overwrite_submit_button_text + '" tabindex="10" ');
+			writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="' + wayf_overwrite_submit_button_text + '" tabindex="11" onClick="javascript:return submitForm();" ');
 		}
 
 		if (dispidp == initdisp) {
@@ -959,7 +1250,7 @@ SCRIPT;
 
 		
 		writeHTML('<tr>');
-		writeHTML('<td colspan="3">');
+		writeHTML('<td colspan="1">');
 		// Draw checkbox
 		writeHTML('<div id="wayf_remember_checkbox_div" style="float: left;margin-top: 0px;margin-bottom:0px; width: 100%;">');
 		// Do we have to show the remember settings checkbox?
@@ -967,11 +1258,11 @@ SCRIPT;
 			// Is the checkbox forced to be checked
 			if (wayf_force_remember_for_session){
 				// First draw the dummy checkbox ...
-				writeHTML('<input id="wayf_remember_checkbox" type="checkbox" name="session_dummy" value="true" tabindex=8 checked="checked" disabled="disabled" >&nbsp;');
+				writeHTML('<input id="wayf_remember_checkbox" type="checkbox" name="session_dummy" value="true" tabindex=9 checked="checked" disabled="disabled" >&nbsp;');
 				// ... and now the real but hidden checkbox
 				writeHTML('<input type="hidden" name="session" value="true">&nbsp;');
 			} else {
-				writeHTML('<input id="wayf_remember_checkbox" type="checkbox" name="session" value="true" tabindex=8 {$checkedBool}>&nbsp;');
+				writeHTML('<input id="wayf_remember_checkbox" type="checkbox" name="session" value="true" tabindex=9 {$checkedBool}>&nbsp;');
 			}
 			
 			// Do we have to display custom text?
@@ -988,13 +1279,23 @@ SCRIPT;
 		writeHTML('</div>');
 		writeHTML('</td>');
 		
-		writeHTML('<td style="vertical-align:middle; text-align:center;">');
-		writeHTML('<div id="clear_a" class="default" title="{$clearTooltip}" tabindex=11>{$clearString}</div>');
+		writeHTML('<td colspan="2" style="vertical-align:middle; text-align:right;">');
+		writeHTML('<div id="map_a" class="default" title="{$mapTooltip}" tabindex=12>{$mapString}</div>');
+		writeHTML('</td>');
+		writeHTML('<td colspan="2" style="vertical-align:middle; text-align:center;">');
+		writeHTML('<div id="clear_a" class="default" title="{$clearTooltip}" tabindex=13>{$clearString}</div>');
 		writeHTML('</td>');
 		writeHTML('</tr>');
 		writeHTML('</table>');
 	
 		// Close form
+		writeHTML('</form>');
+		writeHTML('<form id="GeolocationMap" name="GeolocationMap" method="post" action="${geolocationMapURL}">');
+		writeHTML('<input type="hidden" name="idplist" value="">');
+		writeHTML('<input type="hidden" name="client" value="">');
+		writeHTML('<input type="hidden" name="sp_samldsurl" value="' + wayf_sp_samlDSURL + '">');
+		writeHTML('<input type="hidden" name="sp_returnurl" value="' + wayf_return_url + '">');
+		//writeHTML('<input type="hidden" name="action" value="' + wayf_authReq_URL + '">');
 		writeHTML('</form>');
 		
 	}  // End login check

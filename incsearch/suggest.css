@@ -62,6 +62,7 @@ div.list_group {
 	font-weight: bold;
 	font-size: 75%;
 	text-align: left;
+	vertical-align: middle;
 }
 
 /* IdP list: IdP name */
@@ -71,6 +72,7 @@ div.list_idp {
 	font-weight: normal;
 	font-size: 100%;
 	text-align: left;
+	vertical-align: middle;
 }
 
 /* IdP list favorite: group title */
@@ -80,6 +82,7 @@ div.list_group_favorite {
 	font-weight: bold;
 	font-size: 75%;
 	text-align: left;
+	vertical-align: middle;
 }
 
 /* IdP list favorite: IdP name */
@@ -89,6 +92,7 @@ div.list_idp_favorite {
 	font-weight: normal;
 	font-size: 100%;
 	text-align: left;
+	vertical-align: middle;
 }
 
 /* IdP list hint: group title */
@@ -98,6 +102,7 @@ div.list_group_hint {
         font-weight: bold;
         font-size: 75%;
         text-align: left;
+	vertical-align: middle;
 }
 
 /* IdP list hint: IdP name */
@@ -107,11 +112,22 @@ div.list_idp_hint {
         font-weight: normal;
         font-size: 100%;
         text-align: left;
+	vertical-align: middle;
 }
 
 /* dropdown image */
-#dropdown_img {
+#dropdown_img, #geolocation_img {
 	cursor: pointer;
+}
+
+/* registration */
+#reg_a {
+	font-size: x-small;
+	text-decoration: underline;
+	white-space: nowrap;
+	cursor: pointer;
+	vertical-align:top;
+	margin-left: 10px;
 }
 
 /* clear */
@@ -122,13 +138,21 @@ div.list_idp_hint {
 	cursor: pointer;
 }
 
+/* map */
+#map_a {
+	font-size: 70%;
+	text-decoration: underline;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
 /* clear color: default */
-div.default {
+div.default, a.default{
 	 color: blue;
 }
 
 /* clear color: focus or mouseover */
-div.active {
+div.active, a.active{
 	 color: red;
 }
 

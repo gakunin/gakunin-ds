@@ -14,6 +14,141 @@ For details, see the web site:
 
 --------------------------------------------------------
 */
+var geolocation_flg = true;
+var geolocation_ngflg = false;
+var old_hint_list = [];
+var clientIdo = 0;
+var clientKeido = 0;
+
+function addGeoHintList(){
+  old_hint_list = hint_list.slice(0);
+  if (hintmax > hint_list.length) {
+    navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+  }
+}
+
+function delGeoHintList(){
+  if (!geolocation_ngflg) {
+    hint_list = [];
+    for (var i=0; i<old_hint_list.length; i++){
+      var tmp_hint = old_hint_list[i].slice(0);
+      hint_list.push(tmp_hint);
+    }
+    geolocation_flg = false;
+    clear_a.click();
+  }
+}
+
+function successCallback(position){
+
+  var distance = 0;
+  var geohint_list = [];
+  var geokyori_list = [];
+  
+  clientIdo = position.coords.latitude;
+  clientKeido = position.coords.longitude;
+  document.forms["GeolocationMap"].elements["client"].value = position.coords.latitude + ':' + position.coords.longitude;
+
+  for (var i=0; i<inc_search_list.length; i++){
+    if ( inc_search_list[i][6] != '') {
+      var cur_kyori = 0;
+      var min_kyori = 9999999999;
+      var latlon = [];
+      var geolocations = inc_search_list[i][6].split(";");
+      for (var j=0; j<geolocations.length; j++){
+        latlon = geolocations[j].split(":");
+        cur_kyori = getDistance(clientIdo, clientKeido, latlon[0], latlon[1], 10);
+        if (min_kyori > cur_kyori){
+          min_kyori = cur_kyori;
+        }
+      }
+      if (!geohint_list[min_kyori]) {
+        geohint_list[min_kyori] = [];
+      }
+      var tmp_idp = inc_search_list[i].slice(0);
+      tmp_idp[1] = hint_idp_group;
+      geohint_list[min_kyori].push(tmp_idp);
+      geokyori_list.push(min_kyori);
+    }
+  }
+  geokyori_list.sort();
+
+  var breakFlg = false;
+  for (var i=0; i<geokyori_list.length; i++){
+    for (var j=0; j<geohint_list[geokyori_list[i]].length; j++){
+      for (var k=0; k<old_hint_list.length; k++){
+        if (old_hint_list[k][0] == geohint_list[geokyori_list[i]][j][0]){
+          breakFlg = true;
+          break;
+        }
+      }
+      if (!breakFlg){
+        hint_list.push(geohint_list[geokyori_list[i]][j]);
+        if (hintmax <= hint_list.length) {
+          breakFlg = true;
+          break;
+        }
+      }
+      breakFlg = false;
+    }
+    if (breakFlg) {
+      break;
+    }
+  }
+  geolocation_flg = false;
+  geolocation_ngflg = false;
+  clear_a.click();
+}
+
+function getDistance(lat1, lng1, lat2, lng2, precision) {
+        var distance = 0;
+        if ((Math.abs(lat1 - lat2) < 0.00001) && (Math.abs(lng1 - lng2) < 0.00001)) {
+                distance = 0;
+        } else {
+                lat1 = lat1 * Math.PI / 180;
+                lng1 = lng1 * Math.PI / 180;
+                lat2 = lat2 * Math.PI / 180;
+                lng2 = lng2 * Math.PI / 180;
+
+                var A = 6378140;
+                var B = 6356755;
+                var F = (A - B) / A;
+
+                var P1 = Math.atan((B / A) * Math.tan(lat1));
+                var P2 = Math.atan((B / A) * Math.tan(lat2));
+
+                var X = Math.acos(Math.sin(P1) * Math.sin(P2) + Math.cos(P1) * Math.cos(P2) * Math.cos(lng1 - lng2));
+                var L = (F / 8) * ((Math.sin(X) - X) * Math.pow((Math.sin(P1) + Math.sin(P2)), 2) / Math.pow(Math.cos(X / 2), 2) - (Math.sin(X) - X) * Math.pow(Math.sin(P1) - Math.sin(P2), 2) / Math.pow(Math.sin(X), 2));
+
+                distance = A * (X + L);
+                var decimal_no = Math.pow(10, precision);
+                distance = Math.round(decimal_no * distance / 1) / decimal_no / 1000;
+
+                distance = Math.round(distance * 10);
+                distance = distance / 10;
+        }
+        return distance;
+}
+
+function errorCallback(error) {
+  var err_msg = "";
+  geolocation_ngflg = true;
+  switch(error.code)
+  {
+    case 1:
+      err_msg = "位置情報の利用が許可されていません";
+      break;
+    case 2:
+      err_msg = "デバイスの位置が判定できません";
+      break;
+    case 3:
+      err_msg = "タイムアウトしました";
+      break;
+  }
+  alert(err_msg);
+}
+
+
 function checkDiscofeedList(json, list){
   var newList = new Array();
   var index = 0;
@@ -38,8 +173,23 @@ function checkDiscofeedList(json, list){
 function setDiscofeedList(json){
   if (!json) return;
   inc_search_list = checkDiscofeedList(json, inc_search_list);
+  setPostdataIdpList(inc_search_list);
+
   favorite_list = checkDiscofeedList(json, favorite_list);
   hint_list = checkDiscofeedList(json, hint_list);
+}
+
+function setPostdataIdpList(list){
+  var idplist = '';
+  for (var i = 0, length = list.length; i < length; i++) {
+    if (i != 0){
+      idplist = idplist + '||' + list[i];
+    } else {
+      idplist = list[i];
+    }
+  }
+  document.forms["GeolocationMap"].elements["idplist"].value = idplist;
+
 }
 
 // It adds it to window event.
@@ -53,37 +203,43 @@ function start() {
         favorite_list,            // IdP list (Favorite)
 	hint_list,                // IdP list (Hint IP, Domain)
         "dropdown_img",           // element id of dropdown image
+        "geolocation_img",        // element id of geolocation image
         "wayf_submit_button",     // element id of select button
+        "map_a",                  // element id of map
         "clear_a",                // element id of clear
         initdisp,                 // Initial display of input area
         dispDefault,              // Select IdP display of input area
         dropdown_down,            // URL of deropdown down image 
         dropdown_up,              // URL of deropdown up image
+        geolocation_off,          // URL of geolocation off image
+        geolocation_on,           // URL of geolocation on image
         favorite_idp_group,       // favorite idp list group
 	hint_idp_group,           // hint idp list group
         {dispMax: 500, showgrp: wayf_show_categories}); // option
 }
 
 // DiscoFeed
-if (typeof(wayf_discofeed_url) != "undefined" && wayf_discofeed_url != ''){
-  var urldomain = wayf_discofeed_url.split('/')[2];
-  if(location.hostname != urldomain && window.XDomainRequest){
-    var xdr = new XDomainRequest();
-    xdr.onload = function(){
-        setDiscofeedList(eval("(" + xdr.responseText + ")"));
-    }
-    xdr.open("get", wayf_discofeed_url, false);
-    xdr.send( null );
-  } else {
-    $.ajax({
-      type: 'get',
-      url: wayf_discofeed_url,
-      dataType: 'json',
-      async: false,
-      success: function(json) {
-        setDiscofeedList(json);
+if (typeof(wayf_use_disco_feed) == "undefined" || wayf_use_disco_feed){
+  if (typeof(wayf_discofeed_url) != "undefined" && wayf_discofeed_url != ''){
+    var urldomain = wayf_discofeed_url.split('/')[2];
+    if(location.hostname != urldomain && window.XDomainRequest){
+      var xdr = new XDomainRequest();
+      xdr.onload = function(){
+          setDiscofeedList(eval("(" + xdr.responseText + ")"));
       }
-    });
+      xdr.open("get", wayf_discofeed_url, false);
+      xdr.send( null );
+    } else {
+      $.ajax({
+        type: 'get',
+        url: wayf_discofeed_url,
+        dataType: 'json',
+        async: false,
+        success: function(json) {
+          setDiscofeedList(json);
+        }
+      });
+    }
   }
 }
 
@@ -117,7 +273,8 @@ Suggest.Local = function() {
 };
 Suggest.Local.prototype = {
   initialize: function(input, suggestArea, animateArea, scrollArea, candidateList, favoriteList, hintList,
-                       dnupImgElm, selectElm, clearElm, initDisp, dispDefault, dnImgURL, upImgURL, favoriteIdpGroup, hintIdpGroup) {
+                       dnupImgElm, geolocationImgElm, selectElm, mapElm, clearElm, initDisp, dispDefault, 
+                       dnImgURL, upImgURL, geoOffImgURL, geoOnImgURL, favoriteIdpGroup, hintIdpGroup) {
 
     this.input = this._getElement(input);
     this.suggestArea = this._getElement(suggestArea);
@@ -127,12 +284,16 @@ Suggest.Local.prototype = {
     this.favoriteList = favoriteList;
     this.hintList = hintList;
     this.dnupImgElm = this._getElement(dnupImgElm);
+    this.geolocationImgElm = this._getElement(geolocationImgElm);
     this.selectElm = this._getElement(selectElm);
+    this.mapElm = this._getElement(mapElm);
     this.clearElm = this._getElement(clearElm);
     this.initDisp = initDisp;
     this.dispDefault = dispDefault;
     this.dnImgURL = dnImgURL;
     this.upImgURL = upImgURL;
+    this.geoOffImgURL = geoOffImgURL;
+    this.geoOnImgURL = geoOnImgURL;
     this.favoriteIdpGroup = favoriteIdpGroup;
     this.hintIdpGroup = hintIdpGroup;
     this.setInputText(dispidp);
@@ -141,6 +302,7 @@ Suggest.Local.prototype = {
     this.searchFlg = false;
     this.noMatch = true;
     this.pcFlg = true;
+    this.geoFlg = true;
     this.discofeedFlg = false;
 
     if (this.candidateList.length > 0) {
@@ -154,7 +316,7 @@ Suggest.Local.prototype = {
       }
     }
 
-    if (arguments[16]) this.setOptions(arguments[16]);
+    if (arguments[20]) this.setOptions(arguments[20]);
 
     // reg event
     this._addEvent(this.input, 'focus', this._bind(this.tabFocus));
@@ -166,8 +328,16 @@ Suggest.Local.prototype = {
     }
     this._addEvent(this.input, keyevent, this._bindEvent(this.keyEvent));
     this._addEvent(this.dnupImgElm, keyevent, this._bindEvent(this.keyEvent));
+    this._addEvent(this.geolocationImgElm, keyevent, this._bindEvent(this.keyEvent));
+    this._addEvent(this.mapElm, keyevent, this._bindEvent(this.keyEvent));
     this._addEvent(this.clearElm, keyevent, this._bindEvent(this.keyEvent));
     this._addEvent(this.dnupImgElm, 'click', this._bindEvent(this.elementClick));
+    this._addEvent(this.geolocationImgElm, 'click', this._bindEvent(this.elementClick));
+    this._addEvent(this.mapElm, 'click', this._bindEvent(this.elementClick));
+    this._addEvent(this.mapElm, 'focus', this._bindEvent(this.changeClass, this.classActive));
+    this._addEvent(this.mapElm, 'blur', this._bindEvent(this.changeClass, this.classDefault));
+    this._addEvent(this.mapElm, 'mouseover', this._bindEvent(this.changeClass, this.classActive));
+    this._addEvent(this.mapElm, 'mouseout', this._bindEvent(this.changeClass, this.classDefault));
     this._addEvent(this.clearElm, 'click', this._bindEvent(this.elementClick));
     this._addEvent(this.clearElm, 'focus', this._bindEvent(this.changeClass, this.classActive));
     this._addEvent(this.clearElm, 'blur', this._bindEvent(this.changeClass, this.classDefault));
@@ -180,6 +350,10 @@ Suggest.Local.prototype = {
     this.checkUserAgent();
     this.checkNoMatch(this.oldText);
     this.touchScroll();
+
+    this.geolocationImgElm.src = this.geoOffImgURL;
+
+    setPostdataIdpList(this.candidateList);
 
   },
 
@@ -218,6 +392,9 @@ Suggest.Local.prototype = {
     } else {
       this.pcFlg = true;
     }
+    if (navigator.userAgent.indexOf('MSIE') > 0) {
+      this.geoFlg = false; 
+    }
   },
 
   checkNoMatch: function(text) {
@@ -225,7 +402,7 @@ Suggest.Local.prototype = {
 
     if (text != '') {
       for (var i = 0, length = this.candidateList.length; i < length; i++) {
-        for (var j = 3, length2 = this.candidateList[i].length; j < length2; j++) {
+        for (var j = 10, length2 = this.candidateList[i].length; j < length2; j++) {
           if (text.toLowerCase() == this.candidateList[i][j].toLowerCase()) {
             flg = false;
             break;
@@ -262,10 +439,25 @@ Suggest.Local.prototype = {
       } else {
         this.closeList();
       }
+    } else if (element.id == this.geolocationImgElm.id) {
+      if (this.geolocationImgElm.src == this.geoOffImgURL) {
+        addGeoHintList();
+        this.geolocationImgElm.src = this.geoOnImgURL;
+      } else {
+        delGeoHintList();
+        this.geolocationImgElm.src = this.geoOffImgURL;
+      }
     } else if (element.id == this.clearElm.id) {
       this.setInputText('');
       this.execSearch();
+      if (this.pcFlg) {
+        this.scrollArea.scrollTop = 0;
+      }
+    } else if (element.id == this.mapElm.id) {
+      GeolocationMap.submit();
     }
+
+
   },
 
   changeClass: function(event, classname) {
@@ -314,7 +506,6 @@ Suggest.Local.prototype = {
     }
 
     this.noMatch = true;
-
     if (text != this.oldText || this.searchFlg) {
       hiddenKeyText = '';
       this.searchFlg = false;
@@ -334,8 +525,7 @@ Suggest.Local.prototype = {
     var text = this.getInputText();
 
     if (text == null || text == this.initDisp) return;
-
-    if (!this.discofeedFlg){
+    if (!this.discofeedFlg || !geolocation_flg){
       this.candidateList = inc_search_list;
       this.favoriteList = favorite_list;
       this.hintList = hint_list;
@@ -350,6 +540,7 @@ Suggest.Local.prototype = {
         }
       }
       this.discofeedFlg = true;
+      geolocation_flg = true;
     }
 
     this.hookBeforeSearch(text);
@@ -370,7 +561,7 @@ Suggest.Local.prototype = {
     this.suggestIndexList = [];
 
     for (var i = 0, length = this.candidateList.length; i < length; i++) {
-      for (var j = 3, length2 = this.candidateList[i].length; j < length2; j++) {
+      for (var j = 10, length2 = this.candidateList[i].length; j < length2; j++) {
         if (text == '' ||
              this.isMatch(this.candidateList[i][j], text) != null ||
              this.candidateList[i][1] == this.hintIdpGroup ||
@@ -418,6 +609,14 @@ Suggest.Local.prototype = {
 
     if (!this.pcFlg) {
       $('#' + this.scrollArea.id).flickable('disable');
+
+//flick
+//        $('#' + this.scrollArea.id).flickSimple({
+//                vertical: true,
+//                horizontal: true,
+//                lock: true,
+//		disable: true
+//        });
     }
     var oldGroup = '';
     $('#' + this.suggestArea.id).css('width', '');
@@ -438,33 +637,68 @@ Suggest.Local.prototype = {
         oldGroup = resultList[i][1];
       }
         
-      var element = document.createElement(this.listTagName);
+      var element1 = document.createElement(this.listTagName);
+      var element2 = document.createElement(this.listTagName);
       if (resultList[i][1] == this.hintIdpGroup) {
-        element.className = this.classIdPNmHint;
+        element1.className = this.classIdPNmHint;
+        element2.className = this.classIdPNmHint;
       } else if (resultList[i][1] == this.favoriteIdpGroup) {
-        element.className = this.classIdPNmFavorite;
+        element1.className = this.classIdPNmFavorite;
+        element2.className = this.classIdPNmFavorite;
       } else {
-        element.className = this.classIdPNm;
+        element1.className = this.classIdPNm;
+        element2.className = this.classIdPNm;
       }
+
+      var logo = '';
+      if (resultList[i][3] && resultList[i][3] != '') {
+        var imageSize = '';
+        if (resultList[i][4] && resultList[i][4] != '') {
+          imageSize = 'height="' + resultList[i][4] + '"';
+        } else {
+          imageSize = 'height="15"';
+        }
+        if (resultList[i][5] && resultList[i][5] != '') {
+          imageSize = imageSize + ' width="' + resultList[i][5] + '"';
+        }
+        logo = '&nbsp;<span style="vertical-align: middle; padding:0px; margin:0px;"><img src="' + resultList[i][3] + '" ' + imageSize + ' /></span>';
+      }
+     
       if (this.pcFlg) {
-        element.innerHTML = resultList[i][2];
+        element1.innerHTML = resultList[i][2] + logo;
       } else {
-        element.innerHTML = '<a onclick="">' + resultList[i][2] + '</a>';
+        element1.innerHTML = '<a onclick="">' + resultList[i][2] + '</a>' + logo;
       }
-      this.suggestArea.appendChild(element);
 
-      this._addEvent(element, 'click', this._bindEvent(this.listClick, i));
-      this._addEvent(element, 'mouseover', this._bindEvent(this.listMouseOver, i));
-      this._addEvent(element, 'mouseout', this._bindEvent(this.listMouseOut, i));
+      this.suggestArea.appendChild(element1);
 
-      this.suggestList.push(element);
+      this._addEvent(element1, 'click', this._bindEvent(this.listClick, i));
+      this._addEvent(element1, 'mouseover', this._bindEvent(this.listMouseOver, i));
+      this._addEvent(element1, 'mouseout', this._bindEvent(this.listMouseOut, i));
+
+      var regurl = '';
+      if ((typeof wayf_sp_entityID != 'undefined') && (typeof wayf_return_url != 'undefined') && (resultList[i][7] != '')) {
+        regurl = '新規登録';
+        if (this.pcFlg) {
+          element2.innerHTML = '<div id="reg_a" class="default">' + regurl + '</div>';
+        } else {
+          element2.innerHTML = '<a id="reg_a" class="default" onclick="">' + regurl + '</a>';
+        }
+        //element2.innerHTML = regurl;
+        this.suggestArea.appendChild(element2);
+        this._addEvent(element2, 'click', this._bindEvent(this.listClick2, i));
+        this._addEvent(element2, 'mouseover', this._bindEvent(this.changeClass, this.classActive));
+        this._addEvent(element2, 'mouseout', this._bindEvent(this.changeClass, this.classDefault));
+      }
+
+      this.suggestList.push(element1);
     }
 
     this.scrollArea.scrollTop = 0;
     this.dnupImgElm.src = this.upImgURL;
     $('#' + this.animateArea.id).slideDown(this.dispListTime);
     var scrollbarWidth = 0;
-    if (this.pcFlg) scrollbarWidth = 18;
+    if (this.pcFlg) scrollbarWidth = 28;
     var scrollAreaWidth = Number($('#' + this.scrollArea.id).css('width').replace('px', ''));
     if (scrollAreaWidth > Number($('#' + this.suggestArea.id).css('width').replace('px', ''))) {
       $('#' + this.suggestArea.id).css('width', scrollAreaWidth - scrollbarWidth + 'px');
@@ -473,6 +707,11 @@ Suggest.Local.prototype = {
       $('#' + this.scrollArea.id).flickable('enable');
       $('#' + this.scrollArea.id).flickable('disable');
       $('#' + this.scrollArea.id).flickable('enable');
+
+//flick
+//      $('#' + this.scrollArea.id).flickSimple('disabled', 'false');
+//      $('#' + this.scrollArea.id).flickSimple('disabled', 'true');
+//      $('#' + this.scrollArea.id).flickSimple('disabled', 'false');
     }
   },
 
@@ -483,6 +722,18 @@ Suggest.Local.prototype = {
       friction: 0.7
     });
   },
+
+//flick
+//    $('#' + this.scrollArea.id).flickSimple('disabled', 'false');
+//    $('#' + this.scrollArea.id).flickSimple('duration', '0.2');
+//    $('#' + this.scrollArea.id).flickSimple('ratio', '0.7');
+//
+//    $('#' + this.scrollArea.id).flickSimple({
+//      disabled: false,
+//      duration: 0.2,
+//      ratio: 0.7
+//    });
+//  },
 
   getInputText: function() {
     return this.input.value;
@@ -545,7 +796,6 @@ Suggest.Local.prototype = {
   },
 
   keyEventDispAll: function() {
-
     // init
     this.clearSuggestArea();
 
@@ -635,6 +885,22 @@ Suggest.Local.prototype = {
   },
 
   listClick: function(event, index) {
+
+    this.closeList();
+    this.changeUnactive();
+    this.activePosition = index;
+    this.changeActive(index);
+
+    this.moveEnd();
+
+    if (index != null && index >= 0) {
+      this.selectElm.disabled = false;
+    }
+  },
+
+  listClick2: function(event, index) {
+    var regURL = this.candidateList[this.suggestIndexList[index]][7];
+    location.href = regURL + '?providerId=' + encodeURIComponent(wayf_sp_entityID) + '&target=' + encodeURIComponent(wayf_return_url);
 
     this.closeList();
     this.changeUnactive();
