@@ -1,4 +1,4 @@
-<?php // Copyright (c) 2011, SWITCH - Serving Swiss Universities ?>
+<?php // Copyright (c) 2012, SWITCH - Serving Swiss Universities ?>
 
 <!-- EMBEDDED-WAYF-START -->
 <script type="text/javascript"><!--
@@ -16,6 +16,8 @@
 var wayf_URL = "https://<?php echo $host ?><?php echo $path ?>";
 
 // EntityID of the Service Provider that protects this Resource
+// Value will be overwritten automatically if the page where the Embedded WAYF
+// is displayed is called with a GET argument 'entityID' as automatically set by Shibboleth
 // Examples: "https://econf.switch.ch/shibboleth", "https://dokeos.unige.ch/shibboleth"
 // [Mandatory]
 var wayf_sp_entityID = "https://my-app.switch.ch/shibboleth";
@@ -38,6 +40,8 @@ var wayf_return_url = "https://my-app.switch.ch/aai/index.php?page=show_welcome"
 // Add 2 x (10px + 1px) = 22px for padding and border to get the actual 
 // width of everything that is drawn.
 // [Optional, default: "auto"]
+// Example for fixed size: 
+// var wayf_width  = 250;
 var wayf_width = "auto";
 
 // Height of the embedded WAYF in pixels or "auto"
@@ -45,6 +49,8 @@ var wayf_width = "auto";
 // Add 2 x (10px + 1px) = 22px for padding and border to get the actual 
 // height of everything that is drawn.
 // [Optional, default: "auto"]
+// Example for fixed size: 
+// var wayf_height = 150;
 var wayf_height = "auto";
 
 // Whether to show the checkbox to remember settings for this session
@@ -74,12 +80,12 @@ var wayf_font_size = 12;
 var wayf_font_color = '#000000';
 
 // Border color
-// [Optional, default: #00247D]
-var wayf_border_color = '#00247D';
+// [Optional, default: #848484]
+var wayf_border_color = '#848484';
 
 // Background color
-// [Optional, default: #F4F7F7]
-var wayf_background_color = '#F4F7F7';
+// [Optional, default: #F0F0F0]
+var wayf_background_color = '#F0F0F0';
 
 // Whether to automatically log in user if he has a session/permanent redirect
 // cookie set at central wayf
@@ -125,7 +131,6 @@ var wayf_show_categories =  true;
 // [Optional, commented out by default]
 // var wayf_hide_idps = new Array();
 
-
 //////////////////// ADVANCED SETTINGS ////////////////////
 
 // Use the SAML2/Shibboleth 2 Discovery Service protocol where
@@ -140,6 +145,8 @@ var wayf_show_categories =  true;
 // Session Initiator URL of the Service Provider
 // Examples: "https://econf.switch.ch/Shibboleth.sso/DS", "https://dokeos.unige.ch/Shibboleth.sso/DS"
 // This will implicitely be set to wayf_sp_samlDSURL = wayf_sp_handlerURL + "/DS";
+// or will be set automatically if the page where the Embedded WAYF is placed is called
+// with a 'return' and an 'entityID' GET Arguments
 // [Optional, if wayf_use_discovery_service = true 
 //  or if wayf_additional_idps is not empty, default: commented out]
 // var wayf_sp_samlDSURL = wayf_sp_handlerURL + "/Login";
@@ -216,11 +223,22 @@ var wayf_show_categories =  true;
 //        SAML1SSOurl:"https://other.univ.edu/shibboleth-idp/SSO"},
 // ];
 
-// The list which is the target of incremental search is extracted to IdP acquired by DiscpFeed
-// URL of DiscpFeed is set up
-// var wayf_discofeed_url = "https://point.switch.ch/Shibboleth.sso/DiscoFeed";
+
+// Whether to load Identity Providers from the Discovery Feed provided by
+// the Service Provider. 
+// IdPs that are not listed in the Discovery Feed and that the SP therefore is 
+// not  are able to accept assertions from, are hidden by the Embedded WAYF
+// IdPs that are in the Discovery Feed but are unknown to the SWITCHwayf
+// are added to the wayf_additional_idps. 
+// The list wayf_additional_idps will be sorted alphabetically
+// The SP must have configured the discovery feed handler that generates a 
+// JSON object. Otherwise it won't generate the JSON data containing the IdPs.
 // [Optional, commented out by default]
-// var wayf_discofeed_url = "";
+// var wayf_use_disco_feed = true;
+
+// URL where to load the Discovery Feed from in case wayf_use_disco_feed is true
+// [Optional, commented out by default]
+// var wayf_discofeed_url = "/Shibboleth.sso/DiscoFeed";
 
 // The path of Cookie created by SP is set. As for default configuration, 
 // the path of an access place is set.

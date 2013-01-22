@@ -1,9 +1,9 @@
-<?php // Copyright (c) 2011, SWITCH - Serving Swiss Universities
+<?php // Copyright (c) 2012, SWITCH - Serving Swiss Universities
 
 /*
 ******************************************************************************
 SWITCHwayf
-Version: 1.14.3
+Version: 1.17.1
 Contact:  aai@switch.ch
 Web site: http://www.switch.ch/aai/wayf
 ******************************************************************************
@@ -20,9 +20,13 @@ require_once('incsearch/functions-incsearch.php');
 require_once('languages.php');
 require_once('incsearch/printEmbeddedWAYFScript-incsearch.php');
 
+// Set P3P headers just in case they were not set in Apache already
 header('P3P: CP="NOI CUR DEVa OUR IND COM NAV PRE"');
 
-// Read custom strings
+// Set default config options
+initConfigOptions();
+
+// Read custom locales
 if (file_exists('custom-languages.php')){
 	require_once('custom-languages.php');
 }
@@ -30,7 +34,7 @@ if (file_exists('custom-languages.php')){
 /*------------------------------------------------*/
 // Turn on PHP error reporting
 /*------------------------------------------------*/
-if (isset($developmentMode) && $developmentMode){
+if ($developmentMode){
 	ini_set('error_reporting', E_ALL);
 	ini_set('display_errors', 'On');
 	ini_set('log_erros', 'Off');
@@ -58,7 +62,7 @@ if ($IDPConfigFile == $backupIDPConfigFile){
 }
 
 // Read metadata file if configuration option is set
-if(isset($useSAML2Metadata) && $useSAML2Metadata && function_exists('xml_parser_create')){
+if($useSAML2Metadata && function_exists('xml_parser_create')){
 	require('readMetadata.php');
 }
 
@@ -75,7 +79,7 @@ foreach ($IDProviders as $key => $values){
 
 // This is for back-wards compatibility with very old versions of the WAYF
 if (isset($_GET['getArguments']) && isset($_GET['origin']) && isset($_GET['redirect'])){
-	header('Location: '.$_SERVER['PHP_SELF'].'/redirect/'.$_GET['origin'].'?'.$_GET['getArguments']);
+	redirectTo($_SERVER['PHP_SELF'].'/redirect/'.$_GET['origin'].'?'.$_GET['getArguments']);
 	exit;
 }
 
@@ -93,7 +97,7 @@ if(isValidDSRequest()){
 		exit;
 	}
 	
-	if (isset($enableDSReturnParamCheck) && $enableDSReturnParamCheck){
+	if ($useSAML2Metadata && $enableDSReturnParamCheck){
 		// Check SP
 		if(!isset($SProviders[$_GET['entityID']])){
 			// Show error
@@ -124,14 +128,14 @@ if (isRequestType('deleteSettings')){
 	$cookies = array($redirectCookieName, $redirectStateCookieName, $SAMLDomainCookieName, $SPCookieName);
 	foreach ($cookies as $cookie){ 
 		if (isset($_COOKIE[$cookie])){
-				setcookie($cookie,'',time()-86400, '/', $commonDomain);
+			setcookie($cookie,'',time()-86400, '/', $commonDomain, $cookieSecurity, $cookieSecurity);
 		}
 	}
 	
 	if (isset($_GET['return'])){
-		header('Location: '.$_GET['return']);
+		redirectTo($_GET['return']);
 	} else {
-		header('Location: '.$_SERVER['SCRIPT_NAME']);
+		redirectTo($_SERVER['SCRIPT_NAME']);
 	}
 	exit;
 }
@@ -139,8 +143,8 @@ if (isRequestType('deleteSettings')){
 
 // Delete permanent cookie
 if (isset($_POST['clear_user_idp'])){
-	setcookie ($redirectCookieName, '', time() - 3600, '/', $commonDomain, false);
-	header('Location: ?'.$_SERVER['QUERY_STRING']);
+	setcookie ($redirectCookieName, '', time() - 3600, '/', $commonDomain, $cookieSecurity, $cookieSecurity);
+	redirectTo('?'.$_SERVER['QUERY_STRING']);
 	exit;
 }
 
@@ -159,43 +163,43 @@ if (isset($_COOKIE[$SPCookieName])){
 }
 
 // Set Cookie to remember the selection
-if (isset($_POST['user_idp']) && checkIDP($_POST['user_idp'])){
+if (isset($_POST['user_idp']) && checkIDPAndShowErrors($_POST['user_idp'])){
 	$IDPArray = appendValueToIdPArray($_POST['user_idp'], $IDPArray);
-	setcookie ($SAMLDomainCookieName, getValueFromIdPArray($IDPArray) , time() + (1000*24*3600), '/', $commonDomain, $cookieSecure);
+	setcookie ($SAMLDomainCookieName, getValueFromIdPArray($IDPArray) , time() + ($cookieValidity*24*3600), '/', $commonDomain, $cookieSecurity, $cookieSecurity);
 }
 
 // Set cookie for most recently used Service Provider
 if (isset($_GET['entityID'])){
 	$SPArray = appendValueToIdPArray($_GET['entityID'], array());
-	setcookie ($SPCookieName, getValueFromIdPArray($SPArray), time() + (10*24*3600), '/', $commonDomain, $cookieSecure);
+	setcookie ($SPCookieName, getValueFromIdPArray($SPArray), time() + (10*24*3600), '/', $commonDomain, $cookieSecurity, $cookieSecurity);
 } else if (isset($_GET['providerId'])){
 	$SPArray = appendValueToIdPArray($_GET['providerId'], array());
-	setcookie ($SPCookieName, getValueFromIdPArray($SPArray), time() + (10*24*3600), '/', $commonDomain, $cookieSecure);
+	setcookie ($SPCookieName, getValueFromIdPArray($SPArray), time() + (10*24*3600), '/', $commonDomain, $cookieSecurity, $cookieSecurity);
 }
 
 
 // Set the permanent or session cookie
 if (isset($_POST['permanent']) 
 	&& isset($_POST['user_idp']) 
-	&& checkIDP($_POST['user_idp'])){
+	&& checkIDPAndShowErrors($_POST['user_idp'])){
 	
 	// Set permanent cookie 
 	if (is_numeric($_POST['permanent'])){
-		setcookie ($redirectCookieName, $_POST['user_idp'], time() + ($_POST['permanent']*24*3600), '/', $commonDomain, $cookieSecure);
+		setcookie ($redirectCookieName, $_POST['user_idp'], time() + ($_POST['permanent']*24*3600), '/', $commonDomain, $cookieSecurity, $cookieSecurity);
 	} else {
-		setcookie ($redirectCookieName, $_POST['user_idp'], time() + (100*24*3600), '/', $commonDomain, $cookieSecure);
+		setcookie ($redirectCookieName, $_POST['user_idp'], time() + ($cookieValidity*24*3600), '/', $commonDomain, $cookieSecurity, $cookieSecurity);
 	}
 } elseif (
 	isset($_POST['user_idp']) 
-	&& checkIDP($_POST['user_idp'])
+	&& checkIDPAndShowErrors($_POST['user_idp'])
 	){
 	
 	if (isset($_POST['session'])){
 		// Set redirection cookie and redirection state cookie
-		setcookie ($redirectCookieName, $_POST['user_idp'], null, '/', $commonDomain, $cookieSecure);
-		setcookie ($redirectStateCookieName, 'checked', time() + (100*24*3600), '/', $commonDomain, $cookieSecure);
+		setcookie ($redirectCookieName, $_POST['user_idp'], null, '/', $commonDomain, $cookieSecurity, $cookieSecurity);
+		setcookie ($redirectStateCookieName, 'checked', time() + ($cookieValidity*24*3600), '/', $commonDomain, $cookieSecurity, $cookieSecurity);
 	} else {
-		setcookie ($redirectStateCookieName, 'checked', time() - 3600, '/', $commonDomain, $cookieSecure);
+		setcookie ($redirectStateCookieName, 'checked', time() - 3600, '/', $commonDomain, $cookieSecurity, $cookieSecurity);
 	}
 }
 
@@ -207,7 +211,7 @@ if (isset($_POST['permanent'])
 if (	
 		isValidShibRequest()
 		&& isset($_COOKIE[$redirectCookieName]) 
-		&& checkIDP($_COOKIE[$redirectCookieName], false)
+		&& checkIDP($_COOKIE[$redirectCookieName])
 	){
 	
 	$cookieIdP = $_COOKIE[$redirectCookieName];
@@ -216,16 +220,16 @@ if (
 	if (isset($IDProviders[$cookieIdP]['Type']) && $IDProviders[$cookieIdP]['Type'] == 'wayf'){
 		
 		// Send user to cascaded WAYF with same request
-		header('Location: '.$IDProviders[$cookieIdP]['SSO'].'?'.$_SERVER['QUERY_STRING']);
+		redirectTo($IDProviders[$cookieIdP]['SSO'].'?'.$_SERVER['QUERY_STRING']);
 		
 	} elseif (isValidDSRequest()){
-		header('Location: '.$_GET['return'].'&'.getReturnIDParam().'='.urlencode($cookieIdP));
+		redirectToSP($_GET['return'], $cookieIdP);
 		
 		// Create log entry
 		logAccessEntry('DS', 'Cookie', $_GET['return'], $cookieIdP);
 		
 	} else {
-		header('Location: '.$IDProviders[$cookieIdP]['SSO'].'?'.$_SERVER['QUERY_STRING']);
+		redirectTo($IDProviders[$cookieIdP]['SSO'].'?'.$_SERVER['QUERY_STRING']);
 		
 		// Create log entry
 		logAccessEntry('WAYF', 'Cookie', $_GET['shire'], $cookieIdP);
@@ -242,21 +246,21 @@ if ($useKerberos && isset($_SERVER['REMOTE_USER'])) {
 	// Bingo - we have a winner!
 	$kerberosRealm = substr($user, 1 + strlen($kerberosPrincipal) - strlen(strrchr($kerberosPrincipal, "@")));
 	
-	if ($kerberosIDP = getKerberosRealm($kerberosRealm) && checkIDP($kerberosIDP, false)){
+	if ($kerberosIDP = getKerberosRealm($kerberosRealm) && checkIDP($kerberosIDP)){
 		
 		// Handle cascaded WAYF
 		if (isset($IDProviders[$kerberosIDP]['Type']) && $IDProviders[$kerberosIDP]['Type'] == 'wayf'){
 			
 			// Send user to cascaded WAYF with same request
-			header('Location: '.$IDProviders[$kerberosIDP]['SSO'].'?'.$_SERVER['QUERY_STRING']);
+			redirectTo($IDProviders[$kerberosIDP]['SSO'].'?'.$_SERVER['QUERY_STRING']);
 			
 		} elseif (isValidDSRequest()){
-			header('Location: '.$_GET['return'].'&'.getReturnIDParam().'='.urlencode($kerberosIDP));
+			redirectToSP($_GET['return'], $kerberosIDP);
 			
 			// Create log entry
 			logAccessEntry('DS', 'Kerberos', $_GET['return'], $kerberosIDP);
 		} else {
-			header('Location: '.$IDProviders[$kerberosIDP]['SSO'].'?'.$_SERVER['QUERY_STRING']);
+			redirectTo($IDProviders[$kerberosIDP]['SSO'].'?'.$_SERVER['QUERY_STRING']);
 			
 			// Create log entry
 			logAccessEntry('WAYF', 'Kerberos', $_GET['shire'], $kerberosIDP);
@@ -276,7 +280,7 @@ if ($useKerberos && !isset($kerberosRealm)) {
 			// redirect to the soft link (that points back to this script)
 			// which is	 protected by mod_auth_kerb.
 			$url = $kerberosRedirectURL."?".$_SERVER['QUERY_STRING'];
-			header("Location: $url");
+			redirectTo($url);
 			exit();
 		}
 	}
@@ -294,9 +298,9 @@ if (
 		isset($_GET['shire']) 
 		&& isset($_GET['target'])
 		&& isset($_GET['origin'])
-		&& checkIDP($_GET['origin'])
+		&& checkIDPAndShowErrors($_GET['origin'])
 	){
-	header('Location: '.$IDProviders[$_GET['origin']]['SSO'].'?'.$_SERVER['QUERY_STRING']);
+	redirectTo($IDProviders[$_GET['origin']]['SSO'].'?'.$_SERVER['QUERY_STRING']);
 	
 	// Create log entry
 	logAccessEntry('WAYF', 'Old-Request', $_GET['shire'], $_GET['origin']);
@@ -310,22 +314,22 @@ if ($hintedPathIDP != '-'){
 	if (isset($IDProviders[$hintedPathIDP]['Type']) && $IDProviders[$hintedPathIDP]['Type'] == 'wayf'){
 		
 		// Send user to cascaded WAYF with same request
-		header('Location: '.$IDProviders[$hintedPathIDP]['SSO'].'?'.$_SERVER['QUERY_STRING']);
+		redirectTo($IDProviders[$hintedPathIDP]['SSO'].'?'.$_SERVER['QUERY_STRING']);
 		exit;
 		
-	} elseif ( checkPathInfo('redirect') ){
+	} elseif (isPartOfPathInfo('redirect') ){
 		// Set redirect cookie for this session
-		setcookie ($redirectCookieName, $hintedPathIDP, null, '/', $commonDomain, $cookieSecure);
+		setcookie ($redirectCookieName, $hintedPathIDP, null, '/', $commonDomain, $cookieSecurity, $cookieSecurity);
 		
 		// Determine if DS or WAYF request
 		if (isValidDSRequest()){
-			header('Location: '.$_GET['return'].'&'.getReturnIDParam().'='.urlencode($hintedPathIDP));
+			redirectToSP($_GET['return'], $hintedPathIDP);
 			
 			// Create log entry
 			logAccessEntry('DS', 'Path', $_GET['return'], $hintedPathIDP);
 			
 		} else {
-			header('Location: '.$IDProviders[$hintedPathIDP]['SSO'].'?'.$_SERVER['QUERY_STRING']);
+			redirectTo($IDProviders[$hintedPathIDP]['SSO'].'?'.$_SERVER['QUERY_STRING']);
 			
 			// Create log entry
 			logAccessEntry('WAYF', 'Path', $_GET['shire'], $hintedPathIDP);
@@ -338,7 +342,7 @@ if ($hintedPathIDP != '-'){
 // Redirect using user selection
 if (
 	isset($_POST['user_idp']) 
-	&& checkIDP($_POST['user_idp'])
+	&& checkIDPAndShowErrors($_POST['user_idp'])
 	&& isValidShibRequest()
 	&& !isset($_POST['permanent'])
 	){
@@ -349,10 +353,10 @@ if (
 	if (isset($IDProviders[$selectedIDP]['Type']) && $IDProviders[$selectedIDP]['Type'] == 'wayf'){
 		
 		// Send user to cascaded WAYF with same request
-		header('Location: '.$IDProviders[$selectedIDP]['SSO'].'?'.$_SERVER['QUERY_STRING']);
+		redirectTo($IDProviders[$selectedIDP]['SSO'].'?'.$_SERVER['QUERY_STRING']);
 		
 	} else if (isValidDSRequest()){
-		header('Location: '.$_GET['return'].'&'.getReturnIDParam().'='.urlencode($selectedIDP));
+		redirectToSP($_GET['return'], $selectedIDP);
 		
 		// Create log entry
 		if (isset($_POST['request_type']) && $_POST['request_type'] == 'embedded'){
@@ -362,7 +366,7 @@ if (
 		}
 		
 	} else {
-		header('Location: '.$IDProviders[$selectedIDP]['SSO'].'?'.$_SERVER['QUERY_STRING']);
+		redirectTo($IDProviders[$selectedIDP]['SSO'].'?'.$_SERVER['QUERY_STRING']);
 		
 		// Create log entry
 		if (isset($_POST['request_type']) && $_POST['request_type'] == 'embedded'){
@@ -398,7 +402,7 @@ $hintedIPIDP = getIPAdressHint();
 
 // Reverse DNS lookup hint
 $hintedDomainIDP = '-';
-if (isset($useReverseDNSLookup) && $useReverseDNSLookup){
+if ($useReverseDNSLookup){
 	$hintedDomainIDP = getDomainNameFromURIHint();
 }
 
@@ -445,7 +449,7 @@ if (isset($useMduiHintDomain) && $useMduiHintDomain) {
 // Sort Identity Providers
 /*------------------------------------------------*/
 
-if (isset($useSAML2Metadata) && $useSAML2Metadata){
+if ($useSAML2Metadata){
 	// Only automatically sort if list of Identity Provider is parsed
 	// from metadata instead of being manualy managed
 	sortIdentityProviders($IDProviders);
@@ -470,14 +474,14 @@ if (
 		
 		// Only return user with returnIDParam to SP if IdP could be guessed
 		if ($selectedIDP == '-' || $selectedIDP == ''){
-			header('Location: '.$_GET['return']);
+			redirectTo($_GET['return']);
 			
 			// Create log entry
 			logAccessEntry('DS', 'Passive', $_GET['return'], '-');
 			
 			
 		} else {
-			header('Location: '.$_GET['return'].'&'.getReturnIDParam().'='.urlencode($selectedIDP));
+			redirectToSP($_GET['return'], $selectedIDP);
 			
 			// Create log entry
 			logAccessEntry('DS', 'Passive', $_GET['return'], $selectedIDP);
@@ -507,11 +511,12 @@ if (
 	$invalidstring = preg_replace('/&/',"&\n",$invalidstring);
 	if ($invalidstring == '')
 		$invalidstring = getLocalString('no_arguments');
-	$message = getLocalString('arguments_missing') . '<pre><code>'.htmlentities($invalidstring).'</code></pre></p>
-		<p>'. getLocalString('valid_request_description');
+	$message = getLocalString('arguments_missing') . '<pre>';
+	$message .= '<code>'.htmlentities($invalidstring).'</code></pre></p>';
+	$message .= '<p>'. getLocalString('valid_request_description');
 	printError($message);
 	exit;
-}  elseif(
+} elseif(
 		(!isset($_GET['entityID']) && isset($_GET['return'])) 
 		|| (isset($_GET['entityID']) && !isset($_GET['return']))
 ){
@@ -521,15 +526,16 @@ if (
 	$invalidstring = preg_replace('/&/',"&\n",$invalidstring);
 	if ($invalidstring == '')
 		$invalidstring = getLocalString('no_arguments');
-	$message = getLocalString('arguments_missing') . '<pre><code>'.htmlentities($invalidstring).'</code></pre></p>
-		<p>'. getLocalString('valid_saml2_request_description');
+	$message = getLocalString('arguments_missing') . '</p><pre>';
+	$message .= '<code>'.htmlentities($invalidstring).'</code></pre>';
+	$message .= '<p>'. getLocalString('valid_saml2_request_description');
 	printError($message);
 	exit;
 	
 } elseif(isRequestType('snippet.html')){
 	
 	// Check if this feature is activated at all
-	if (!isset($useEmbeddedWAYF) || !$useEmbeddedWAYF){
+	if (!$useEmbeddedWAYF){
 		echo '// The embedded WAYF feature is deactivated in the configuration';
 		exit;
 	}
@@ -544,7 +550,7 @@ if (
 	header('Content-Type: text/plain');
 	
 	// Check if this feature is activated at all
-	if (!isset($useEmbeddedWAYF) || !$useEmbeddedWAYF){
+	if (!$useEmbeddedWAYF){
 		echo '// The embedded WAYF feature is deactivated in the configuration';
 		exit;
 	}
@@ -557,7 +563,7 @@ if (
 } elseif(isRequestType('embedded-wayf.js')){
 	
 	// Check if this feature is activated at all
-	if (!isset($useEmbeddedWAYF) || !$useEmbeddedWAYF){
+	if (!$useEmbeddedWAYF){
 		echo '// The embedded WAYF feature is deactivated in the configuration';
 		exit;
 	}
@@ -567,60 +573,68 @@ if (
 	
 	$safekind = 0;
 	
-	// Is Embedded WAYF data protection feature enabled?
-	if (
-		   isset($useEmbeddedWAYFPrivacyProtection) 
-		&& $useEmbeddedWAYFPrivacyProtection == true
-		){
+	// If the data protection feature is enabled, don't preselect the IdP
+	if ($useEmbeddedWAYFPrivacyProtection){
 		$selectedIDP = '-';
 		$safekind = 3;
-	} else {
-		if (isset($useRefererForPrivacyProtection) && $useRefererForPrivacyProtection == true){
-			// Referer Check
-			if (isset($_SERVER["HTTP_REFERER"]) && ($_SERVER["HTTP_REFERER"] != '')){
-				$referer_url = parse_url($_SERVER["HTTP_REFERER"]);
-				$safekind = 1;
-				foreach ($SProviders as $key => $SProvider){
-					// SP EntityID
-					$sp_url = parse_url($key);
-					if ($referer_url['host'] == $sp_url['host']){
-						$safekind = 0;
+	}
+	
+	// If the referer check is enabled but fails, don't preselect the IdP
+	if (
+		   !$useEmbeddedWAYFPrivacyProtection
+		&&  $useEmbeddedWAYFRefererForPrivacyProtection
+		){
+		// Referer Check
+		if (
+			   isset($_SERVER["HTTP_REFERER"])
+			&& $_SERVER["HTTP_REFERER"] != ''
+			&& isset($SProviders)
+			&& is_array($SProviders)
+			){
+			$refererHostname = getHostNameFromURI($_SERVER["HTTP_REFERER"]);
+			$safekind = 1;
+			foreach ($SProviders as $key => $SProvider){
+				// Check referer against entityID
+				$spHostname = getHostNameFromURI($key);
+				if ($refererHostname == $spHostname){
+					$safekind = 0;
+					break;
+				}
+				
+				// Check referer against Discovery Response URL(DSURL)
+				if (isset($SProvider['DSURL'])) {
+					foreach ($SProvider['DSURL'] as $url){
+						$spHostname = getHostNameFromURI($url);
+						if ($refererHostname == $spHostname){
+							$safekind = 0;
+							break;
+						}
+					}
+					if ($safekind == 0) {
 						break;
 					}
-					// Discovery Response URL(DSURL)
-					if (isset($SProvider['DSURL'])) {
-						foreach ($SProvider['DSURL'] as $url){
-							$sp_url = parse_url($url);
-							if ($referer_url['host'] == $sp_url['host']){
-								$safekind = 0;
-								break;
-							}
-						}
-						if ($safekind == 0) {
+				}
+				
+				// Check referer against Assertion Consumer Service URL(ACURL)
+				if (isset($SProvider['ACURL'])) {
+					foreach ($SProvider['ACURL'] as $url){
+						$spHostname = getHostNameFromURI($url);
+						if ($refererHostname == $spHostname){
+							$safekind = 0;
 							break;
 						}
 					}
-					// Assertion Consumer Service URL(ACURL)
-					if (isset($SProvider['ACURL'])) {
-						foreach ($SProvider['ACURL'] as $url){
-							$sp_url = parse_url($url);
-							if ($referer_url['host'] == $sp_url['host']){
-								$safekind = 0;
-								break;
-							}
-						}
-						if ($safekind == 0) {
-							break;
-						}
+					if ($safekind == 0) {
+						break;
 					}
 				}
-			} else {
-				$safekind = 2;
 			}
+		} else {
+			$safekind = 2;
+		}
 			
-			if ($safekind > 0){
-				$selectedIDP = '-';
-			}
+		if ($safekind > 0){
+			$selectedIDP = '-';
 		}
 	}
 
@@ -641,7 +655,7 @@ if (
 	}
 	
 	// Add guessed Identity Provider
-	if (isset($exportPreselectedIdP) && $exportPreselectedIdP){
+	if ($exportPreselectedIdP){
 		$IDProviders['preselectedIDP'] = $selectedIDP;
 	}
 	
@@ -658,7 +672,7 @@ if (
 	header('Content-type: text/javascript;charset="utf-8"');
 	
 	// Add guessed Identity Provider
-	if (isset($exportPreselectedIdP) && $exportPreselectedIdP){
+	if ($exportPreselectedIdP){
 		$IDProviders['preselectedIDP'] = $selectedIDP;
 	}
 	
@@ -677,7 +691,7 @@ if (
 	}
 	
 	// Add guessed Identity Provider
-	if (isset($exportPreselectedIdP) && $exportPreselectedIdP){
+	if ($exportPreselectedIdP){
 		$IDProviders['preselectedIDP'] = $selectedIDP;
 	}
 	
@@ -692,7 +706,7 @@ if (
 	header('Content-Type: text/plain');
 	
 	// Add guessed Identity Provider
-	if (isset($exportPreselectedIdP) && $exportPreselectedIdP){
+	if ($exportPreselectedIdP){
 		$IDProviders['preselectedIDP'] = $selectedIDP;
 	}
 	
@@ -709,7 +723,7 @@ if (
 	header('Content-Type: text/plain');
 	
 	// Add guessed Identity Provider
-	if (isset($exportPreselectedIdP) && $exportPreselectedIdP){
+	if ($exportPreselectedIdP){
 		$IDProviders['preselectedIDP'] = $selectedIDP;
 	}
 	
@@ -721,8 +735,11 @@ if (
 	exit;
 	
 } elseif (
-			(isset($_POST['user_idp']) && checkIDP($_POST['user_idp']))
-			|| (isset($_COOKIE[$redirectCookieName]) && checkIDP($_COOKIE[$redirectCookieName], false))
+			(isset($_POST['user_idp']) && checkIDPAndShowErrors($_POST['user_idp']))
+			|| (
+				   isset($_COOKIE[$redirectCookieName]) 
+				&& checkIDP($_COOKIE[$redirectCookieName])
+				)
 		){
 	
 	// Show confirmatin notice

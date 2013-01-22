@@ -1,8 +1,110 @@
-<?php // Copyright (c) 2011, SWITCH - Serving Swiss Universities
+<?php // Copyright (c) 2012, SWITCH - Serving Swiss Universities
 
 /******************************************************************************/
 // Commonly used functions for the WAYF
 /******************************************************************************/
+
+// Initilizes default configuration options if they were not set already
+function initConfigOptions(){
+	global $defaultLanguage;
+	global $commonDomain;
+	global $cookieNamePrefix;
+	global $redirectCookieName;
+	global $redirectStateCookieName;
+	global $SAMLDomainCookieName;
+	global $SPCookieName;
+	global $cookieSecurity;
+	global $cookieValidity;
+	global $showPermanentSetting;
+	global $useImprovedDropDownList;
+	global $useSAML2Metadata;
+	global $SAML2MetaOverLocalConf;
+	global $includeLocalConfEntries;
+	global $enableDSReturnParamCheck;
+	global $useACURLsForReturnParamCheck;
+	global $useKerberos;
+	global $useReverseDNSLookup;
+	global $useEmbeddedWAYF;
+	global $useEmbeddedWAYFPrivacyProtection;
+	global $useEmbeddedWAYFRefererForPrivacyProtection;
+	global $useLogging;
+	global $exportPreselectedIdP;
+	global $federationName;
+	global $federationURL;
+	global $imageURL;
+	global $javascriptURL;
+	global $cssURL;
+	global $logoURL;
+	global $smallLogoURL;
+	global $IDPConfigFile;
+	global $backupIDPConfigFile;
+	global $metadataFile;
+	global $metadataIDPFile;
+	global $metadataSPFile;
+	global $metadataLockFile;
+	global $WAYFLogFile;
+	global $kerberosRedirectURL;
+	global $developmentMode;
+	
+	// Set independet default configuration options
+	$defaults = array();
+	$defaults['defaultLanguage'] = 'en'; 
+	$defaults['commonDomain'] = '.switch.ch';
+	$defaults['cookieNamePrefix'] = '';
+	$defaults['cookieSecurity'] = false;
+	$defaults['cookieValidity'] = 100;
+	$defaults['showPermanentSetting'] = false;
+	$defaults['useImprovedDropDownList'] = true;
+	$defaults['useSAML2Metadata'] = true; 
+	$defaults['SAML2MetaOverLocalConf'] = false;
+	$defaults['includeLocalConfEntries'] = true;
+	$defaults['enableDSReturnParamCheck'] = true;
+	$defaults['useACURLsForReturnParamCheck'] = false;
+	$defaults['useKerberos'] = false;
+	$defaults['useReverseDNSLookup'] = false;
+	$defaults['useEmbeddedWAYF'] = false;
+	$defaults['useEmbeddedWAYFPrivacyProtection'] = false;
+	$defaults['useEmbeddedWAYFRefererForPrivacyProtection'] = false;
+	$defaults['useLogging'] = true; 
+	$defaults['exportPreselectedIdP'] = false;
+	$defaults['federationName'] = 'SWITCHaai Federation';
+	$defaults['federationURL'] = 'http://www.switch.ch/aai/';
+	$defaults['imageURL'] = 'https://'.$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']).'/images';
+	$defaults['javascriptURL'] = 'https://'.$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']).'/js';
+	$defaults['cssURL'] = 'https://'.$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']).'/css';
+	$defaults['IDPConfigFile'] = 'IDProvider.conf.php';
+	$defaults['backupIDPConfigFile'] = 'IDProvider.conf.php';
+	$defaults['metadataFile'] = '/etc/shibboleth/metadata.switchaai.xml';
+	$defaults['metadataIDPFile'] = 'IDProvider.metadata.php';
+	$defaults['metadataSPFile'] = 'SProvider.metadata.php';
+	$defaults['metadataLockFile'] = (substr($_SERVER['PATH'],0,1) == '/') ? '/tmp/wayf_metadata.lock' : 'C:\windows\TEMP';
+	$defaults['WAYFLogFile'] = '/var/log/apache2/wayf.log'; 
+	$defaults['kerberosRedirectURL'] = dirname($_SERVER['SCRIPT_NAME']).'kerberosRedirect.php';
+	$defaults['developmentMode'] = false;
+	
+	// Initialize independent defaults
+	foreach($defaults as $key => $value){
+		if (!isset($$key)){
+			$$key = $value;
+		}
+	}
+	
+	// Set dependent default configuration options
+	$defaults = array();
+	$defaults['redirectCookieName'] = $cookieNamePrefix.'_redirect_user_idp';
+	$defaults['redirectStateCookieName'] = $cookieNamePrefix.'_redirection_state';
+	$defaults['SAMLDomainCookieName'] = $cookieNamePrefix.'_saml_idp';
+	$defaults['SPCookieName'] = $cookieNamePrefix.'_saml_sp';
+	$defaults['logoURL'] = $imageURL.'/switch-aai-transparent.png'; 
+	$defaults['smallLogoURL'] = $imageURL.'/switch-aai-transparent-small.png';
+	
+	// Initialize dependent defaults
+	foreach($defaults as $key => $value){
+		if (!isset($$key)){
+			$$key = $value;
+		}
+	}
+}
 
 /******************************************************************************/
 // Generates an array of IDPs using the cookie value
@@ -71,31 +173,41 @@ function checkConfig($IDPConfigFile, $backupIDPConfigFile){
 }
 
 /******************************************************************************/
-// Checks if an IDP exists and prints an error if it doesnt
-function checkIDP($IDP, $showError = true){
+// Checks if an IDP exists and returns true if it does, false otherwise
+function checkIDP($IDP){
 	
-	global $IDProviders, $redirectCookieName;
+	global $IDProviders;
 	
 	if (isset($IDProviders[$IDP])){
 		return true;
-	} elseif ($IDP == '-' || $IDP == ''){ 
-		return false;
-	} elseif(!$showError){
-		return false;
 	} else {
-		$message = sprintf(getLocalString('invalid_user_idp'), htmlentities($IDP))."</p><p>\n<tt>";
-					foreach ($IDProviders as $key => $value){
-						if (isset($value['SSO'])){
-							$message .= $key."<br>\n";
-						}
-					}
-		$message .= "</tt>\n";
-		
-		printError($message);
-		exit;
-	}
+		return false;
+	} 
 }
 
+/******************************************************************************/
+// Checks if an IDP exists and returns true if it exists and prints an error 
+// if it doesnt
+function checkIDPAndShowErrors($IDP){
+	
+	global $IDProviders;
+	
+	if (checkIDP($IDP)){
+		return true;
+	}
+	
+	// Otherwise show an error
+	$message = sprintf(getLocalString('invalid_user_idp'), htmlentities($IDP))."</p><p>\n<tt>";
+	foreach ($IDProviders as $key => $value){
+		if (isset($value['SSO'])){
+			$message .= $key."<br>\n";
+		}
+	}
+	$message .= "</tt>\n";
+	
+	printError($message);
+	exit;
+}
 
 
 /******************************************************************************/
@@ -188,25 +300,28 @@ function getDomainNameFromURIHint(){
 	
 	global $IDProviders;
 	
-	$hostname = gethostbyaddr($_SERVER['REMOTE_ADDR']);
-	if ($hostname == $_SERVER['REMOTE_ADDR']){
+	$clientHostname = gethostbyaddr($_SERVER['REMOTE_ADDR']);
+	if ($clientHostname == $_SERVER['REMOTE_ADDR']){
 		return '-';
 	}
 	
-	// Do we still have something
-	$domainname = getDomainNameFromURI($hostname);
-	if ($domainname != ''){
-		// Find a matching IdP SSO, must be matching the IdP urn 
-		// or at least the last part of the urn
-		foreach ($IDProviders as $key => $value){
-			if (preg_match('/'.$domainname.'$/', $key)){
-				return $key;
-			}
+	// Get domain name from client host name
+	$clientDomainName = getDomainNameFromURI($clientHostname);
+	if ($clientDomainName == ''){
+		return '-';
+	}
+	
+	// Return first matching IdP entityID that contains the client domain name
+	foreach ($IDProviders as $key => $value){
+		if (
+			   preg_match('/^http.+'.$clientDomainName.'/', $key)
+			|| preg_match('/^urn:.+'.$clientDomainName.'$/', $key)){ 
+			return $key;
 		}
-	} else {
-		return '-';
 	}
 	
+	// No matching entityID was found
+	return '-';
 }
 
 /******************************************************************************/
@@ -327,7 +442,7 @@ function getIdPPathInfoHint(){
 				isset($value['SSO']) 
 				&& !empty($value['SSO'])
 				&& $value['Type'] != 'wayf'
-				&& checkPathInfo(getHostNameFromURI($key))
+				&& isPartOfPathInfo(getHostNameFromURI($key))
 				){
 			return $key;
 		}
@@ -340,13 +455,29 @@ function getIdPPathInfoHint(){
 				isset($value['SSO']) 
 				&& !empty($value['SSO'])
 				&& $value['Type'] != 'wayf'
-				&& checkPathInfo(getDomainNameFromURI($key))
+				&& isPartOfPathInfo(getDomainNameFromURI($key))
 				){
 			return $key;
 		}
 	}
 	
 	return '-';
+}
+
+/******************************************************************************/
+// Parses the Kerbores realm out of the string and returns it
+
+function composeOptionTitle($IdPValues){
+	$title = '';
+	foreach($IdPValues as $key => $value){
+		if (is_array($value) && isset($value['Name'])){
+			$title .= ' '.$value['Name'];
+		} elseif (is_array($value) && isset($value['Keywords'])) {
+			$title .= ' '.$value['Keywords'];
+		}
+	}
+	
+	return $title;
 }
 
 /******************************************************************************/
@@ -365,18 +496,6 @@ function getKerberosRealm($string){
 	return '-';
 }
 
-/******************************************************************************/
-// Tries to match an IP to a network mask
-function getNetMatch($network, $ip) {
-	$ip_arr = explode('/', $network);
-	$network_long = ip2long($ip_arr[0]);
-	
-	$x = ip2long($ip_arr[1]);
-	$mask = long2ip($x) == $ip_arr[1] ? $x : 0xffffffff << (32 - $ip_arr[1]);
-	$ip_long = ip2long($ip);
-	
-	return ($ip_long & $mask) == ($network_long & $mask);
-}
 
 /******************************************************************************/
 // Determines the IdP according to the IP address if possible
@@ -388,13 +507,85 @@ function getIPAdressHint() {
 			$clientIP = $_SERVER["REMOTE_ADDR"];
 			
 			foreach( $idp["IP"] as $network ) {
-				if (getNetMatch($network, $clientIP)) {
+				if (isIPinCIDRBlock($network, $clientIP)) {
 					return $name;
 				}
 			}
 		}
 	}
 	return '-';
+}
+
+/******************************************************************************/
+// Returns true if IP is in IPv4/IPv6 CIDR range
+// and returns false otherwise
+function isIPinCIDRBlock($cidr, $ip) {
+	
+	// Split CIDR notation
+	list ($net, $mask) = preg_split ("|/|", $cidr);
+	
+	// Convert to binary string value of 1s and 0s
+	$netAsBinary = convertIPtoBinaryForm($net);
+	$ipAsBinary =  convertIPtoBinaryForm($ip);
+	
+	// Return false if netmask and ip are using different protocols
+	if (strlen($netAsBinary) != strlen($ipAsBinary)){
+		return false;
+	}
+	
+	// Compare the first $mask bits
+	for($i = 0; $i < $mask; $i++){
+	
+		// Return false if bits don't match
+		if ($netAsBinary[$i] != $ipAsBinary[$i]){
+			return false;
+		}
+	}
+	
+	// If we got here, ip matches net
+	return true;
+	
+}
+
+/******************************************************************************/
+// Converts IP in human readable format to binary string
+function convertIPtoBinaryForm($ip){
+	
+	//  Handle IPv4 IP
+	if(filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false){
+		return base_convert(ip2long($ip),10,2);
+	}
+	
+	// Return false if IP is neither IPv4 nor a IPv6 IP
+	if(filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false){
+		return false;
+	}
+	
+	// Convert IP to binary structure and return false if this fails
+	if(($ipAsBinStructure = inet_pton($ip)) === false) {
+		return false;
+	}
+	
+	
+	$numOfBytes = 16; 
+	$ipAsBinaryString = '';
+	
+	// Convert IP to binary string
+	while ($numOfBytes > 0){
+		// Convert current byte to decimal number
+		$currentByte = ord($ipAsBinStructure[$numOfBytes - 1]);
+		
+		// Convert currenty byte to string of 1 and 0
+		$currentByteAsBinary = sprintf("%08b", $currentByte);
+		
+		// Prepend to rest of IP in binary string
+		$ipAsBinaryString = $currentByteAsBinary.$ipAsBinaryString;
+		
+		// Decrease byte counter
+		$numOfBytes--;
+	}
+	
+	return $ipAsBinaryString;
 }
 
 /******************************************************************************/
@@ -408,7 +599,7 @@ function verifyReturnURL($entityID, $returnURL) {
 	}
 	
 	// If fall back check is enabled, check return param
-	if (isset($useACURLsForReturnParamCheck) && $useACURLsForReturnParamCheck){
+	if ($useACURLsForReturnParamCheck){
 		
 		// Return true if no assertion consumer URL is defined to check against
 		// Should never happend
@@ -459,15 +650,50 @@ function isValidShib1Request(){
 }
 
 /******************************************************************************/
-// Returns true if valid Directory Service request
+// Returns true if request is a valid Directory Service request
 function isValidDSRequest(){
-	if (isset($_GET['entityID']) && isset($_GET['return'])){
-		return true;
-	} else {
+	global $SProviders;
+	
+	// If entityID is not present, request is invalid
+	if (!isset($_GET['entityID'])){
 		return false;
 	}
+	
+	// If entityID and return parameters are present, request is valid
+	if (isset($_GET['return'])){
+		return true;
+	}
+	
+	// If no return parameter and no Discovery Service endpoint is available 
+	// for SP, request is invalid
+	if (!isset($SProviders[$_GET['entityID']]['DSURL'])){
+		return false;
+	}
+	
+	if (count($SProviders[$_GET['entityID']]['DSURL']) < 1){
+		return false;
+	}
+	
+	// EntityID is available and there is at least one DiscoveryService 
+	// endpoint defined. Therefore, the request is valid
+	return true;
 }
 
+/******************************************************************************/
+// Sets the Location header to redirect the user's web browser
+function redirectTo($url){
+	header('Location: '.$url);
+}
+
+/******************************************************************************/
+// Sets the Location that is used for redirect the web browser back to the SP
+function redirectToSP($url, $IdP){
+	if (preg_match('/\?/', $url) > 0){
+		redirectTo($url.'&'.getReturnIDParam().'='.urlencode($IdP));
+	} else {
+		redirectTo($url.'?'.getReturnIDParam().'='.urlencode($IdP));
+	}
+}
 /******************************************************************************/
 // Returns true if valid Directory Service request
 function logAccessEntry($protocol, $type, $sp, $idp){
@@ -509,12 +735,12 @@ function logAccessEntry($protocol, $type, $sp, $idp){
 // Returns true if PATH info indicates a request of type $type
 function isRequestType($type){
 	// Make sure the type is checked at end of path info
-	return checkPathInfo($type.'$');
+	return isPartOfPathInfo($type.'$');
 }
 
 /******************************************************************************/
 // Checks for substrings in Path Info and returns true if match was found
-function checkPathInfo($needle){
+function isPartOfPathInfo($needle){
 	if (
 		isset($_SERVER['PATH_INFO']) 
 		&& !empty($_SERVER['PATH_INFO'])
@@ -531,7 +757,7 @@ function checkPathInfo($needle){
 function convertToShibDSStructure($IDProviders){
 	global $federationName;
 	
-	$ShibDSIDProviders['identityProviders'] = array();
+	$ShibDSIDProviders = array();
 	
 	foreach ($IDProviders as $key => $value){
 		
@@ -547,13 +773,9 @@ function convertToShibDSStructure($IDProviders){
 		// Init and fill IdP data
 		$identityProvider = array();
 		$identityProvider['entityID'] = $key;
-		$identityProvider['shibSSOEndpoint'] =  $value['SSO'];
-		$identityProvider['displayNames'][] = array('lang' => 'en', 'name' => $value['Name']);
-		$identityProvider['attributes'][] = array(
-		'name' => 'type', 'value' => $value['Type']
-		);
+		$identityProvider['DisplayNames'][] = array('lang' => 'en', 'value' => $value['Name']);
 		
-		// Add displayNames in other languages
+		// Add DisplayNames in other languages
 		foreach($value as $lang => $name){
 			if(
 				   $lang == 'Name'
@@ -567,28 +789,12 @@ function convertToShibDSStructure($IDProviders){
 			}
 			
 			if (isset($name['Name'])){
-				$identityProvider['displayNames'][] = array('lang' => $lang, 'name' => $name['Name']);
+				$identityProvider['DisplayNames'][] = array('lang' => $lang, 'value' => $name['Name']);
 			}
 		}
 		
-		
-		// Add kerberos realm
-		if(isset($value['Realm'])){
-			$identityProvider['attributes'][] = array(
-		'name' => 'kerberosRealm', 'value' => $value['Realm']
-		);
-		}
-		
-		
-		// Add IP ranges
-		if(isset($value['IP'])){
-			$identityProvider['attributes'][] = array(
-		'name' => 'IP', 'value' => $value['IP']
-		);
-		}
-		
 		// Add data to ShibDSIDProviders
-		$ShibDSIDProviders['identityProviders'][] = $identityProvider;
+		$ShibDSIDProviders[] = $identityProvider;
 	}
 	
 	return $ShibDSIDProviders;
@@ -680,4 +886,52 @@ function sortUsingTypeIndexAndName($a, $b){
 	}
 }
 
+
+/******************************************************************************/
+// Returns true if the referer of the current request is matching an assertion
+// consumer or discovery service URL of a Service Provider
+function isRequestRefererMatchingSPHost(){
+	
+	global $SProviders;
+	
+	// If referer is not available return false
+	if (!isset($_SERVER["HTTP_REFERER"]) || $_SERVER["HTTP_REFERER"] == ''){
+		return false;
+	}
+	
+	if (!isset($SProviders) || !is_array($SProviders)){
+		return false;
+	}
+	
+	$refererHostname = getHostNameFromURI($_SERVER["HTTP_REFERER"]);
+	foreach ($SProviders as $key => $SProvider){
+		// Check referer against entityID
+		$spHostname = getHostNameFromURI($key);
+		if ($refererHostname == $spHostname){
+			return true;
+		}
+		
+		// Check referer against Discovery Response URL(DSURL)
+		if (isset($SProvider['DSURL'])) {
+			foreach ($SProvider['DSURL'] as $url){
+				$spHostname = getHostNameFromURI($url);
+				if ($refererHostname == $spHostname){
+					return true;
+				}
+			}
+		}
+		
+		// Check referer against Assertion Consumer Service URL(ACURL)
+		if (isset($SProvider['ACURL'])) {
+			foreach ($SProvider['ACURL'] as $url){
+				$spHostname = getHostNameFromURI($url);
+				if ($refererHostname == $spHostname){
+					return true;
+				}
+			}
+		}
+	}
+	
+	return false;
+}
 ?>
