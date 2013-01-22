@@ -1,4 +1,4 @@
-<?php // Copyright (c) 2011, SWITCH - Serving Swiss Universities
+<?php // Copyright (c) 2012, SWITCH - Serving Swiss Universities
 
 /*
 ******************************************************************************
@@ -10,21 +10,16 @@ if(!isset($_SERVER['REMOTE_ADDR']) || basename($_SERVER['SCRIPT_NAME']) == 'temp
 	exit('No direct script access allowed');
 }
 
-// Config validation
-if(!isset($smallLogoURL) or empty($smallLogoURL)) $smallLogoURL = $logoURL;
-if(!isset($federationName)) $federationName = '';
-if(!isset($federationURL)) $federationURL = '';
-
 /*------------------------------------------------*/
 // Functions containing HTML code
 /*------------------------------------------------*/
 
 function printHeader(){
 
-	global $langStrings, $language, $imageURL, $logoURL;
+	global $langStrings, $language, $imageURL, $javascriptURL, $cssURL, $logoURL, $useImprovedDropDownList;
 	global $selectedIDP, $language, $IDProviders;
 	global $useAutocompleteIdP, $selIdP, $incsearchCssURL, $incsearchLibURL, $dropdownUpURL, $dropdownDnURL, $ajaxLibURL, $ajaxFlickLibURL;
-	global $mduiHintIDPs;
+	global $mduiHintIDPs, $geolocationOffURL, $geolocationOnURL, $useMduiHintMax;
 	
 	// Check if custom header template exists
 	if(file_exists('custom-header.php')){
@@ -49,15 +44,13 @@ function printHeader(){
 function printWAYF(){
 	
 	global $selectedIDP, $language, $IDProviders, $redirectCookieName, $imageURL, $redirectStateCookieName, $showPermanentSetting;
-	global $useAutocompleteIdP, $selIdP;
+	global $useAutocompleteIdP, $selIdP, $geolocationMapURL;
 	
 	if (!isset($showPermanentSetting)){
 		$showPermanentSetting = false;
 	}
 	$promptMessage =  '<strong>'.getLocalString('make_selection').'</strong>';
-	if (isset($_GET['target']) && preg_match('|:/|', $_GET['target'])){
-		$promptMessage = sprintf(getLocalString('access_target'), $_GET['target'], $_GET['target']);
-	} else if (isset($_GET['return'])){
+	if (isset($_GET['return'])){
 		$promptMessage =  sprintf(getLocalString('access_host'), getHostNameFromURI($_GET['return']));
 	} else if (isset($_GET['entityID'])){
 		$promptMessage =  sprintf(getLocalString('access_host'), getHostNameFromURI($_GET['entityID']));
@@ -113,20 +106,24 @@ function printDropDownList($IDProviders, $selectedIDP = ''){
 	
 	$counter = 0;
 	$optgroup = '';
-	foreach ($IDProviders as $key => $value){
+	foreach ($IDProviders as $key => $values){
 		
 		// Get IdP Name
-		if (isset($value[$language]['Name'])){
-			$IdPName = $value[$language]['Name'];
+		if (isset($values[$language]['Name'])){
+			$IdPName = $values[$language]['Name'];
 		} else {
-			$IdPName = $value['Name'];
+			$IdPName = $values['Name'];
 		}
 		
+		// Add additional information as title to the entry
+		$title = getDomainNameFromURI($key);
+		$title .= composeOptionTitle($values);
+		
 		// Figure out if entry is valid or a category
-		if (!isset($value['SSO'])){
+		if (!isset($values['SSO'])){
 			
 			// Check if entry is a category
-			if (isset($value['Type']) && $value['Type'] == 'category'){
+			if (isset($values['Type']) && $values['Type'] == 'category'){
 				if (!empty($optgroup)){
 					echo '
 	</optgroup>';
@@ -147,8 +144,9 @@ function printDropDownList($IDProviders, $selectedIDP = ''){
 		} else {
 			$selected = '';
 		}
+		
 		echo '
-		<option value="'.$key.'"'.$selected.'>'.$IdPName.'</option>';
+		<option title="'.$title.'" value="'.$key.'"'.$selected.'>'.$IdPName.'</option>';
 		
 		$counter++;
 	}
@@ -173,13 +171,13 @@ function printNotice(){
 	$permanentUserIdPName = '';
 	if (
 			isset($_POST['user_idp']) 
-			&& checkIDP($_POST['user_idp'])
+			&& checkIDPAndShowErrors($_POST['user_idp'])
 		){
 		$hiddenUserIdPInput = '<input type="hidden" name="user_idp" value="'.$_POST['user_idp'].'">';
 		$permanentUserIdPName = $IDProviders[$_POST['user_idp']]['Name'];
 	} elseif (
 			isset($_COOKIE[$redirectCookieName]) 
-			&& checkIDP($_COOKIE[$redirectCookieName])
+			&& checkIDPAndShowErrors($_COOKIE[$redirectCookieName])
 		){
 		$hiddenUserIdPInput = '<input type="hidden" name="user_idp" value="'.$_COOKIE[$redirectCookieName].'">';
 		$permanentUserIdPName = $IDProviders[$_COOKIE[$redirectCookieName]]['Name'];
@@ -195,8 +193,9 @@ function printNotice(){
 }
 
 /******************************************************************************/
-
+// Prints end of HTML page
 function printFooter(){
+	global $useAutocompleteIdP;
 	
 	// Check if footer template exists
 	if(file_exists('custom-footer.php')){
@@ -208,7 +207,6 @@ function printFooter(){
 }
 
 /******************************************************************************/
-
 // Prints an error message
 function printError($message){
 	
@@ -230,11 +228,11 @@ function printError($message){
 }
 
 /******************************************************************************/
-
+// Prints the JavaScript that renders the Embedded WAYF
 function printEmbeddedWAYFScript(){
 
 	global $langStrings, $language, $imageURL, $logoURL, $smallLogoURL, $federationURL;
-	global $selectedIDP, $IDProviders, $redirectCookieName, $redirectStateCookieName, $federationName, $cookieSecure;
+	global $selectedIDP, $IDProviders, $redirectCookieName, $redirectStateCookieName, $federationName, $cookieSecurity;
 	
 	// Get some values that are used in the script
 	$loginWithString = getLocalString('login_with');
@@ -324,6 +322,8 @@ var wayf_force_remember_for_session;
 var wayf_additional_idps;
 var wayf_sp_samlDSURL;
 var wayf_sp_samlACURL;
+var wayf_use_disco_feed;
+var wayf_discofeed_url;
 var wayf_html = "";
 var wayf_idps = { {$JSONIdPList} };
 
@@ -336,8 +336,6 @@ function submitForm(){
 	}
 	
 	// User chose non-federation IdP
-	// TODO: FIX windows error
-	// 4 >= (8 - 3/4)
 	if (
 		wayf_additional_idps.length > 0 
 		&& document.IdPList.user_idp
@@ -351,11 +349,20 @@ function submitForm(){
 		
 		// Redirect user to SP handler
 		if (wayf_use_discovery_service){
-			redirect_url = wayf_sp_samlDSURL + (wayf_sp_samlDSURL.indexOf('?')>=0?'&':'?')+'entityID=' 
-			+ encodeURIComponent(NonFedEntityID)
-			+ '&target=' + encodeURIComponent(wayf_return_url);
 			
-			// Make sure the redirect always is being done in parent window
+			var entityIDGETParam = getGETArgument("entityID");
+			var returnGETParam = getGETArgument("return");
+			if (entityIDGETParam != "" && returnGETParam != ""){
+				redirect_url = returnGETParam;
+			} else {
+				redirect_url = wayf_sp_samlDSURL;
+				redirect_url += getGETArgumentSeparator(redirect_url) + 'target=' + encodeURIComponent(wayf_return_url);
+			}
+			
+			// Append selected Identity Provider
+			redirect_url += '&entityID=' + encodeURIComponent(NonFedEntityID);
+			
+			// Make sure the redirect always is being executed in parent window
 			if (window.parent){
 				window.parent.location = redirect_url;
 			} else {
@@ -375,7 +382,6 @@ function submitForm(){
 			}
 			
 		}
-		
 		// If input type button is used for submit, we must return false
 		return false;
 	} else {
@@ -429,7 +435,7 @@ function isAllowedCategory(category){
 
 function isAllowedIdP(IdP){
 	
-	for ( var i=0; i<=wayf_hide_idps.length; i++){
+	for ( var i=0; i <= wayf_hide_idps.length; i++){
 		if (wayf_hide_idps[i] == IdP){
 			return false;
 		}
@@ -442,22 +448,7 @@ function setCookie(c_name, value, expiredays){
 	var exdate = new Date();
 	exdate.setDate(exdate.getDate() + expiredays);
 	document.cookie=c_name + "=" + escape(value) +
-	((expiredays==null) ? "" : "; expires=" + exdate.toGMTString())
-SCRIPT;
-	if( isset($cookieSecure) )
-	{
-		echo <<<SCRIPT
- + "; secure";
-SCRIPT;
-	}
-	else
-	{
-		echo <<<SCRIPT
-;
-SCRIPT;
-	}
-	echo <<<SCRIPT
-
+	((expiredays==null) ? "" : "; expires=" + exdate.toGMTString());
 }
 
 function getCookie(check_name){
@@ -468,8 +459,7 @@ function getCookie(check_name){
 	var cookie_name = '';
 	var cookie_value = '';
 	
-	for ( var i = 0; i < a_all_cookies.length; i++ )
-	{
+	for ( var i = 0; i < a_all_cookies.length; i++ ){
 		// now we'll split apart each name=value pair
 		a_temp_cookie = a_all_cookies[i].split( '=' );
 		
@@ -520,6 +510,154 @@ function isCookie(check_name){
 	
 	// Shibboleth session cookie has not been found
 	return false;
+}
+
+// Query Shibboleth Session handler and process response afterwards
+// This method has to be used because HttpOnly prevents reading 
+// the shib session cookies via JavaScript
+function isShibbolethSession(url){
+	var xmlhttp;
+	if (window.XMLHttpRequest){
+		xmlhttp = new XMLHttpRequest();
+	}  else {
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	
+	// Send request
+	try {
+		xmlhttp.open("GET", url, false);
+		xmlhttp.send();
+	} catch (e) {
+		// Something went wrong, send back false
+		return false;
+	} 
+	
+	// Check response code
+	if (xmlhttp.readyState != 4 || xmlhttp.status != 200 ){
+		return false;
+	}
+	
+	// Return true if session handler shows valid session
+	if (
+		xmlhttp.responseText.search(/Authentication Time/i) > 0){
+		return true;
+	}
+	
+	return false;
+}
+
+// Loads Identity Provider from DiscoFeed and adds them to additional IdPs
+function loadDiscoFeedIdPs(){
+	var xmlhttp;
+	
+	if (window.XMLHttpRequest){
+		xmlhttp = new XMLHttpRequest();
+	}  else {
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	
+	// Send request
+	try {
+		xmlhttp.open("GET", wayf_discofeed_url, false);
+		xmlhttp.send();
+	} catch (e) {
+		// Something went wrong, send back false
+		return;
+	} 
+	
+	// Check response code
+	if (xmlhttp.readyState != 4 || xmlhttp.status != 200 ){
+		return;
+	}
+	
+	// Load JSON
+	var IdPs = eval("(" + xmlhttp.responseText + ")");
+	
+	return IdPs;
+
+} 
+
+// Adds unknown IdPs to wayf_additional_idps and hides IdPs that are not
+// contained in the Discovery Feed
+function processDiscoFeedIdPs(IdPs){
+	
+	if (typeof(IdPs) == "undefined"){
+		return;
+	}
+	
+	// Hide IdPs that are not in the Discovery Feed
+	for (var entityID in wayf_idps){
+		var foundIdP = false;
+		for ( var i = 0; i < IdPs.length; i++) {
+			if (IdPs[i].entityID == entityID){
+				foundIdP = true;
+			}
+		}
+		
+		if (foundIdP == false){
+			wayf_hide_idps.push(entityID);
+		}
+	}
+	
+	
+	// Add unkown IdPs to wayf_additional_idps
+	for ( var i = 0; i < IdPs.length; i++) {
+		// Skip IdPs that are in same federation
+		if (wayf_idps[IdPs[i].entityID]){
+			continue;
+		}
+		
+		// Skip hidden IdPs
+		if (!isAllowedIdP(IdPs[i].entityID)){
+			continue;
+		}
+		
+		var newIdP;
+		if (IdPs[i].DisplayNames){
+			newIdP = {"name": IdPs[i].DisplayNames[0].value, "entityID":IdPs[i].entityID, "SAML1SSOurl":"https://www.example.org/test"};
+		} else {
+			newIdP = {"name":IdPs[i].entityID, "entityID":IdPs[i].entityID, "SAML1SSOurl":"https://www.example.org/test"};
+		}
+		wayf_additional_idps.push(newIdP);
+	}
+}
+
+// Sorts Discovery feed entries 
+function sortEntities(a, b){
+	var nameA = a.name.toLowerCase();
+	var nameB = b.name.toLowerCase();
+	
+	if (nameA < nameB){
+		return -1;
+	}
+	
+	if (nameA > nameB){
+		return 1;
+	}
+	
+	return 0;
+}
+
+// Returns true if user is logged in
+function isUserLoggedIn(){
+	
+	if (
+		   typeof(wayf_check_login_state_function) != "undefined"
+		&& typeof(wayf_check_login_state_function) == "function" ){
+		
+		// Use custom function
+		return wayf_check_login_state_function();
+	
+	} else {
+		// Check if Shibboleth session cookie exists
+		var shibSessionCookieExists = isCookie('shibsession');
+		
+		// Check if Shibboleth session handler 
+		var shibSessionHandlerShowsSession = isShibbolethSession(wayf_sp_handlerURL + '/Session');
+		
+		// Return true if one of these checks is succsesful
+		return (shibSessionCookieExists || shibSessionHandlerShowsSession);
+	}
 }
 
 function encodeBase64(input) {
@@ -581,9 +719,34 @@ function decodeBase64(input) {
 	return output;
 }
 
+function getGETArgument(name){
+	name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+	var regexString = "[\\?&]"+name+"=([^&#]*)";
+	var regex = new RegExp(regexString);
+	var results = regex.exec(window.location.href);
+	
+	if( results == null ){
+		return "";
+	} else {
+		return decodeURIComponent(results[1]);
+	}
+}
+
+function getGETArgumentSeparator(url){
+	if (url.indexOf('?') >=0 ){
+		return '&';
+	} else {
+		return '?';
+	}
+}
+
 (function() {
 	
 	var config_ok = true; 
+	
+	// Get GET parameters that maybe are set by Shibboleth
+	var returnGETParam = getGETArgument("return");
+	var entityIDGETParam = getGETArgument("entityID");
 	
 	// First lets make sure properties are available
 	if(
@@ -593,40 +756,63 @@ function decodeBase64(input) {
 		wayf_use_discovery_service = true;
 	}
 	
-	if(typeof(wayf_sp_entityID) == "undefined"){
+	// Overwrite entityID with GET argument if present
+	var entityIDGETParam = getGETArgument("entityID");
+	if (entityIDGETParam != ""){
+		wayf_sp_entityID = entityIDGETParam;
+	}
+	
+	if(
+		typeof(wayf_sp_entityID) == "undefined"
+		|| typeof(wayf_sp_entityID) != "string"
+		){
 		alert('The mandatory parameter \'wayf_sp_entityID\' is missing. Please add it as a javascript variable on this page.');
 		config_ok = false;
 	}
 	
-	if(typeof(wayf_URL) == "undefined"){
+	if(
+		typeof(wayf_URL) == "undefined"
+		|| typeof(wayf_URL) != "string"
+		){
 		alert('The mandatory parameter \'wayf_URL\' is missing. Please add it as a javascript variable on this page.');
 		config_ok = false;
 	}
 	
-	if(typeof(wayf_return_url) == "undefined"){
+	if(
+		typeof(wayf_return_url) == "undefined"
+		|| typeof(wayf_return_url) != "string"
+		){
 		alert('The mandatory parameter \'wayf_return_url\' is missing. Please add it as a javascript variable on this page.');
 		config_ok = false;
 	}
-
-	if(typeof(wayf_discofeed_url) == "undefined"){
-		wayf_discofeed_url = '';
-	}
 	
-	if(wayf_use_discovery_service == false && typeof(wayf_sp_handlerURL) == "undefined"){
+	if(
+		wayf_use_discovery_service == false 
+		&& typeof(wayf_sp_handlerURL) == "undefined"
+		){
 		alert('The mandatory parameter \'wayf_sp_handlerURL\' is missing. Please add it as a javascript variable on this page.');
 		config_ok = false;
 	}
 	
-	if(wayf_use_discovery_service == true && typeof(wayf_sp_samlDSURL) == "undefined"){
+	if(
+		wayf_use_discovery_service == true 
+		&& typeof(wayf_sp_samlDSURL) == "undefined"
+		){
 		// Set to default DS handler
 		wayf_sp_samlDSURL = wayf_sp_handlerURL + "/DS";
 	}
 	
-	if (typeof(wayf_sp_samlACURL) == "undefined"){
+	if (
+		typeof(wayf_sp_samlACURL) == "undefined"
+		|| typeof(wayf_sp_samlACURL) != "string"
+		){
 		wayf_sp_samlACURL = wayf_sp_handlerURL + '/SAML/POST';
 	}
 	
-	if(typeof(wayf_font_color) == "undefined"){
+	if(
+		typeof(wayf_font_color) == "undefined"
+		|| typeof(wayf_font_color) != "string"
+		){
 		wayf_font_color = 'black';
 	}
 	
@@ -637,12 +823,18 @@ function decodeBase64(input) {
 		wayf_font_size = 12;
 	}
 	
-	if(typeof(wayf_border_color) == "undefined"){
-		wayf_border_color = '#00247D';
+	if(
+		typeof(wayf_border_color) == "undefined"
+		|| typeof(wayf_border_color) != "string"
+		){
+		wayf_border_color = '#848484';
 	}
 	
-	if(typeof(wayf_background_color) == "undefined"){
-		wayf_background_color = '#F4F7F7';
+	if(
+		typeof(wayf_background_color) == "undefined"
+		|| typeof(wayf_background_color) != "string"
+		){
+		wayf_background_color = '#F0F0F0';
 	}
 	
 	if(
@@ -659,15 +851,21 @@ function decodeBase64(input) {
 		wayf_hide_logo = false;
 	}
 	
-	if(typeof(wayf_width) == "undefined"){
+	if(
+		typeof(wayf_width) == "undefined" 
+		|| typeof(wayf_width) != "number"
+	){
 		wayf_width = "auto";
-	} else if (typeof(wayf_width) == "number"){
+	} else {
 		wayf_width += 'px';
 	}
 	
-	if(typeof(wayf_height) == "undefined"){
+	if(
+		typeof(wayf_height) == "undefined" 
+		|| typeof(wayf_height) != "number"
+		){
 		wayf_height = "auto";
-	} else if (typeof(wayf_height) == "number"){
+	} else {
 		wayf_height += "px";
 	}
 	
@@ -699,8 +897,11 @@ function decodeBase64(input) {
 		wayf_hide_after_login = false;
 	}
 	
-	if(typeof(wayf_logged_in_messsage) == "undefined"){
-		wayf_logged_in_messsage = "{$loggedInString}";
+	if(
+		typeof(wayf_logged_in_messsage) == "undefined"
+		|| typeof(wayf_logged_in_messsage) != "string"
+		){
+		wayf_logged_in_messsage = "{$loggedInString}".replace(/%s/, wayf_return_url);
 	}
 	
 	if(
@@ -750,21 +951,27 @@ function decodeBase64(input) {
 		wayf_additional_idps = [];
 	}
 	
+	if(
+		typeof(wayf_use_disco_feed) == "undefined"
+		|| typeof(wayf_use_disco_feed) != "boolean"
+		){
+		wayf_use_disco_feed = false;
+	}
+	
+	if(
+		typeof(wayf_discofeed_url) == "undefined"
+		|| typeof(wayf_discofeed_url) != "string"
+		){
+		wayf_discofeed_url = "/Shibboleth.sso/DiscoFeed";
+	}
+	
 	// Exit without outputting html if config is not ok
 	if (config_ok != true){
 		return;
 	}
 	
 	// Check if user is logged in already:
-	var user_logged_in = false;
-	if (typeof(wayf_check_login_state_function) == "undefined"
-		|| typeof(wayf_check_login_state_function) != "function" ){
-		// Use default Shibboleth Service Provider login check
-		user_logged_in = isCookie('shibsession');
-	} else {
-		// Use custom function
-		user_logged_in = wayf_check_login_state_function();
-	}
+	var user_logged_in = isUserLoggedIn();
 	
 	// Check if user is authenticated already and 
 	// whether something has to be drawn
@@ -828,23 +1035,31 @@ function decodeBase64(input) {
 		var form_start = '';
 		
 		if (wayf_use_discovery_service == true){
-			var return_url = wayf_sp_samlDSURL + (wayf_sp_samlDSURL.indexOf('?')>=0?'&':'?')+'SAMLDS=1&target=' + encodeURIComponent(wayf_return_url);
+			// New SAML Discovery Service protocol
 			
-			wayf_authReq_URL = wayf_URL 
-			+ '?entityID=' + encodeURIComponent(wayf_sp_entityID)
-			+ '&amp;return=' + encodeURIComponent(return_url);
+			wayf_authReq_URL = wayf_URL;
 			
-			form_start = '<form id="IdPList" name="IdPList" method="post" target="_parent" action="' + wayf_authReq_URL + '">';
+			// Use GET arguments or use configuration parameters
+			if (entityIDGETParam != "" && returnGETParam != ""){
+				wayf_authReq_URL += '?entityID=' + encodeURIComponent(entityIDGETParam);
+				wayf_authReq_URL += '&amp;return=' + encodeURIComponent(returnGETParam);
+			} else {
+				var return_url = wayf_sp_samlDSURL + getGETArgumentSeparator(wayf_sp_samlDSURL);
+				return_url += 'SAMLDS=1&target=' + encodeURIComponent(wayf_return_url);
+				wayf_authReq_URL += '?entityID=' + encodeURIComponent(wayf_sp_entityID);
+				wayf_authReq_URL += '&amp;return=' + encodeURIComponent(return_url);
+			}
 		} else {
-			
-			wayf_authReq_URL = wayf_URL 
-			+ '?providerId=' + encodeURIComponent(wayf_sp_entityID)
-			+ '&amp;shire=' + encodeURIComponent(wayf_sp_samlACURL)
-			+ '&amp;target=' + encodeURIComponent(wayf_return_url);
-			
-			form_start = '<form id="IdPList" name="IdPList" method="post" target="_parent" action="' + wayf_authReq_URL + '&amp;time={$utcTime}'
-			+ '">';
+			// Old Shibboleth WAYF protocol
+			wayf_authReq_URL = wayf_URL;
+			wayf_authReq_URL += '?providerId=' + encodeURIComponent(wayf_sp_entityID);
+			wayf_authReq_URL += '&amp;target=' + encodeURIComponent(wayf_return_url);
+			wayf_authReq_URL += '&amp;shire=' + encodeURIComponent(wayf_sp_samlACURL);
+			wayf_authReq_URL += '&amp;time={$utcTime}';
 		}
+		
+		// Add form element
+		form_start = '<form id="IdPList" name="IdPList" method="post" target="_parent" action="' + wayf_authReq_URL + '">';
 		
 SCRIPT;
 	
@@ -875,6 +1090,14 @@ SCRIPT;
 	}
 	
 	echo <<<SCRIPT
+		
+		// Load additional IdPs from DiscoFeed if feature is enabled
+		if (wayf_use_disco_feed){
+			discoFeedIdPs = loadDiscoFeedIdPs();
+			
+			// Hide IdPs for which SP doesnt have metadata and add unknown IdPs 
+			processDiscoFeedIdPs(discoFeedIdPs);
+		}
 		
 		writeHTML(form_start);
 		writeHTML('<input name="request_type" type="hidden" value="embedded">');
@@ -992,13 +1215,17 @@ SCRIPT;
 	}
 	
 	echo <<<SCRIPT
+		
 		if (wayf_additional_idps.length > 0){
 			
 			if (wayf_show_categories == true){
 				writeHTML('<optgroup label="{$otherFederationString}">');
 			}
 			
-			// Show additional IdPs in the order they are defined
+			// Sort Array
+			wayf_additional_idps.sort(sortEntities)
+			
+			// Show additional IdPs
 			for ( var i=0; i < wayf_additional_idps.length ; i++){
 				if (wayf_additional_idps[i]){
 					// Last used IdP is known because of local _saml_idp cookie
@@ -1080,7 +1307,7 @@ SCRIPT;
 }
 
 /******************************************************************************/
-
+// Print sample configuration script used for Embedded WAYF
 function printEmbeddedConfigurationScript(){
 	global $IDProviders;
 	
@@ -1105,4 +1332,28 @@ function printEmbeddedConfigurationScript(){
 	}
 }
 
+/******************************************************************************/
+// Print sample configuration script used for Embedded WAYF
+function printCSS(){
+	
+	global $imageURL;
+	global $useAutocompleteIdP;
+	
+	$defaultCSSFile =  'css/default-styles.css';
+	$cssContent = file_get_contents($defaultCSSFile);
+
+	// Read custom CSS if available
+	if (isset($useAutocompleteIdP) && $useAutocompleteIdP == true){
+		$customCSSincsearchFile = 'incsearch/custom-styles-incsearch.css';
+		$cssContent .= file_get_contents($customCSSincsearchFile);
+	} elseif (file_exists('css/custom-styles.css')){
+		$customCSSFile =  'css/custom-styles.css';
+		$cssContent .= file_get_contents($customCSSFile);
+	}
+	
+	// Read CSS and substitute content
+	$cssContent = preg_replace('/{?\$imageURL}?/',$imageURL, $cssContent);
+	
+	echo $cssContent;
+}
 ?>
