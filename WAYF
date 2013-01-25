@@ -575,8 +575,8 @@ if (
 	
 	// If the data protection feature is enabled, don't preselect the IdP
 	if ($useEmbeddedWAYFPrivacyProtection){
-		$selectedIDP = '-';
 		$safekind = 3;
+		$selectedIDP = '-';
 	}
 	
 	// If the referer check is enabled but fails, don't preselect the IdP
@@ -585,54 +585,7 @@ if (
 		&&  $useEmbeddedWAYFRefererForPrivacyProtection
 		){
 		// Referer Check
-		if (
-			   isset($_SERVER["HTTP_REFERER"])
-			&& $_SERVER["HTTP_REFERER"] != ''
-			&& isset($SProviders)
-			&& is_array($SProviders)
-			){
-			$refererHostname = getHostNameFromURI($_SERVER["HTTP_REFERER"]);
-			$safekind = 1;
-			foreach ($SProviders as $key => $SProvider){
-				// Check referer against entityID
-				$spHostname = getHostNameFromURI($key);
-				if ($refererHostname == $spHostname){
-					$safekind = 0;
-					break;
-				}
-				
-				// Check referer against Discovery Response URL(DSURL)
-				if (isset($SProvider['DSURL'])) {
-					foreach ($SProvider['DSURL'] as $url){
-						$spHostname = getHostNameFromURI($url);
-						if ($refererHostname == $spHostname){
-							$safekind = 0;
-							break;
-						}
-					}
-					if ($safekind == 0) {
-						break;
-					}
-				}
-				
-				// Check referer against Assertion Consumer Service URL(ACURL)
-				if (isset($SProvider['ACURL'])) {
-					foreach ($SProvider['ACURL'] as $url){
-						$spHostname = getHostNameFromURI($url);
-						if ($refererHostname == $spHostname){
-							$safekind = 0;
-							break;
-						}
-					}
-					if ($safekind == 0) {
-						break;
-					}
-				}
-			}
-		} else {
-			$safekind = 2;
-		}
-			
+		$safekind = isRequestRefererMatchingSPHost();
 		if ($safekind > 0){
 			$selectedIDP = '-';
 		}

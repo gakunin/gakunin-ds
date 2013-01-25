@@ -888,7 +888,7 @@ function sortUsingTypeIndexAndName($a, $b){
 
 
 /******************************************************************************/
-// Returns true if the referer of the current request is matching an assertion
+// Returns 0 if the referer of the current request is matching an assertion
 // consumer or discovery service URL of a Service Provider
 function isRequestRefererMatchingSPHost(){
 	
@@ -896,11 +896,11 @@ function isRequestRefererMatchingSPHost(){
 	
 	// If referer is not available return false
 	if (!isset($_SERVER["HTTP_REFERER"]) || $_SERVER["HTTP_REFERER"] == ''){
-		return false;
+		return 2;
 	}
 	
 	if (!isset($SProviders) || !is_array($SProviders)){
-		return false;
+		return 2;
 	}
 	
 	$refererHostname = getHostNameFromURI($_SERVER["HTTP_REFERER"]);
@@ -908,7 +908,7 @@ function isRequestRefererMatchingSPHost(){
 		// Check referer against entityID
 		$spHostname = getHostNameFromURI($key);
 		if ($refererHostname == $spHostname){
-			return true;
+			return 0;
 		}
 		
 		// Check referer against Discovery Response URL(DSURL)
@@ -916,7 +916,7 @@ function isRequestRefererMatchingSPHost(){
 			foreach ($SProvider['DSURL'] as $url){
 				$spHostname = getHostNameFromURI($url);
 				if ($refererHostname == $spHostname){
-					return true;
+					return 0;
 				}
 			}
 		}
@@ -926,12 +926,12 @@ function isRequestRefererMatchingSPHost(){
 			foreach ($SProvider['ACURL'] as $url){
 				$spHostname = getHostNameFromURI($url);
 				if ($refererHostname == $spHostname){
-					return true;
+					return 0;
 				}
 			}
 		}
 	}
 	
-	return false;
+	return 1;
 }
 ?>
