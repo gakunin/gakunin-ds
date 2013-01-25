@@ -47,7 +47,7 @@ function successCallback(position){
   
   clientIdo = position.coords.latitude;
   clientKeido = position.coords.longitude;
-  document.forms["GeolocationMap"].elements["client"].value = position.coords.latitude + ':' + position.coords.longitude;
+  document.getElementById("client").value = position.coords.latitude + ':' + position.coords.longitude;
 
   for (var i=0; i<inc_search_list.length; i++){
     if ( inc_search_list[i][6] != '') {
@@ -188,7 +188,7 @@ function setPostdataIdpList(list){
       idplist = list[i];
     }
   }
-  document.forms["GeolocationMap"].elements["idplist"].value = idplist;
+  document.getElementById("idplist").value = idplist;
 
 }
 
@@ -454,7 +454,7 @@ Suggest.Local.prototype = {
         this.scrollArea.scrollTop = 0;
       }
     } else if (element.id == this.mapElm.id) {
-      GeolocationMap.submit();
+      document.getElementById("GeolocationMap").submit();
     }
 
 

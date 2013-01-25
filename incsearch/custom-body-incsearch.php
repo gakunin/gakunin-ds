@@ -82,14 +82,10 @@
 	</tr>
 </table>
 </form>
-<form id="GeolocationMap" name="GeolocationMap" method="post" action="<?php echo $geolocationMapURL ?>">
-	<input type="hidden" name="idplist" value="">
-	<input type="hidden" name="client" value="">
-	<input type="hidden" name="sp_samldsurl" value="">
-	<input type="hidden" name="sp_returnurl" value="">
-<!--
-	<input type="hidden" name="action" value="<?php echo  urlencode($actionURL) ?>">
--->
+<form id="GeolocationMap" method="post" action="<?php echo $geolocationMapURL ?>">
+	<input type="hidden" id="idplist" name="idplist" value="">
+	<input type="hidden" id="client" name="client" value="">
+	<input type="hidden" id="action" name="action" value="<?php echo $actionURL ?>">
 </form>
 <?php #phpinfo(); ?>
 <p><?php echo getLocalString('additional_info') ?></p>
