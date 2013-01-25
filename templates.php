@@ -17,9 +17,10 @@ if(!isset($_SERVER['REMOTE_ADDR']) || basename($_SERVER['SCRIPT_NAME']) == 'temp
 function printHeader(){
 
 	global $langStrings, $language, $imageURL, $javascriptURL, $cssURL, $logoURL, $useImprovedDropDownList;
-	global $selectedIDP, $language, $IDProviders;
+	global $selectedIDP, $IDProviders;
 	global $useAutocompleteIdP, $selIdP, $incsearchCssURL, $incsearchLibURL, $dropdownUpURL, $dropdownDnURL, $ajaxLibURL, $ajaxFlickLibURL;
 	global $mduiHintIDPs, $geolocationOffURL, $geolocationOnURL, $useMduiHintMax;
+	global $IncSearchList, $IncSearchHintList, $JSONIdPList, $IdPHintList, $selIdP, $InitDisp, $hintIDPString;
 	
 	// Check if custom header template exists
 	if(file_exists('custom-header.php')){

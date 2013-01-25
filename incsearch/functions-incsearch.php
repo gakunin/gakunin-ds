@@ -74,4 +74,161 @@ function checkHintIDP($HintKey, $HintKeyList) {
 
 }
 
+
+function getSearchIdPList() {
+	
+	global $IDProviders, $language, $selectedIDP, $mduiHintIDPs;
+	global $IncSearchList, $IncSearchHintList, $JSONIdPList, $IdPHintList;
+	global $selIdP, $InitDisp, $hintIDPString;
+	
+	$IncSearchArray = array();
+	$IncSearchHintArray = array();
+	$JSONIdPArray = array();
+
+	$IdPHintList = '';
+	$selIdP = '';
+	$InitDisp = addslashes(getLocalString('select_idp'));
+	$hintIDPString = addslashes(getLocalString('hint_idp'));
+	
+	foreach ($IDProviders as $key => $IDProvider){
+		
+		// Get IdP Name
+		if (isset($IDProvider[$language]['Name'])){
+			$IdPName = addslashes($IDProvider[$language]['Name']);
+		} else {
+			$IdPName = addslashes($IDProvider['Name']);
+		}
+		
+		if ($selIdP == ''){
+			$selIdP = ($selectedIDP == $key) ? $IdPName : '' ;
+		}
+		$IdPType = isset($IDProviders[$key]['Type']) ? $IDProviders[$key]['Type'] : '';
+		
+		// SSO
+		if (isset($IDProvider['SSO'])){
+			$IdPSSO = $IDProvider['SSO'];
+		} else {
+			$IdPSSO = '';
+		}
+		
+		// Skip non-IdP entries
+		if ($IdPType == '' || $IdPType == 'category'){
+			continue;
+		}
+		
+		// Get IdP Category
+		$IdPCategory = '';
+		$IDProviders2 = $IDProviders;
+		foreach ($IDProviders2 as $key2 => $IDProvider2){
+			$IdPType2 = isset($IDProviders2[$key2]['Type']) ? $IDProviders2[$key2]['Type'] : '';
+			// Skip non-Category
+			if ($IdPType2 == 'category' && $IdPType == $key2){
+				// Get IdP Category Name
+				if (isset($IDProvider2[$language]['Name'])){
+					$IdPCategory = addslashes($IDProvider2[$language]['Name']);
+				} else {
+					$IdPCategory = addslashes($IDProvider2['Name']);
+				}
+				break;
+			}
+		}
+		
+		// Get IdP Logo URL and Size
+		$IdPLogoURL = '';
+		$IdPLogoHeight = '';
+		$IdPLogoWidth = '';
+		if (isset($IDProvider[$language]['Logo'])){
+			$IdPLogoURL = $IDProvider[$language]['Logo']['url'];
+			$IdPLogoHeight = $IDProvider[$language]['Logo']['height'];
+			$IdPLogoWidth = $IDProvider[$language]['Logo']['width'];
+		} elseif (isset($IDProvider['Logo'])) {
+			$IdPLogoURL = $IDProvider['Logo']['url'];
+			$IdPLogoHeight = $IDProvider['Logo']['height'];
+			$IdPLogoWidth = $IDProvider['Logo']['width'];
+		}
+		
+		// Get GeolocationHint latitude and longitude
+		$IdPGeolocationHint = '';
+		if (isset($IDProvider['GeolocationHint'])){
+			foreach($IDProvider['GeolocationHint'] as $geolocation){
+				if (empty($IdPGeolocationHint)){
+					$IdPGeolocationHint = $geolocation;
+				} else {
+					$IdPGeolocationHint = $IdPGeolocationHint.';'.$geolocation;
+				}
+			}
+		}
+		
+		// Get Registration URL
+		$IdPRegistrationURL = isset($IDProvider['RegistrationURL']) ? $IDProvider['RegistrationURL'] : '';
+		
+		// Get Search IdP Name
+		$SearchIdPName = '';
+		foreach ($IDProvider as $attr => $value){
+			foreach($langStrings as $lang => $value2){
+				if ($attr == $lang){
+					if (empty($SearchIdPName)){
+						$SearchIdPName = '"'.addslashes($value['Name']).'"';
+					} else {
+						$SearchIdPName = $SearchIdPName.', "'.addslashes($value['Name']).'"';
+					}
+					break;
+				}
+			}
+		}
+		if (empty($SearchIdPName)){
+			$SearchIdPName = '"'.$IdPName.'"';
+		}
+		
+		$IncSearchAdd = <<<ENTRY
+, "{$IdPLogoURL}", "{$IdPLogoHeight}", "{$IdPLogoWidth}", "{$IdPGeolocationHint}", "{$IdPRegistrationURL}", "", "", {$SearchIdPName}
+ENTRY;
+
+		$IncSearchIDP = <<<ENTRY
+"{$key}", "{$IdPCategory}", "{$IdPName}"{$IncSearchAdd}
+ENTRY;
+		
+		$IncSearchArray[] = <<<ENTRY
+
+	[
+		{$IncSearchIDP}
+	]
+ENTRY;
+
+		foreach ($mduiHintIDPs as $hintIDP) {
+			if ($key == $hintIDP) {
+				$IncSearchHintArray[] = <<<ENTRY
+
+	[
+		"{$key}", "{$hintIDPString}", "{$IdPName}"{$IncSearchAdd}
+	]
+ENTRY;
+				if (empty($IdPHintList)) {
+					$IdPHintList = '"'.$hintIDP.'"';
+				} else {
+					$IdPHintList = $IdPHintList.', "'.$hintIDP.'"';
+				}
+			}
+		}
+		
+		$JSONIdPArray[] = <<<ENTRY
+
+	"{$key}":{
+		type:"{$IdPType}",
+		name:"{$IdPName}",
+		search:[{$IncSearchIDP}],
+		SAML1SSOurl:"{$IdPSSO}"
+		}
+ENTRY;
+
+	}
+	
+	$IncSearchList = join(',', $IncSearchArray);
+	$IncSearchHintList = join(',', $IncSearchHintArray);
+	$JSONIdPList = join(',', $JSONIdPArray);
+	$selIdP = ($selIdP == '') ? $InitDisp : $selIdP ;
+	
+}
+
+
 ?>
