@@ -9,6 +9,7 @@ function printEmbeddedWAYFScript_IncSearch(){
 	global $cookieSecurity;
 	global $safekind, $selIdP, $incsearchLibURL, $incsearchCssURL, $alertURL, $dropdownUpURL, $dropdownDnURL, $ajaxLibURL, $ajaxFlickLibURL;
 	global $mduiHintIDPs, $useMduiHintMax, $geolocationOffURL, $geolocationOnURL, $geolocationMapURL;
+	global $IncSearchList, $IncSearchHintList, $JSONIdPList, $IdPHintList, $selIdP, $InitDisp, $hintIDPString;
 	
 	// Get some values that are used in the script
 	$loginWithString = getLocalString('login_with');
@@ -31,132 +32,8 @@ function printEmbeddedWAYFScript_IncSearch(){
 	$mapTooltip = addslashes(getLocalString('map_tooltip'));
 	$regTooltip = addslashes(getLocalString('reg_tooltip'));
 	$geolocationTooltip = addslashes(getLocalString('geolocation_tooltip'));
-	$hintIDPString = addslashes(getLocalString('hint_idp'));
 	
-	$selIdP = '';
-
-	// Generate list of Identity Providers
-	$JSONIdPArray = array();
-	
-	foreach ($IDProviders as $key => $IDProvider){
-		
-		// Get IdP Name
-		if (isset($IDProvider[$language]['Name'])){
-			$IdPName = addslashes($IDProvider[$language]['Name']);
-		} else {
-			$IdPName = addslashes($IDProvider['Name']);
-		}
-
-		if ($selIdP == ''){
-			$selIdP = ($selectedIDP == $key) ? $IdPName : '' ;
-		}
-		$IdPType = isset($IDProviders[$key]['Type']) ? $IDProviders[$key]['Type'] : '';
-
-		$IDProviders2 = $IDProviders;
-		$IdPType2 = $IdPType;
-		if ($IdPType2 != ''){
-			foreach ($IDProviders2 as $key2 => $IDProvider2){
-				$incsearchIdPType = isset($IDProviders2[$key2]['Type']) ? $IDProviders2[$key2]['Type'] : '';
-				// Skip non-Category
-				if ($incsearchIdPType != 'category'){
-					continue;
-				}
-				if ($IdPType == $key2){
-					// Get IdP Category Name
-					if (isset($IDProvider2[$language]['Name'])){
-						$IdPType2 = addslashes($IDProvider2[$language]['Name']);
-					} else {
-						$IdPType2 = addslashes($IDProvider2['Name']);
-					}
-					break;
-				}
-				
-			}
-		}
-		
-		// SSO
-		if (isset($IDProvider['SSO'])){
-			$IdPSSO = $IDProvider['SSO'];
-		} else {
-			$IdPSSO = '';
-		}
-		
-		// Skip non-IdP entries
-		if ($IdPType == '' || $IdPType == 'category'){
-			continue;
-		}
-
-		// Get IdP Logo URL and Size
-		$IdPLogoURL    = '';
-		$IdPLogoHeight = '';
-		$IdPLogoWidth  = '';
-		if (isset($IDProvider[$language]['Logo'])){
-			$IdPLogoURL    = $IDProvider[$language]['Logo']['url'];
-			$IdPLogoHeight = $IDProvider[$language]['Logo']['height'];
-			$IdPLogoWidth  = $IDProvider[$language]['Logo']['width'];
-		} elseif (isset($IDProvider['Logo'])) {
-			$IdPLogoURL    = $IDProvider['Logo']['url'];
-			$IdPLogoHeight = $IDProvider['Logo']['height'];
-			$IdPLogoWidth  = $IDProvider['Logo']['width'];
-		}
-
-		// Get GeolocationHint latitude and longitude 
-		$IdPGeolocationHint = '';
-		if (isset($IDProvider['GeolocationHint'])){
-			foreach($IDProvider['GeolocationHint'] as $geolocation){
-				if (empty($IdPGeolocationHint)){
-					$IdPGeolocationHint = $geolocation;
-				} else {
-					$IdPGeolocationHint = $IdPGeolocationHint.';'.$geolocation;
-				}
-			}
-		}
-
-		// Get Registration URL
-		$IdPRegistrationURL = isset($IDProvider['RegistrationURL']) ? $IDProvider['RegistrationURL'] : '';
-
-		// Get IdP Name
-		$SearchIdPName = '';
-		foreach ($IDProvider as $attr => $value){
-			foreach($langStrings as $lang => $value2){
-				if ($attr == $lang){
-					if (empty($SearchIdPName)){
-						$SearchIdPName = '"'.addslashes($value['Name']).'"';
-					} else {
-						$SearchIdPName = $SearchIdPName.', "'.addslashes($value['Name']).'"';
-					}
-					break;
-				}
-			}
-		}
-		if (empty($SearchIdPName)){
-			$SearchIdPName = '"'.$IdPName.'"';
-		}
-
-		$IncSearchIDP = <<<ENTRY
-"{$key}", "{$IdPType2}", "{$IdPName}", "{$IdPLogoURL}", "{$IdPLogoHeight}", "{$IdPLogoWidth}", "{$IdPGeolocationHint}", "{$IdPRegistrationURL}", "", "", {$SearchIdPName}
-ENTRY;
-
-		$JSONIdPArray[] = <<<ENTRY
-
-	"{$key}":{
-		type:"{$IdPType}",
-		name:"{$IdPName}",
-		search:[{$IncSearchIDP}],
-		SAML1SSOurl:"{$IdPSSO}"
-		}
-ENTRY;
-	}
-	$JSONIdPList = join(',', $JSONIdPArray);
-	$IdPHintList = '';
-	foreach ($mduiHintIDPs as $hintIDP){
-		if (empty($IdPHintList)) {
-			$IdPHintList = '"'.$hintIDP.'"';
-		} else {
-			$IdPHintList = $IdPHintList.', "'.$hintIDP.'"';
-		}
-	}
-	$InitDisp = getLocalString('select_idp');
+	getSearchIdPList();
 	
 	echo <<<SCRIPT
 
@@ -217,7 +94,7 @@ var dropdown_up = '{$dropdownUpURL}';
 var dropdown_down = '{$dropdownDnURL}';
 var geolocation_off = '{$geolocationOffURL}';
 var geolocation_on = '{$geolocationOnURL}';
-var favorite_idp_group = "{$mostUsedIdPsString}";
+var favorite_idp_group = '{$mostUsedIdPsString}';
 var hint_idp_group = '{$hintIDPString}';
 var hintmax = '{$useMduiHintMax}';
 
@@ -274,7 +151,6 @@ function submitForm(){
                 // Redirect user to SP handler
                 if (wayf_use_discovery_service){
 			
-/*
 			var entityIDGETParam = getGETArgument("entityID");
 			var returnGETParam = getGETArgument("return");
 			if (entityIDGETParam != "" && returnGETParam != ""){
@@ -283,10 +159,9 @@ function submitForm(){
 				redirect_url = wayf_sp_samlDSURL;
 				redirect_url += getGETArgumentSeparator(redirect_url) + 'target=' + encodeURIComponent(wayf_return_url);
 			}
-*/
-			redirect_url = wayf_sp_samlDSURL + '?entityID='
-			+ encodeURIComponent(NonFedEntityID)
-			+ '&target=' + encodeURIComponent(wayf_return_url);
+			
+			// Append selected Identity Provider
+			redirect_url += '&entityID=' + encodeURIComponent(NonFedEntityID);
 			
                         // Make sure the redirect always is being done in parent window
                         if (window.parent){
@@ -1290,12 +1165,10 @@ SCRIPT;
 	
 		// Close form
 		writeHTML('</form>');
-		writeHTML('<form id="GeolocationMap" name="GeolocationMap" method="post" action="${geolocationMapURL}">');
-		writeHTML('<input type="hidden" name="idplist" value="">');
-		writeHTML('<input type="hidden" name="client" value="">');
-		writeHTML('<input type="hidden" name="sp_samldsurl" value="' + wayf_sp_samlDSURL + '">');
-		writeHTML('<input type="hidden" name="sp_returnurl" value="' + wayf_return_url + '">');
-		//writeHTML('<input type="hidden" name="action" value="' + wayf_authReq_URL + '">');
+		writeHTML('<form id="GeolocationMap" method="post" action="${geolocationMapURL}">');
+		writeHTML('<input type="hidden" id="idplist" name="idplist" value="">');
+		writeHTML('<input type="hidden" id="client" name="client" value="">');
+		writeHTML('<input type="hidden" id="action" name="action" value="' + wayf_authReq_URL + '">');
 		writeHTML('</form>');
 		
 	}  // End login check
