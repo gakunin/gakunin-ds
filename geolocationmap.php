@@ -4,6 +4,12 @@ $clientGeolocation[] = array('', '');
 if (!empty($_POST['client'])){
 	$clientGeolocation = explode(':', $_POST['client']);
 }
+if (!isset($geolocationMapWidth) || empty($geolocationMapWidth) || $geolocationMapWidth == 'auto') {
+	$geolocationMapWidth = '100%';
+}
+if (!isset($geolocationMapHeight) || empty($geolocationMapHeight)) {
+	$geolocationMapHeight = '500px';
+}
 ?>
 
 <!DOCTYPE html>
@@ -11,6 +17,15 @@ if (!empty($_POST['client'])){
 <head> 
 <meta charset=utf-8>
 <title>IDP Geolocation</title>
+<style type="text/css">
+<!--
+div#view_idpmap {
+	text-align:center;
+	margin-left:auto;
+	margin-right:auto;
+}
+-->
+</style>
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 <script type="text/javascript" src="<?php echo $ajaxLibURL ?>"></script>
 <script type="text/javascript">
@@ -140,7 +155,7 @@ printout;
        <div id="show_result" ></div>
    </tr>
    <tr>
-       <div id="view_idpmap" style="height:450px;"></div>
+       <div id="view_idpmap" style="width:<?php echo $geolocationMapWidth ?>; height:<?php echo $geolocationMapHeight ?>;"></div>
    </tr>
 </table>
 

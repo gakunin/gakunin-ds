@@ -247,6 +247,10 @@ $WAYFLogFile = 'logs/wayf.log';
 // A Kerboros-protected soft link back to this script!
 //$kerberosRedirectURL = '/SWITCHaai/kerberosRedirect.php';
 
+// Geolocation Map Display Width(default auto)
+$geolocationMapWidth = 'auto';
+// Geolocation Map Display Height(default 500px)
+$geolocationMapHeight = '500px';
 
 // Development mode settings
 //**************************
