@@ -77,7 +77,7 @@ function checkHintIDP($HintKey, $HintKeyList) {
 
 function getSearchIdPList() {
 	
-	global $IDProviders, $language, $selectedIDP, $mduiHintIDPs;
+	global $IDProviders, $langStrings, $language, $selectedIDP, $mduiHintIDPs;
 	global $IncSearchList, $IncSearchHintList, $JSONIdPList, $IdPHintList;
 	global $selIdP, $InitDisp, $hintIDPString;
 	
