@@ -550,9 +550,12 @@ function getMDUILogos($RoleDescriptorNode){
 	foreach( $MDUILogos as $MDUILogoEntry ){
 		$Item = Array();
 		$Item['url'] = trim($MDUILogoEntry->nodeValue);
-		$Item['height'] = isset($MDUILogoEntry->attribute['height']) ? $MDUILogoEntry->attribute['height']->value : '18';
-		$Item['width'] = isset($MDUILogoEntry->attribute['width']) ? $MDUILogoEntry->attribute['width']->value : '18';
-		$lang = $MDUILogoEntry->getAttributeNodeNS('http://www.w3.org/XML/1998/namespace', 'lang')->nodeValue;
+		$Item['height'] = ($MDUILogoEntry->getAttribute('height') != '') ? $MDUILogoEntry->getAttribute('height') : '18';
+		$Item['width'] = trim($MDUILogoEntry->getAttribute('width'));
+		$lang = trim($MDUILogoEntry->getAttribute('lang'));
+		if (empty($lang)){
+			$lang = '';
+		}
 		$Entity[$lang] = $Item;
 	}
 	

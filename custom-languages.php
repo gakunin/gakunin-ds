@@ -55,10 +55,14 @@ $langStrings['en'] = array (
 'dropdown_tooltip' => 'Display/non-display of IdP list',
 'hint_idp' => ' Hint! IdP',
 'map_button' => 'Map',
-'reg_button' => 'Registration',
+'reg_button' => 'sign up',
 'map_tooltip' => 'You can be selected from the icon on the map',
 'reg_tooltip' => 'If you are not registered with IdP, registration can be performed from here',
 'geolocation_tooltip' => 'Get the latitude and longitude of the terminal, Nearby IdP will be added to the tips',
+'geolocation_err1' => 'In this browser, location information is not available',
+'geolocation_err2' => 'Use of location information is not permitted',
+'geolocation_err3' => 'Location of the device I can not determine',
+'geolocation_err4' => 'Timed out',
 );
 
 
@@ -279,10 +283,14 @@ $langStrings['ja'] = array (
 'dropdown_tooltip' => 'IdPリストの表示/非表示',
 'hint_idp' => 'ヒント！所属機関',
 'map_button' => '地図表示',
-'reg_button' => '初期登録',
+'reg_button' => 'このIdP上に新規アカウント作成',
 'map_tooltip' => '地図上のアイコンより選択',
 'reg_tooltip' => 'IdPに登録してない場合、こちらより登録してください',
 'geolocation_tooltip' => '端末の緯度経度を取得し、近くのIdPをヒント表示',
+'geolocation_err1' => '本ブラウザでは、位置情報が使用できません',
+'geolocation_err2' => '位置情報の利用が許可されていません',
+'geolocation_err3' => 'デバイスの位置が判定できません',
+'geolocation_err4' => 'タイムアウトしました',
 );
 
 ?>

@@ -5,7 +5,7 @@ if (!empty($_POST['client'])){
 	$clientGeolocation = explode(':', $_POST['client']);
 }
 if (!isset($geolocationMapWidth) || empty($geolocationMapWidth) || $geolocationMapWidth == 'auto') {
-	$geolocationMapWidth = '100%';
+	$geolocationMapWidth = '500px';
 }
 if (!isset($geolocationMapHeight) || empty($geolocationMapHeight)) {
 	$geolocationMapHeight = '500px';
@@ -19,10 +19,22 @@ if (!isset($geolocationMapHeight) || empty($geolocationMapHeight)) {
 <title>IDP Geolocation</title>
 <style type="text/css">
 <!--
-div#view_idpmap {
-	text-align:center;
-	margin-left:auto;
-	margin-right:auto;
+#history_back {
+  height: 25px;
+  position: static;
+}
+#show_result {
+  position: relative;
+}
+#view_idpmap {
+  height: auto;
+  position: relative;
+  bottom:0;
+  left:0;
+  right:0;
+  top:0;
+  text-align:center;
+  margin:auto;
 }
 -->
 </style>
@@ -31,8 +43,14 @@ div#view_idpmap {
 <script type="text/javascript">
 	var latitude = '<?php echo $clientGeolocation[0] ?>';
 	var longitude = '<?php echo $clientGeolocation[1] ?>';
+
+	function winSizeChange(){
+		document.getElementById('view_idpmap').style.width = document.documentElement.clientWidth-15+'px';
+		document.getElementById('view_idpmap').style.height = document.documentElement.clientHeight-55+'px';
+	}
 	
 	function initialize(){
+		winSizeChange();
 		if ((latitude == '') || (longitude == '')){
 			navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
 		} else {
@@ -115,6 +133,8 @@ div#view_idpmap {
 		str = str.replace(")","");
 		jQuery('#latlng').val(str);
 	}
+
+	window.onresize = winSizeChange;
 	
 </script>
 </head>
@@ -149,15 +169,10 @@ printout;
 <form id="userIdP" method="post" action="<?php echo $_POST['action'] ?>">
 	<input type="hidden" id="user_idp" name="user_idp" value="" />
 </form>
-<table>
-   <tr>
-   <a href="javascript:history.back();">戻る</a><br /><br />
-       <div id="show_result" ></div>
-   </tr>
-   <tr>
-       <div id="view_idpmap" style="width:<?php echo $geolocationMapWidth ?>; height:<?php echo $geolocationMapHeight ?>;"></div>
-   </tr>
-</table>
+
+<div id="history_back"><a href="javascript:history.back();">戻る</a></div>
+<div id="show_result" ></div>
+<div id="view_idpmap"></div>
 
 </body> 
 </html>

@@ -15,15 +15,25 @@ For details, see the web site:
 --------------------------------------------------------
 */
 var geolocation_flg = true;
+var clear_flg = true;
 var geolocation_ngflg = false;
 var old_hint_list = [];
-var clientIdo = 0;
-var clientKeido = 0;
+var suggest;
 
 function addGeoHintList(){
   old_hint_list = hint_list.slice(0);
   if (hintmax > hint_list.length) {
-    navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+    if (navigator.geolocation) {
+      var clientGeolocation = document.getElementById("client").value;
+      if (clientGeolocation == '') {
+        navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+      } else {
+        clientGeolocations = clientGeolocation.split(":");
+        checkGeolocationList(clientGeolocations[0], clientGeolocations[1]);
+      }
+    } else {
+      alert(geolocation_err1);
+    }
   }
 }
 
@@ -34,20 +44,25 @@ function delGeoHintList(){
       var tmp_hint = old_hint_list[i].slice(0);
       hint_list.push(tmp_hint);
     }
+    document.getElementById("geolocation_img").src = geolocation_off;
     geolocation_flg = false;
-    clear_a.click();
+    suggest.search();
   }
 }
 
 function successCallback(position){
+  
+  checkGeolocationList(position.coords.latitude, position.coords.longitude);
+  
+}
 
+function checkGeolocationList(clientIdo, clientKeido) {
+  
   var distance = 0;
   var geohint_list = [];
   var geokyori_list = [];
   
-  clientIdo = position.coords.latitude;
-  clientKeido = position.coords.longitude;
-  document.getElementById("client").value = position.coords.latitude + ':' + position.coords.longitude;
+  document.getElementById("client").value = clientIdo + ':' + clientKeido;
 
   for (var i=0; i<inc_search_list.length; i++){
     if ( inc_search_list[i][6] != '') {
@@ -95,9 +110,10 @@ function successCallback(position){
       break;
     }
   }
+  document.getElementById("geolocation_img").src = geolocation_on;
   geolocation_flg = false;
   geolocation_ngflg = false;
-  clear_a.click();
+  suggest.search();
 }
 
 function getDistance(lat1, lng1, lat2, lng2, precision) {
@@ -136,15 +152,16 @@ function errorCallback(error) {
   switch(error.code)
   {
     case 1:
-      err_msg = "位置情報の利用が許可されていません";
+      err_msg = geolocation_err2;
       break;
     case 2:
-      err_msg = "デバイスの位置が判定できません";
+      err_msg = geolocation_err3;
       break;
     case 3:
-      err_msg = "タイムアウトしました";
+      err_msg = geolocation_err4;
       break;
   }
+  document.getElementById("geolocation_img").src = geolocation_off;
   alert(err_msg);
 }
 
@@ -154,10 +171,10 @@ function checkDiscofeedList(json, list){
   var index = 0;
   var matchFlg = false;
 
-  for (var i in json) {
-    for (var j = 0, length = list.length; j < length; j++) {
-      if (json[i].entityID == list[j][0]) {
-        newList[index] = list[j];
+  for (var i = 0, length = list.length; i < length; i++) {
+    for (var j in json) {
+      if (json[j].entityID == list[i][0]) {
+        newList[index] = list[i];
         matchFlg = true;
         index++;
         break;
@@ -194,14 +211,14 @@ function setPostdataIdpList(list){
 
 // It adds it to window event.
 function start() {
-  new Suggest.Local(
+  suggest = new Suggest.Local(
         "keytext",                // element id of input area
         "view_incsearch",         // element id of IdP list display area
         "view_incsearch_animate", // element id of IdP list display animate area
         "view_incsearch_scroll",  // element id of IdP list display scroll area
         inc_search_list,          // IdP list
         favorite_list,            // IdP list (Favorite)
-	hint_list,                // IdP list (Hint IP, Domain)
+        hint_list,                // IdP list (Hint IP, Domain)
         "dropdown_img",           // element id of dropdown image
         "geolocation_img",        // element id of geolocation image
         "wayf_submit_button",     // element id of select button
@@ -214,7 +231,7 @@ function start() {
         geolocation_off,          // URL of geolocation off image
         geolocation_on,           // URL of geolocation on image
         favorite_idp_group,       // favorite idp list group
-	hint_idp_group,           // hint idp list group
+        hint_idp_group,           // hint idp list group
         {dispMax: 500, showgrp: wayf_show_categories}); // option
 }
 
@@ -442,22 +459,23 @@ Suggest.Local.prototype = {
     } else if (element.id == this.geolocationImgElm.id) {
       if (this.geolocationImgElm.src == this.geoOffImgURL) {
         addGeoHintList();
-        this.geolocationImgElm.src = this.geoOnImgURL;
       } else {
         delGeoHintList();
-        this.geolocationImgElm.src = this.geoOffImgURL;
       }
     } else if (element.id == this.clearElm.id) {
       this.setInputText('');
+      clear_flg = false;
       this.execSearch();
       if (this.pcFlg) {
         this.scrollArea.scrollTop = 0;
       }
     } else if (element.id == this.mapElm.id) {
-      document.getElementById("GeolocationMap").submit();
+      if (navigator.geolocation) {
+        document.getElementById("GeolocationMap").submit();
+      } else {
+        alert(geolocation_err1);
+      }
     }
-
-
   },
 
   changeClass: function(event, classname) {
@@ -525,7 +543,7 @@ Suggest.Local.prototype = {
     var text = this.getInputText();
 
     if (text == null || text == this.initDisp) return;
-    if (!this.discofeedFlg || !geolocation_flg){
+    if (!this.discofeedFlg || !geolocation_flg || !clear_flg){
       this.candidateList = inc_search_list;
       this.favoriteList = favorite_list;
       this.hintList = hint_list;
@@ -541,6 +559,7 @@ Suggest.Local.prototype = {
       }
       this.discofeedFlg = true;
       geolocation_flg = true;
+      clear_flg = true;
     }
 
     this.hookBeforeSearch(text);
@@ -609,14 +628,6 @@ Suggest.Local.prototype = {
 
     if (!this.pcFlg) {
       $('#' + this.scrollArea.id).flickable('disable');
-
-//flick
-//        $('#' + this.scrollArea.id).flickSimple({
-//                vertical: true,
-//                horizontal: true,
-//                lock: true,
-//		disable: true
-//        });
     }
     var oldGroup = '';
     $('#' + this.suggestArea.id).css('width', '');
@@ -652,16 +663,7 @@ Suggest.Local.prototype = {
 
       var logo = '';
       if (resultList[i][3] && resultList[i][3] != '') {
-        var imageSize = '';
-        if (resultList[i][4] && resultList[i][4] != '') {
-          imageSize = 'height="' + resultList[i][4] + '"';
-        } else {
-          imageSize = 'height="15"';
-        }
-        if (resultList[i][5] && resultList[i][5] != '') {
-          imageSize = imageSize + ' width="' + resultList[i][5] + '"';
-        }
-        logo = '&nbsp;<span style="vertical-align: middle; padding:0px; margin:0px;"><img src="' + resultList[i][3] + '" ' + imageSize + ' /></span>';
+        logo = '&nbsp;<span style="vertical-align: middle; padding:0px; margin:0px;"><img src="' + resultList[i][3] + '" height="18"/></span>';
       }
      
       if (this.pcFlg) {
@@ -678,13 +680,11 @@ Suggest.Local.prototype = {
 
       var regurl = '';
       if ((typeof wayf_sp_entityID != 'undefined') && (typeof wayf_return_url != 'undefined') && (resultList[i][7] != '')) {
-        regurl = '新規登録';
         if (this.pcFlg) {
-          element2.innerHTML = '<div id="reg_a" class="default">' + regurl + '</div>';
+          element2.innerHTML = '<div id="reg_a" class="default">' + reg_button + '</div>';
         } else {
-          element2.innerHTML = '<a id="reg_a" class="default" onclick="">' + regurl + '</a>';
+          element2.innerHTML = '<a id="reg_a" class="default" onclick="">' + reg_button + '</a>';
         }
-        //element2.innerHTML = regurl;
         this.suggestArea.appendChild(element2);
         this._addEvent(element2, 'click', this._bindEvent(this.listClick2, i));
         this._addEvent(element2, 'mouseover', this._bindEvent(this.changeClass, this.classActive));
@@ -707,11 +707,6 @@ Suggest.Local.prototype = {
       $('#' + this.scrollArea.id).flickable('enable');
       $('#' + this.scrollArea.id).flickable('disable');
       $('#' + this.scrollArea.id).flickable('enable');
-
-//flick
-//      $('#' + this.scrollArea.id).flickSimple('disabled', 'false');
-//      $('#' + this.scrollArea.id).flickSimple('disabled', 'true');
-//      $('#' + this.scrollArea.id).flickSimple('disabled', 'false');
     }
   },
 
@@ -722,18 +717,6 @@ Suggest.Local.prototype = {
       friction: 0.7
     });
   },
-
-//flick
-//    $('#' + this.scrollArea.id).flickSimple('disabled', 'false');
-//    $('#' + this.scrollArea.id).flickSimple('duration', '0.2');
-//    $('#' + this.scrollArea.id).flickSimple('ratio', '0.7');
-//
-//    $('#' + this.scrollArea.id).flickSimple({
-//      disabled: false,
-//      duration: 0.2,
-//      ratio: 0.7
-//    });
-//  },
 
   getInputText: function() {
     return this.input.value;
@@ -900,7 +883,9 @@ Suggest.Local.prototype = {
 
   listClick2: function(event, index) {
     var regURL = this.candidateList[this.suggestIndexList[index]][7];
-    location.href = regURL + '?providerId=' + encodeURIComponent(wayf_sp_entityID) + '&target=' + encodeURIComponent(wayf_return_url);
+    location.href = regURL + '?providerId=' + encodeURIComponent(wayf_sp_entityID) 
+                           + '&target=' + encodeURIComponent(wayf_return_url)
+                           + '&samlDSURL=' + encodeURIComponent(wayf_sp_samlDSURL);
 
     this.closeList();
     this.changeUnactive();

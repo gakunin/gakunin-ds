@@ -1,12 +1,15 @@
 <!-- Identity Provider Selection: Start-->
 <h1><?php echo getLocalString('header'); ?></h1> 
-<p class="switchaai">
-	<?php echo $promptMessage ?>
-</p>
 <form id="IdPList" name="IdPList" method="post" onSubmit="return checkForm()" action="<?php echo $actionURL ?>">
-
+	<div id="userInputArea">
+		<p class="promptMessage"><?php echo $promptMessage ?></p>
 <script language="JavaScript" type="text/javascript">
 <!--
+   var reg_button = '<?php echo addslashes(getLocalString('reg_button')); ?>';
+   var geolocation_err1 = '<?php echo addslashes(getLocalString('geolocation_err1')); ?>';
+   var geolocation_err2 = '<?php echo addslashes(getLocalString('geolocation_err2')); ?>';
+   var geolocation_err3 = '<?php echo addslashes(getLocalString('geolocation_err3')); ?>';
+   var geolocation_err4 = '<?php echo addslashes(getLocalString('geolocation_err4')); ?>';
    document.write('<input id="user_idp" type="hidden" name="user_idp" value=""/>');
    document.write('<table border="0" cellpadding="0" cellspacing="0">');
    document.write('	<tr>');
@@ -35,58 +38,57 @@
      document.write('>');
    }
    document.write('		</td>');
--->
-</script>
-<noscript>
-<table border="0" cellpadding="0" cellspacing="0">
-	<tr>
-		<td colspan="3">
-			<select name="user_idp">
-				<option value="-" <?php echo $defaultSelected ?>><?php echo getLocalString('select_idp') ?> ...</option>
-				<?php printDropDownList($IDProviders, $selectedIDP) ?>
-			</select>
-		</td>
-		<td>&nbsp;</td>
-		<td>
-			<input type="submit" name="Select" accesskey="s" tabindex="10" value="<?php echo getLocalString('select_button') ?>" >
-		</td>
-</noscript>
-		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	</tr>
-	<tr>
-		<td colspan="1">
-			<p>
-			<input type="checkbox" tabindex="8" <?php echo $rememberSelectionChecked ?> name="session" id="rememberForSession" value="true">
-			<span class="warning"><label for="rememberForSession"><?php echo getLocalString('remember_selection') ?></label></span><br>
-			<?php if ($showPermanentSetting) : ?>
-			<!-- Value permanent must be a number which is equivalent to the days the cookie shall be valid -->
-			<input type="checkbox" tabindex="9" name="permanent" id="rememberPermanent" value="100">
-			<span class="warning"><label for="rememberPermanent" /><?php echo getLocalString('permanently_remember_selection') ?></label></span>
-			<?php endif ?>
-			</p>
-		</td>
-<script language="JavaScript" type="text/javascript">
-<!--
+   document.write('		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>');
+   document.write('	</tr>');
+   document.write('	<tr>');
+   document.write('		<td colspan="1">');
+   document.write('			<p>');
+   document.write('			<input type="checkbox" tabindex="8" <?php echo $rememberSelectionChecked ?> name="session" id="rememberForSession" value="true">');
+   document.write('			<span class="warning"><label for="rememberForSession"><?php echo getLocalString('remember_selection') ?></label></span><br>');
+   document.write('			<?php if ($showPermanentSetting) : ?>');
+   document.write('			<!-- Value permanent must be a number which is equivalent to the days the cookie shall be valid -->');
+   document.write('			<input type="checkbox" tabindex="9" name="permanent" id="rememberPermanent" value="100">');
+   document.write('			<span class="warning"><label for="rememberPermanent" /><?php echo getLocalString('permanently_remember_selection') ?></label></span>');
+   document.write('			<?php endif ?>');
+   document.write('			</p>');
+   document.write('		</td>');
    document.write('		<td colspan="2" style="vertical-align:top; text-align:right;">');
    document.write('			<div id="map_a" class="default" title="<?php echo getLocalString('map_tooltip') ?>" tabindex=11><?php echo getLocalString('map_button') ?></div>');
    document.write('		<td colspan="2" style="vertical-align:top; text-align:center;">');
    document.write('			<div id="clear_a" class="default" title="<?php echo getLocalString('clear_tooltip') ?>" tabindex=12><?php echo getLocalString('clear_button') ?></div>');
+   document.write('		</td>');
+   document.write('		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>');
+   document.write('	</tr>');
+   document.write('</table>');
 -->
 </script>
 <noscript>
-		<td colspan="4" style="vertical-align:top; text-align:center;">
-			&nbsp;
+		<div align="center">
+			<select name="user_idp" id="userIdPSelection"> 
+				<option value="-" <?php echo $defaultSelected ?>><?php echo getLocalString('select_idp') ?> ...</option>
+			<?php printDropDownList($IDProviders, $selectedIDP) ?>
+			</select>
+			<input type="submit" name="Select" accesskey="s" value="<?php echo getLocalString('select_button') ?>"> 
+		</div>
+		<div align="left">
+			<p class="selectOptions">
+				<input type="checkbox" <?php echo $rememberSelectionChecked ?> name="session" id="rememberForSession" value="true">
+				<label for="rememberForSession"><?php echo getLocalString('remember_selection') ?></label><br>
+				<?php if ($showPermanentSetting) : ?>
+				<!-- Value permanent must be a number which is equivalent to the days the cookie shall be valid -->
+				<input type="checkbox" name="permanent" id="rememberPermanent" value="100">
+				<label for="rememberPermanent" /><?php echo getLocalString('permanently_remember_selection') ?></label>
+				<?php endif ?>
+			</p>
+		</div>
 </noscript>
-		</td>
-		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	</tr>
-</table>
+</div>
 </form>
 <form id="GeolocationMap" method="post" action="<?php echo $geolocationMapURL ?>">
 	<input type="hidden" id="idplist" name="idplist" value="">
 	<input type="hidden" id="client" name="client" value="">
 	<input type="hidden" id="action" name="action" value="<?php echo $actionURL ?>">
 </form>
-<?php #phpinfo(); ?>
+
 <p><?php echo getLocalString('additional_info') ?></p>
 <!-- Identity Provider Selection: End-->

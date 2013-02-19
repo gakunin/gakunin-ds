@@ -32,6 +32,10 @@ function printEmbeddedWAYFScript_IncSearch(){
 	$mapTooltip = addslashes(getLocalString('map_tooltip'));
 	$regTooltip = addslashes(getLocalString('reg_tooltip'));
 	$geolocationTooltip = addslashes(getLocalString('geolocation_tooltip'));
+	$geolocationErr1 = addslashes(getLocalString('geolocation_err1'));
+	$geolocationErr2 = addslashes(getLocalString('geolocation_err2'));
+	$geolocationErr3 = addslashes(getLocalString('geolocation_err3'));
+	$geolocationErr4 = addslashes(getLocalString('geolocation_err4'));
 	
 	getSearchIdPList();
 	
@@ -97,6 +101,11 @@ var geolocation_on = '{$geolocationOnURL}';
 var favorite_idp_group = '{$mostUsedIdPsString}';
 var hint_idp_group = '{$hintIDPString}';
 var hintmax = '{$useMduiHintMax}';
+var reg_button = '{$regString}';
+var geolocation_err1 = '{$geolocationErr1}';
+var geolocation_err2 = '{$geolocationErr2}';
+var geolocation_err3 = '{$geolocationErr3}';
+var geolocation_err4 = '{$geolocationErr4}';
 
 // Define functions
 function submitForm(){
