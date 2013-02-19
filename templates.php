@@ -30,12 +30,8 @@ function printHeader(){
 			include('custom-header.php');
 		}
 	} else {
-		if (isset($useAutocompleteIdP) && $useAutocompleteIdP == true){
-			include('incsearch/default-header-incsearch.php');
-		} else {
-			// Use default code
-			include('default-header.php');
-		}
+		// Use default code
+		include('default-header.php');
 	}
 }
 
@@ -45,7 +41,7 @@ function printHeader(){
 function printWAYF(){
 	
 	global $selectedIDP, $language, $IDProviders, $redirectCookieName, $imageURL, $redirectStateCookieName, $showPermanentSetting;
-	global $useAutocompleteIdP, $selIdP, $geolocationMapURL;
+	global $useAutocompleteIdP, $selIdP, $geolocationMapURL, $SProviders;
 	
 	if (!isset($showPermanentSetting)){
 		$showPermanentSetting = false;
@@ -60,6 +56,24 @@ function printWAYF(){
 	} else {
 		$promptMessage =  sprintf(getLocalString('access_host'), 'unknown');
 	}
+	
+	$SPName = '';
+	foreach ($SProviders as $key => $SProvider){
+		
+		if (isset($_GET['entityID']) && $key == $_GET['entityID']){
+			// Get SP Name
+			if (isset($SProvider[$language]['Name'])){
+				$SPName = addslashes($SProvider[$language]['Name']);
+			} else {
+				$SPName = addslashes($SProvider['Name']);
+			}
+			break;
+		}
+	}
+	if ($SPName != ''){
+		$promptMessage =  '<span title="'.$_GET['entityID'].'">'.sprintf(getLocalString('access_host'), $SPName).'</span>';
+	}
+	
 	$actionURL = $_SERVER['SCRIPT_NAME'].'?'.htmlentities($_SERVER['QUERY_STRING']);
 	$defaultSelected = ($selectedIDP == '-') ? 'selected="selected"' : '';
 	$rememberSelectionChecked = (isset($_COOKIE[$redirectStateCookieName])) ? 'checked="checked"' : '' ;
@@ -73,12 +87,8 @@ function printWAYF(){
 			include('custom-body.php');
 		}
 	} else {
-		if (isset($useAutocompleteIdP) && $useAutocompleteIdP == true){
-			include('incsearch/default-body-incsearch.php');
-		} else {
-			// Use default code
-			include('default-body.php');
-		}
+		// Use default code
+		include('default-body.php');
 	}
 }
 
@@ -196,7 +206,6 @@ function printNotice(){
 /******************************************************************************/
 // Prints end of HTML page
 function printFooter(){
-	global $useAutocompleteIdP;
 	
 	// Check if footer template exists
 	if(file_exists('custom-footer.php')){
@@ -1338,16 +1347,12 @@ function printEmbeddedConfigurationScript(){
 function printCSS(){
 	
 	global $imageURL;
-	global $useAutocompleteIdP;
 	
 	$defaultCSSFile =  'css/default-styles.css';
 	$cssContent = file_get_contents($defaultCSSFile);
 
 	// Read custom CSS if available
-	if (isset($useAutocompleteIdP) && $useAutocompleteIdP == true){
-		$customCSSincsearchFile = 'incsearch/custom-styles-incsearch.css';
-		$cssContent .= file_get_contents($customCSSincsearchFile);
-	} elseif (file_exists('css/custom-styles.css')){
+	if (file_exists('css/custom-styles.css')){
 		$customCSSFile =  'css/custom-styles.css';
 		$cssContent .= file_get_contents($customCSSFile);
 	}
