@@ -45,7 +45,11 @@ function delGeoHintList(){
       hint_list.push(tmp_hint);
     }
     document.getElementById("geolocation_img").src = geolocation_off;
+    if (suggest.getInputText == initdisp) {
+      suggest.setInputText('');
+    }
     geolocation_flg = false;
+    suggest.input.focus();
     suggest.search();
   }
 }
@@ -111,8 +115,12 @@ function checkGeolocationList(clientIdo, clientKeido) {
     }
   }
   document.getElementById("geolocation_img").src = geolocation_on;
+  if (suggest.getInputText == initdisp) {
+    suggest.setInputText('');
+  }
   geolocation_flg = false;
   geolocation_ngflg = false;
+  suggest.input.focus();
   suggest.search();
 }
 
@@ -465,7 +473,8 @@ Suggest.Local.prototype = {
     } else if (element.id == this.clearElm.id) {
       this.setInputText('');
       clear_flg = false;
-      this.execSearch();
+      this.input.focus();
+      this.search();
       if (this.pcFlg) {
         this.scrollArea.scrollTop = 0;
       }
