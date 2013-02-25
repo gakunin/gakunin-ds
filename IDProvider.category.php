@@ -128,4 +128,70 @@ $IDProviders['others'] = array (
 		'Index' => '009',
 );
 
+//
+// 全て
+$IDProvidersKind['all'] = array (
+		'Type' => 'kind',
+		'en' => array ('Name' => 'all'),
+		'ja' => array ('Name' => '全て'),
+		'Name' => 'All',
+		'Default' => 'checked',
+		'Index' => '010',
+);
+
+//
+// 大学
+$IDProvidersKind['university'] = array (
+		'Type' => 'kind',
+		'en' => array ('Name' => 'university'),
+		'ja' => array ('Name' => '大学'),
+		'Name' => 'University',
+		'Default' => '',
+		'Index' => '011',
+);
+
+//
+// 短大
+$IDProvidersKind['tertiaryb'] = array (
+		'Type' => 'kind',
+		'en' => array ('Name' => 'tertiaryb'),
+		'ja' => array ('Name' => '短大'),
+		'Name' => 'Tertiaryb',
+		'Default' => '',
+		'Index' => '012',
+);
+
+//
+// 高専
+$IDProvidersKind['uppersecondary'] = array (
+		'Type' => 'kind',
+		'en' => array ('Name' => 'uppersecondary'),
+		'ja' => array ('Name' => '高専'),
+		'Name' => 'Uppersecondary',
+		'Default' => '',
+		'Index' => '013',
+);
+
+//
+// 研究所
+$IDProvidersKind['vho'] = array (
+		'Type' => 'kind',
+		'en' => array ('Name' => 'vho'),
+		'ja' => array ('Name' => '研究所'),
+		'Name' => 'Vho',
+		'Default' => '',
+		'Index' => '014',
+);
+
+//
+// その他
+$IDProvidersKind['others'] = array (
+		'Type' => 'kind',
+		'en' => array ('Name' => 'others'),
+		'ja' => array ('Name' => 'その他'),
+		'Name' => 'Others',
+		'Default' => '',
+		'Index' => '015',
+);
+
 ?>

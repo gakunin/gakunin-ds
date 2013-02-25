@@ -41,7 +41,7 @@ function printHeader(){
 function printWAYF(){
 	
 	global $selectedIDP, $language, $IDProviders, $redirectCookieName, $imageURL, $redirectStateCookieName, $showPermanentSetting;
-	global $useAutocompleteIdP, $selIdP, $geolocationMapURL, $SProviders;
+	global $useAutocompleteIdP, $selIdP, $geolocationMapURL, $SProviders, $IDProvidersKind;
 	
 	if (!isset($showPermanentSetting)){
 		$showPermanentSetting = false;

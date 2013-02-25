@@ -342,6 +342,12 @@ function processIDPRoleDescriptor($IDPRoleDescriptorNode){
 		}
 	}
 	
+	// Get AttributeValue 
+	$SAMLAttributeValue = getSAMLAttributeValue($IDPRoleDescriptorNode);
+	if ($SAMLAttributeValue){
+		$IDP['AttributeValue'] = $SAMLAttributeValue;
+	}
+	
 	// Get IPHints 
 	$MDUIIPHints = getMDUIIPHints($IDPRoleDescriptorNode);
 	if ($MDUIIPHints){
@@ -561,6 +567,23 @@ function getMDUILogos($RoleDescriptorNode){
 	
 	return $Entity;
 }
+
+
+/******************************************************************************/
+// Get MD Attribute Value(kind) from RoleDescriptor
+function getSAMLAttributeValue($RoleDescriptorNode){
+	
+	$Entity = Array();
+	
+	$SAMLAttributeValue = $RoleDescriptorNode->getElementsByTagNameNS('urn:oasis:names:tc:SAML:2.0:assertion', 'AttributeValue');
+	foreach( $SAMLAttributeValue as $SAMLAttributeValueEntry ){
+		$Entity = $SAMLAttributeValueEntry->nodeValue;
+		break;
+	}
+	
+	return $Entity;
+}
+
 
 /******************************************************************************/
 // Get MD IP Address Hints from RoleDescriptor

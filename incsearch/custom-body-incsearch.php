@@ -31,7 +31,7 @@
    document.write('		</td>');
    document.write('		<td>&nbsp;</td>');
    document.write('		<td>');
-   document.write('			<input id="wayf_submit_button" type="submit" name="Select" accesskey="s" tabindex="10" value="<?php echo getLocalString('select_button') ?>" ');
+   document.write('			<input id="wayf_submit_button" type="submit" name="Select" accesskey="s" tabindex="19" value="<?php echo getLocalString('select_button') ?>" ');
    if (dispidp == initdisp) {
      document.write('disabled >');
    } else {
@@ -41,23 +41,42 @@
    document.write('		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>');
    document.write('	</tr>');
    document.write('	<tr>');
-   document.write('		<td colspan="1">');
+   document.write('		<td colspan="1" style="font-size: 80%;">');
+<?php
+  $tabindex = 8;
+  foreach ($IDProvidersKind as $key => $IDProviderKind){
+    $IdPType = isset($IDProvidersKind[$key]['Type']) ? $IDProvidersKind[$key]['Type'] : '';
+    if ($IdPType != 'kind'){ continue; }
+    if (isset($IDProviderKind[$language]['Name'])){
+      $IdPKindName = addslashes($IDProviderKind[$language]['Name']);
+    } else {
+      $IdPKindName = addslashes($IDProviderKind['Name']);
+    }
+    $IdPKindChecked = $IDProviderKind['Default'];
+    print("document.write('                     <input type=\"radio\" tabindex=$tabindex name=\"kindgroup\" value=\"$key\" onclick=\"changeKind();\" $IdPKindChecked>$IdPKindName</input>');\n");
+    $tabindex++;
+  }
+?>
+   document.write('		</td>');
+   document.write('		<td colspan="2" style="vertical-align:top; text-align:right;">');
+   document.write('			<div id="map_a" class="default" title="<?php echo getLocalString('map_tooltip') ?>" tabindex=15><?php echo getLocalString('map_button') ?></div>');
+   document.write('		<td colspan="2" style="vertical-align:top; text-align:center;">');
+   document.write('			<div id="clear_a" class="default" title="<?php echo getLocalString('clear_tooltip') ?>" tabindex=16><?php echo getLocalString('clear_button') ?></div>');
+   document.write('		</td>');
+   document.write('		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>');
+   document.write('	</tr>');
+   document.write('	<tr>');
+   document.write('		<td colspan="6">');
    document.write('			<p>');
-   document.write('			<input type="checkbox" tabindex="8" <?php echo $rememberSelectionChecked ?> name="session" id="rememberForSession" value="true">');
+   document.write('			<input type="checkbox" tabindex="17" <?php echo $rememberSelectionChecked ?> name="session" id="rememberForSession" value="true">');
    document.write('			<span class="warning"><label for="rememberForSession"><?php echo getLocalString('remember_selection') ?></label></span><br>');
    document.write('			<?php if ($showPermanentSetting) : ?>');
    document.write('			<!-- Value permanent must be a number which is equivalent to the days the cookie shall be valid -->');
-   document.write('			<input type="checkbox" tabindex="9" name="permanent" id="rememberPermanent" value="100">');
+   document.write('			<input type="checkbox" tabindex="18" name="permanent" id="rememberPermanent" value="100">');
    document.write('			<span class="warning"><label for="rememberPermanent" /><?php echo getLocalString('permanently_remember_selection') ?></label></span>');
    document.write('			<?php endif ?>');
    document.write('			</p>');
    document.write('		</td>');
-   document.write('		<td colspan="2" style="vertical-align:top; text-align:right;">');
-   document.write('			<div id="map_a" class="default" title="<?php echo getLocalString('map_tooltip') ?>" tabindex=11><?php echo getLocalString('map_button') ?></div>');
-   document.write('		<td colspan="2" style="vertical-align:top; text-align:center;">');
-   document.write('			<div id="clear_a" class="default" title="<?php echo getLocalString('clear_tooltip') ?>" tabindex=12><?php echo getLocalString('clear_button') ?></div>');
-   document.write('		</td>');
-   document.write('		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>');
    document.write('	</tr>');
    document.write('</table>');
 -->

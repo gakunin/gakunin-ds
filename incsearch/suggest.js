@@ -587,8 +587,10 @@ Suggest.Local.prototype = {
     var resultList = [];
     var temp; 
     this.suggestIndexList = [];
-
     for (var i = 0, length = this.candidateList.length; i < length; i++) {
+      if (selkind != '' && selkind != 'all' && selkind != this.candidateList[i][8]){
+        continue;
+      }
       for (var j = 10, length2 = this.candidateList[i].length; j < length2; j++) {
         if (text == '' ||
              this.isMatch(this.candidateList[i][j], text) != null ||

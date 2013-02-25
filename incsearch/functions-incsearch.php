@@ -79,7 +79,7 @@ function getSearchIdPList() {
 	
 	global $IDProviders, $langStrings, $language, $selectedIDP, $mduiHintIDPs;
 	global $IncSearchList, $IncSearchHintList, $JSONIdPList, $IdPHintList;
-	global $selIdP, $InitDisp, $hintIDPString;
+	global $selIdP, $InitDisp, $hintIDPString, $IDProvidersKind;
 	
 	$IncSearchArray = array();
 	$IncSearchHintArray = array();
@@ -116,12 +116,12 @@ function getSearchIdPList() {
 			continue;
 		}
 		
-		// Get IdP Category
+		// Set IdP Category
 		$IdPCategory = '';
 		$IDProviders2 = $IDProviders;
 		foreach ($IDProviders2 as $key2 => $IDProvider2){
 			$IdPType2 = isset($IDProviders2[$key2]['Type']) ? $IDProviders2[$key2]['Type'] : '';
-			// Skip non-Category
+			// Category
 			if ($IdPType2 == 'category' && $IdPType == $key2){
 				// Get IdP Category Name
 				if (isset($IDProvider2[$language]['Name'])){
@@ -129,8 +129,27 @@ function getSearchIdPList() {
 				} else {
 					$IdPCategory = addslashes($IDProvider2['Name']);
 				}
-				break;
+				if (!empty($IdPKind)){
+					break;
+				}
 			}
+		}
+		
+		// Set IdP Kind
+		if (isset($IDProvider['AttributeValue'])){
+			$IdPKindCheckFlg = false;
+			$IdPKind = addslashes($IDProvider['AttributeValue']);
+			foreach ($IDProvidersKind as $key3 => $IDProviderKind){
+				if ($IdPKind == $key3){
+					$IdPKindCheckFlg = true;
+					break;
+				}
+			}
+			if (!$IdPKindCheckFlg){
+				$IdPKind = 'others';
+			}
+		} else {
+			$IdPKind = 'others';
 		}
 		
 		// Get IdP Logo URL and Size
@@ -181,7 +200,7 @@ function getSearchIdPList() {
 		}
 		
 		$IncSearchAdd = <<<ENTRY
-, "{$IdPLogoURL}", "{$IdPLogoHeight}", "{$IdPLogoWidth}", "{$IdPGeolocationHint}", "{$IdPRegistrationURL}", "", "", {$SearchIdPName}
+, "{$IdPLogoURL}", "{$IdPLogoHeight}", "{$IdPLogoWidth}", "{$IdPGeolocationHint}", "{$IdPRegistrationURL}", "{$IdPKind}", "", {$SearchIdPName}
 ENTRY;
 
 		$IncSearchIDP = <<<ENTRY

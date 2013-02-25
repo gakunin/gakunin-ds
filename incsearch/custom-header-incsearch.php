@@ -37,6 +37,7 @@
 	} else {
 		dispidp = dispDefault;
 	}
+        var selkind = '';
 	
 	// Central DS: Selection IdP check
 	function checkSelectIdP(){
@@ -86,6 +87,16 @@
 			}
 		}
 	}
+	
+	function changeKind(){
+		for(i = 0; i < IdPList.kindgroup.length; i++){
+			if(IdPList.kindgroup[i].checked) {
+				selkind = IdPList.kindgroup[i].value;
+				break;
+			}
+		}
+	}
+
 	
 	-->
 	</script>

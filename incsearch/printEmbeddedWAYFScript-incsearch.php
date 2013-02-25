@@ -9,7 +9,7 @@ function printEmbeddedWAYFScript_IncSearch(){
 	global $cookieSecurity;
 	global $safekind, $selIdP, $incsearchLibURL, $incsearchCssURL, $alertURL, $dropdownUpURL, $dropdownDnURL, $ajaxLibURL, $ajaxFlickLibURL;
 	global $mduiHintIDPs, $useMduiHintMax, $geolocationOffURL, $geolocationOnURL, $geolocationMapURL;
-	global $IncSearchList, $IncSearchHintList, $JSONIdPList, $IdPHintList, $selIdP, $InitDisp, $hintIDPString;
+	global $IncSearchList, $IncSearchHintList, $JSONIdPList, $IdPHintList, $selIdP, $InitDisp, $hintIDPString, $IDProvidersKind;
 	
 	// Get some values that are used in the script
 	$loginWithString = getLocalString('login_with');
@@ -106,6 +106,16 @@ var geolocation_err1 = '{$geolocationErr1}';
 var geolocation_err2 = '{$geolocationErr2}';
 var geolocation_err3 = '{$geolocationErr3}';
 var geolocation_err4 = '{$geolocationErr4}';
+var selkind = '';
+
+function changeKind(){
+	for(i = 0; i < IdPList.kindgroup.length; i++) {
+		if(IdPList.kindgroup[i].checked) {
+			selkind = IdPList.kindgroup[i].value;
+			break;
+		}
+	}
+}
 
 // Define functions
 function submitForm(){
@@ -1118,9 +1128,9 @@ SCRIPT;
 		writeHTML('<td>');
 		// Do we have to display custom text?
 		if(typeof(wayf_overwrite_submit_button_text) == "undefined"){
-			writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="{$loginString}" tabindex="11" onClick="javascript:return submitForm();" ');
+			writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="{$loginString}" tabindex="19" onClick="javascript:return submitForm();" ');
 		} else {
-			writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="' + wayf_overwrite_submit_button_text + '" tabindex="11" onClick="javascript:return submitForm();" ');
+			writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="' + wayf_overwrite_submit_button_text + '" tabindex="19" onClick="javascript:return submitForm();" ');
 		}
 
 		if (dispidp == initdisp) {
@@ -1131,10 +1141,37 @@ SCRIPT;
 
 		writeHTML('</td>');
 		writeHTML('</tr>');
-
 		
 		writeHTML('<tr>');
-		writeHTML('<td colspan="1">');
+		writeHTML('<td colspan="1" style="font-size: 80%;">');
+SCRIPT;
+
+$tabindex = 8;
+foreach ($IDProvidersKind as $key => $IDProviderKind){
+	$IdPType = isset($IDProvidersKind[$key]['Type']) ? $IDProvidersKind[$key]['Type'] : '';
+	if ($IdPType != 'kind'){ continue; }
+	if (isset($IDProviderKind[$language]['Name'])){
+		$IdPKindName = addslashes($IDProviderKind[$language]['Name']);
+	} else {
+		$IdPKindName = addslashes($IDProviderKind['Name']);
+	}
+	$IdPKindChecked = $IDProviderKind['Default'];
+	print("writeHTML('<input type=\"radio\" tabindex=$tabindex name=\"kindgroup\" value=\"$key\" onclick=\"changeKind();\" $IdPKindChecked>$IdPKindName</input>');\n");
+	$tabindex++;
+}
+
+                echo <<<SCRIPT
+		writeHTML('</td>');
+		
+		writeHTML('<td colspan="2" style="vertical-align:middle; text-align:right;">');
+		writeHTML('<div id="map_a" class="default" title="{$mapTooltip}" tabindex=15>{$mapString}</div>');
+		writeHTML('</td>');
+		writeHTML('<td colspan="2" style="vertical-align:middle; text-align:center;">');
+		writeHTML('<div id="clear_a" class="default" title="{$clearTooltip}" tabindex=16>{$clearString}</div>');
+		writeHTML('</td>');
+		writeHTML('</tr>');
+		writeHTML('<tr>');
+		writeHTML('<td colspan="5">');
 		// Draw checkbox
 		writeHTML('<div id="wayf_remember_checkbox_div" style="float: left;margin-top: 0px;margin-bottom:0px; width: 100%;">');
 		// Do we have to show the remember settings checkbox?
@@ -1142,11 +1179,11 @@ SCRIPT;
 			// Is the checkbox forced to be checked
 			if (wayf_force_remember_for_session){
 				// First draw the dummy checkbox ...
-				writeHTML('<input id="wayf_remember_checkbox" type="checkbox" name="session_dummy" value="true" tabindex=9 checked="checked" disabled="disabled" >&nbsp;');
+				writeHTML('<input id="wayf_remember_checkbox" type="checkbox" name="session_dummy" value="true" tabindex=17 checked="checked" disabled="disabled" >&nbsp;');
 				// ... and now the real but hidden checkbox
 				writeHTML('<input type="hidden" name="session" value="true">&nbsp;');
 			} else {
-				writeHTML('<input id="wayf_remember_checkbox" type="checkbox" name="session" value="true" tabindex=9 {$checkedBool}>&nbsp;');
+				writeHTML('<input id="wayf_remember_checkbox" type="checkbox" name="session" value="true" tabindex=17 {$checkedBool}>&nbsp;');
 			}
 			
 			// Do we have to display custom text?
@@ -1161,13 +1198,6 @@ SCRIPT;
 			writeHTML('<input id="wayf_remember_checkbox" type="hidden" name="session" value="true">&nbsp;');
 		}
 		writeHTML('</div>');
-		writeHTML('</td>');
-		
-		writeHTML('<td colspan="2" style="vertical-align:middle; text-align:right;">');
-		writeHTML('<div id="map_a" class="default" title="{$mapTooltip}" tabindex=12>{$mapString}</div>');
-		writeHTML('</td>');
-		writeHTML('<td colspan="2" style="vertical-align:middle; text-align:center;">');
-		writeHTML('<div id="clear_a" class="default" title="{$clearTooltip}" tabindex=13>{$clearString}</div>');
 		writeHTML('</td>');
 		writeHTML('</tr>');
 		writeHTML('</table>');
