@@ -36,6 +36,7 @@ function printEmbeddedWAYFScript_IncSearch(){
 	$geolocationErr2 = addslashes(getLocalString('geolocation_err2'));
 	$geolocationErr3 = addslashes(getLocalString('geolocation_err3'));
 	$geolocationErr4 = addslashes(getLocalString('geolocation_err4'));
+	$categoryRadio = addslashes(getLocalString('category_radio'));
 	
 	getSearchIdPList();
 	
@@ -1144,6 +1145,7 @@ SCRIPT;
 		
 		writeHTML('<tr>');
 		writeHTML('<td colspan="1" style="font-size: 80%;">');
+		writeHTML('{$categoryRadio}');
 SCRIPT;
 
 $tabindex = 8;

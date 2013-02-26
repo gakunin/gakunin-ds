@@ -42,6 +42,7 @@
    document.write('	</tr>');
    document.write('	<tr>');
    document.write('		<td colspan="1" style="font-size: 80%;">');
+   document.write('			<?php echo addslashes(getLocalString('category_radio')) ?>');
 <?php
   $tabindex = 8;
   foreach ($IDProvidersKind as $key => $IDProviderKind){

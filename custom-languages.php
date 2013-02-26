@@ -63,6 +63,7 @@ $langStrings['en'] = array (
 'geolocation_err2' => 'Use of location information is not permitted',
 'geolocation_err3' => 'Location of the device I can not determine',
 'geolocation_err4' => 'Timed out',
+'category_radio' => 'Filter:',
 );
 
 
@@ -291,6 +292,7 @@ $langStrings['ja'] = array (
 'geolocation_err2' => '位置情報の利用が許可されていません',
 'geolocation_err3' => 'デバイスの位置が判定できません',
 'geolocation_err4' => 'タイムアウトしました',
+'category_radio' => '絞り込み:',
 );
 
 ?>
