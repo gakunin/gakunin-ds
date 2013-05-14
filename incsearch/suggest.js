@@ -29,9 +29,6 @@ function checkDiscofeedList(json, list){
       }
     }
   }
-  if (!matchFlg){
-    newList = list;
-  }
   return newList;
 }
 
@@ -72,14 +69,14 @@ if (typeof(wayf_discofeed_url) != "undefined" && wayf_discofeed_url != ''){
     xdr.onload = function(){
         setDiscofeedList(eval("(" + xdr.responseText + ")"));
     }
-    xdr.open("get", wayf_discofeed_url, false);
+    xdr.open("get", wayf_discofeed_url, true);
     xdr.send( null );
   } else {
     $.ajax({
       type: 'get',
       url: wayf_discofeed_url,
       dataType: 'json',
-      async: false,
+      async: true,
       success: function(json) {
         setDiscofeedList(json);
       }
@@ -152,6 +149,9 @@ Suggest.Local.prototype = {
       if (this.hintList.length > 0) {
         this.candidateList = this.hintList.concat(this.candidateList);
       }
+    }
+    if (this.candidateList.length == 0) {
+      this.setInputText(this.initDisp);
     }
 
     if (arguments[16]) this.setOptions(arguments[16]);
@@ -348,6 +348,9 @@ Suggest.Local.prototype = {
         if (this.hintList.length > 0) {
           this.candidateList = this.hintList.concat(this.candidateList);
         }
+      }
+      if (this.candidateList.length == 0) {
+        this.setInputText(this.initDisp);
       }
       this.discofeedFlg = true;
     }
