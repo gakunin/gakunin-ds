@@ -352,7 +352,7 @@ function processIDPRoleDescriptor($IDPRoleDescriptorNode){
 				}
 			}
 		}
-		$DiscoHints = $Extensions->getElementsByTagName('DiscoHints')->item(0);
+		$DiscoHints = $Extensions->getElementsByTagNameNS('urn:oasis:names:tc:SAML:metadata:ui', 'DiscoHints')->item(0);
 		if ($DiscoHints){
 			$IPHints = $DiscoHints->getElementsByTagNameNS('urn:oasis:names:tc:SAML:metadata:ui', 'IPHint');
 			if ($IPHints){
