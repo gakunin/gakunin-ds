@@ -24,7 +24,7 @@ function getDomainNameFromURIHint_IncSearch($HintKeyList){
 				if (count($HintKeyList) == $useMduiHintMax) {
 					return $HintKeyList;
 				}
-				if (preg_match('/'.$domainhint.'$/', $clientHostname)){
+				if ((!empty($domainhint)) && (preg_match('/'.$domainhint.'$/', $hostname))){
 					if (!checkHintIDP($key, $HintKeyList)) {
 						array_push($HintKeyList, $key);
 					}
