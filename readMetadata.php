@@ -343,9 +343,9 @@ function processIDPRoleDescriptor($IDPRoleDescriptorNode){
 	}
 	
 	// Get AttributeValue 
-	$SAMLAttributeValue = getSAMLAttributeValue($IDPRoleDescriptorNode);
-	if ($SAMLAttributeValue){
-		$IDP['AttributeValue'] = $SAMLAttributeValue;
+	$SAMLAttributeValues = getSAMLAttributeValues($IDPRoleDescriptorNode);
+	if ($SAMLAttributeValues){
+		$IDP['AttributeValue'] = $SAMLAttributeValues;
 	}
 	
 	// Get IPHints 
@@ -556,7 +556,7 @@ function getMDUILogos($RoleDescriptorNode){
 	foreach( $MDUILogos as $MDUILogoEntry ){
 		$Item = Array();
 		$Item['url'] = trim($MDUILogoEntry->nodeValue);
-		$Item['height'] = ($MDUILogoEntry->getAttribute('height') != '') ? $MDUILogoEntry->getAttribute('height') : '18';
+		$Item['height'] = ($MDUILogoEntry->getAttribute('height') != '') ? trim($MDUILogoEntry->getAttribute('height')) : '18';
 		$Item['width'] = trim($MDUILogoEntry->getAttribute('width'));
 		$lang = trim($MDUILogoEntry->getAttribute('lang'));
 		if (empty($lang)){
@@ -571,14 +571,13 @@ function getMDUILogos($RoleDescriptorNode){
 
 /******************************************************************************/
 // Get MD Attribute Value(kind) from RoleDescriptor
-function getSAMLAttributeValue($RoleDescriptorNode){
+function getSAMLAttributeValues($RoleDescriptorNode){
 	
 	$Entity = Array();
 	
-	$SAMLAttributeValue = $RoleDescriptorNode->getElementsByTagNameNS('urn:oasis:names:tc:SAML:2.0:assertion', 'AttributeValue');
-	foreach( $SAMLAttributeValue as $SAMLAttributeValueEntry ){
-		$Entity = $SAMLAttributeValueEntry->nodeValue;
-		break;
+	$SAMLAttributeValues = $RoleDescriptorNode->getElementsByTagNameNS('urn:oasis:names:tc:SAML:2.0:assertion', 'AttributeValue');
+	foreach( $SAMLAttributeValues as $SAMLAttributeValuesEntry ){
+		$Entity[] = trim($SAMLAttributeValuesEntry->nodeValue);
 	}
 	
 	return $Entity;
@@ -593,7 +592,11 @@ function getMDUIIPHints($RoleDescriptorNode){
 	
 	$MDUIIPHints = $RoleDescriptorNode->getElementsByTagNameNS('urn:oasis:names:tc:SAML:metadata:ui', 'IPHint');
 	foreach( $MDUIIPHints as $MDUIIPHintEntry ){
-		$Entity = array_merge($Entity, explode(' ', $MDUIIPHintEntry->nodeValue));
+		if (preg_match("/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\/[0-9]{1,2}$/", trim($MDUIIPHintEntry->nodeValue), $splitIP)){
+			$Entity[] = $splitIP[0];
+		} elseif (preg_match("/^.*\:.*\/[0-9]{1,2}$/", trim($MDUIIPHintEntry->nodeValue), $splitIP)){ 
+			$Entity[] = $splitIP[0];
+		}
 	}
 	
 	return $Entity;
@@ -607,7 +610,7 @@ function getMDUIDomainHints($RoleDescriptorNode){
 	
 	$MDUIDomainHints = $RoleDescriptorNode->getElementsByTagNameNS('urn:oasis:names:tc:SAML:metadata:ui', 'DomainHint');
 	foreach( $MDUIDomainHints as $MDUIDomainHintEntry ){
-		$Entity = array_merge($Entity, explode(' ', $MDUIDomainHintEntry->nodeValue));
+		$Entity[] = trim($MDUIDomainHintEntry->nodeValue);
 	}
 	
 	return $Entity;
@@ -621,8 +624,9 @@ function getMDUIGeolocationHints($RoleDescriptorNode){
 	
 	$MDUIGeolocationHints = $RoleDescriptorNode->getElementsByTagNameNS('urn:oasis:names:tc:SAML:metadata:ui', 'GeolocationHint');
 	foreach( $MDUIGeolocationHints as $MDUIGeolocationHintEntry ){
-		if (preg_match("/^geo:([0-9]+\.{0,1}[0-9]+),([0-9]+\.{0,1}[0-9]+)$/", trim($MDUIGeolocationHintEntry->nodeValue), $splitGeo)){
-			$Entity = array_merge($Entity, array($splitGeo[1].':'.$splitGeo[2]));
+		if (preg_match("/^geo:([0-9]+\.{0,1}[0-9]*,[0-9]+\.{0,1}[0-9]*)$/", trim($MDUIGeolocationHintEntry->nodeValue), $splitGeo)){
+			$Entity[] = $splitGeo[1];
+
 		}
 	}
 	
