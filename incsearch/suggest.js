@@ -1,5 +1,3 @@
-jQuery.noConflict();
-jQuery(document).ready(function($){
 /*
 --------------------------------------------------------
 suggest.js - Input Suggest
@@ -14,264 +12,13 @@ For details, see the web site:
 
 --------------------------------------------------------
 */
-var geolocation_flg = true;
-var clear_flg = true;
-var geolocation_ngflg = false;
-var old_hint_list = [];
-var suggest;
-
-function addGeoHintList(){
-  old_hint_list = hint_list.slice(0);
-  if (hintmax > hint_list.length) {
-    if (navigator.geolocation) {
-      var clientGeolocation = document.getElementById("client").value;
-      if (clientGeolocation == '') {
-        navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
-      } else {
-        clientGeolocations = clientGeolocation.split(":");
-        checkGeolocationList(clientGeolocations[0], clientGeolocations[1]);
-      }
-    } else {
-      alert(geolocation_err1);
-    }
-  }
-}
-
-function delGeoHintList(){
-  if (!geolocation_ngflg) {
-    hint_list = [];
-    for (var i=0; i<old_hint_list.length; i++){
-      var tmp_hint = old_hint_list[i].slice(0);
-      hint_list.push(tmp_hint);
-    }
-    document.getElementById("geolocation_img").src = geolocation_off;
-    if (suggest.getInputText == initdisp) {
-      suggest.setInputText('');
-    }
-    geolocation_flg = false;
-    suggest.input.focus();
-    suggest.search();
-  }
-}
-
-function successCallback(position){
-  
-  checkGeolocationList(position.coords.latitude, position.coords.longitude);
-  
-}
-
-function checkGeolocationList(clientIdo, clientKeido) {
-  
-  var distance = 0;
-  var geohint_list = [];
-  var geokyori_list = [];
-  
-  document.getElementById("client").value = clientIdo + ':' + clientKeido;
-
-  for (var i=0; i<inc_search_list.length; i++){
-    if ( inc_search_list[i][6] != '') {
-      var cur_kyori = 0;
-      var min_kyori = 9999999999;
-      var latlon = [];
-      var geolocations = inc_search_list[i][6].split(";");
-      for (var j=0; j<geolocations.length; j++){
-        latlon = geolocations[j].split(":");
-        cur_kyori = getDistance(clientIdo, clientKeido, latlon[0], latlon[1], 10);
-        if (min_kyori > cur_kyori){
-          min_kyori = cur_kyori;
-        }
-      }
-      if (!geohint_list[min_kyori]) {
-        geohint_list[min_kyori] = [];
-      }
-      var tmp_idp = inc_search_list[i].slice(0);
-      tmp_idp[1] = hint_idp_group;
-      geohint_list[min_kyori].push(tmp_idp);
-      geokyori_list.push(min_kyori);
-    }
-  }
-  geokyori_list.sort();
-
-  var breakFlg = false;
-  for (var i=0; i<geokyori_list.length; i++){
-    for (var j=0; j<geohint_list[geokyori_list[i]].length; j++){
-      for (var k=0; k<old_hint_list.length; k++){
-        if (old_hint_list[k][0] == geohint_list[geokyori_list[i]][j][0]){
-          breakFlg = true;
-          break;
-        }
-      }
-      if (!breakFlg){
-        hint_list.push(geohint_list[geokyori_list[i]][j]);
-        if (hintmax <= hint_list.length) {
-          breakFlg = true;
-          break;
-        }
-      }
-      breakFlg = false;
-    }
-    if (breakFlg) {
-      break;
-    }
-  }
-  document.getElementById("geolocation_img").src = geolocation_on;
-  if (suggest.getInputText == initdisp) {
-    suggest.setInputText('');
-  }
-  geolocation_flg = false;
-  geolocation_ngflg = false;
-  suggest.input.focus();
-  suggest.search();
-}
-
-function getDistance(lat1, lng1, lat2, lng2, precision) {
-        var distance = 0;
-        if ((Math.abs(lat1 - lat2) < 0.00001) && (Math.abs(lng1 - lng2) < 0.00001)) {
-                distance = 0;
-        } else {
-                lat1 = lat1 * Math.PI / 180;
-                lng1 = lng1 * Math.PI / 180;
-                lat2 = lat2 * Math.PI / 180;
-                lng2 = lng2 * Math.PI / 180;
-
-                var A = 6378140;
-                var B = 6356755;
-                var F = (A - B) / A;
-
-                var P1 = Math.atan((B / A) * Math.tan(lat1));
-                var P2 = Math.atan((B / A) * Math.tan(lat2));
-
-                var X = Math.acos(Math.sin(P1) * Math.sin(P2) + Math.cos(P1) * Math.cos(P2) * Math.cos(lng1 - lng2));
-                var L = (F / 8) * ((Math.sin(X) - X) * Math.pow((Math.sin(P1) + Math.sin(P2)), 2) / Math.pow(Math.cos(X / 2), 2) - (Math.sin(X) - X) * Math.pow(Math.sin(P1) - Math.sin(P2), 2) / Math.pow(Math.sin(X), 2));
-
-                distance = A * (X + L);
-                var decimal_no = Math.pow(10, precision);
-                distance = Math.round(decimal_no * distance / 1) / decimal_no / 1000;
-
-                distance = Math.round(distance * 10);
-                distance = distance / 10;
-        }
-        return distance;
-}
-
-function errorCallback(error) {
-  var err_msg = "";
-  geolocation_ngflg = true;
-  switch(error.code)
-  {
-    case 1:
-      err_msg = geolocation_err2;
-      break;
-    case 2:
-      err_msg = geolocation_err3;
-      break;
-    case 3:
-      err_msg = geolocation_err4;
-      break;
-  }
-  document.getElementById("geolocation_img").src = geolocation_off;
-  alert(err_msg);
-}
-
-
-function checkDiscofeedList(json, list){
-  var newList = new Array();
-  var index = 0;
-  var matchFlg = false;
-
-  for (var i = 0, length = list.length; i < length; i++) {
-    for (var j in json) {
-      if (json[j].entityID == list[i][0]) {
-        newList[index] = list[i];
-        matchFlg = true;
-        index++;
-        break;
-      }
-    }
-  }
-  return newList;
-}
-
-function setDiscofeedList(json){
-  if (!json) return;
-  inc_search_list = checkDiscofeedList(json, inc_search_list);
-  setPostdataIdpList(inc_search_list);
-
-  favorite_list = checkDiscofeedList(json, favorite_list);
-  hint_list = checkDiscofeedList(json, hint_list);
-}
-
-function setPostdataIdpList(list){
-  var idplist = '';
-  for (var i = 0, length = list.length; i < length; i++) {
-    if (i != 0){
-      idplist = idplist + '||' + list[i];
-    } else {
-      idplist = list[i];
-    }
-  }
-  document.getElementById("idplist").value = idplist;
-
-}
-
-// It adds it to window event.
-function start() {
-  suggest = new Suggest.Local(
-        "keytext",                // element id of input area
-        "view_incsearch",         // element id of IdP list display area
-        "view_incsearch_animate", // element id of IdP list display animate area
-        "view_incsearch_scroll",  // element id of IdP list display scroll area
-        inc_search_list,          // IdP list
-        favorite_list,            // IdP list (Favorite)
-        hint_list,                // IdP list (Hint IP, Domain)
-        "dropdown_img",           // element id of dropdown image
-        "geolocation_img",        // element id of geolocation image
-        "wayf_submit_button",     // element id of select button
-        "map_a",                  // element id of map
-        "clear_a",                // element id of clear
-        initdisp,                 // Initial display of input area
-        dispDefault,              // Select IdP display of input area
-        dropdown_down,            // URL of deropdown down image 
-        dropdown_up,              // URL of deropdown up image
-        geolocation_off,          // URL of geolocation off image
-        geolocation_on,           // URL of geolocation on image
-        favorite_idp_group,       // favorite idp list group
-        hint_idp_group,           // hint idp list group
-        {dispMax: 500, showgrp: wayf_show_categories}); // option
-}
-
-// DiscoFeed
-if (typeof(wayf_use_disco_feed) == "undefined" || wayf_use_disco_feed){
-  if (typeof(wayf_discofeed_url) != "undefined" && wayf_discofeed_url != ''){
-    var urldomain = wayf_discofeed_url.split('/')[2];
-    if(location.hostname != urldomain && window.XDomainRequest){
-      var xdr = new XDomainRequest();
-      xdr.onload = function(){
-          setDiscofeedList(eval("(" + xdr.responseText + ")"));
-      }
-      xdr.open("get", wayf_discofeed_url, true);
-      xdr.send( null );
-    } else {
-      $.ajax({
-        type: 'get',
-        url: wayf_discofeed_url,
-        dataType: 'json',
-        async: true,
-        success: function(json) {
-          setDiscofeedList(json);
-        }
-      });
-    }
-  }
-}
-
-window.addEventListener ?
-        window.addEventListener('load', start, false) :
-        window.attachEvent('onload', start);
-
 if (!Suggest) {
   var Suggest = {};
 }
+
+jQuery.noConflict();
+jQuery(document).ready(function($){
+
 /*-- KeyCodes -----------------------------------------*/
 Suggest.Key = {
   TAB:     9,
@@ -296,7 +43,7 @@ Suggest.Local = function() {
 Suggest.Local.prototype = {
   initialize: function(input, suggestArea, animateArea, scrollArea, candidateList, favoriteList, hintList,
                        dnupImgElm, geolocationImgElm, selectElm, mapElm, clearElm, initDisp, dispDefault, 
-                       dnImgURL, upImgURL, geoOffImgURL, geoOnImgURL, favoriteIdpGroup, hintIdpGroup) {
+                       dnImgURL, upImgURL, geoOffImgURL, geoOnImgURL, favoriteIdpGroup, hintIdpGroup, embeddedFlg) {
 
     this.input = this._getElement(input);
     this.suggestArea = this._getElement(suggestArea);
@@ -318,6 +65,7 @@ Suggest.Local.prototype = {
     this.geoOnImgURL = geoOnImgURL;
     this.favoriteIdpGroup = favoriteIdpGroup;
     this.hintIdpGroup = hintIdpGroup;
+    this.embeddedFlg = embeddedFlg;
     this.setInputText(dispidp);
     this.oldText = (this.initDisp == this.getInputText()) ?
       '': this.getInputText();
@@ -325,7 +73,6 @@ Suggest.Local.prototype = {
     this.noMatch = true;
     this.pcFlg = true;
     this.geoFlg = true;
-    this.discofeedFlg = false;
 
     if (this.candidateList.length > 0) {
       // favorite IdP List
@@ -337,11 +84,14 @@ Suggest.Local.prototype = {
         this.candidateList = this.hintList.concat(this.candidateList);
       }
     }
+    if (!discofeed_flg){
+      this.candidateList = new Array();
+    }
     if (this.candidateList.length == 0) {
       this.setInputText(this.initDisp);
     }
 
-    if (arguments[20]) this.setOptions(arguments[20]);
+    if (arguments[21]) this.setOptions(arguments[21]);
 
     // reg event
     this._addEvent(this.input, 'focus', this._bind(this.tabFocus));
@@ -377,8 +127,6 @@ Suggest.Local.prototype = {
     this.touchScroll();
 
     this.geolocationImgElm.src = this.geoOffImgURL;
-
-    setPostdataIdpList(this.candidateList);
 
   },
 
@@ -424,11 +172,14 @@ Suggest.Local.prototype = {
 
   checkNoMatch: function(text) {
     var flg = true;
+    var search_cnt = 0;
+    var countHintList = 0;
+    var countFavoriteList = 0;
 
     if (text != '') {
-      for (var i = 0, length = this.candidateList.length; i < length; i++) {
-        for (var j = 10, length2 = this.candidateList[i].length; j < length2; j++) {
-          if (text.toLowerCase() == this.candidateList[i][j].toLowerCase()) {
+      for (var i in this.candidateList){
+        for (var j in this.candidateList.search){
+          if (text.toLowerCase() == this.candidateList[i].search[j].toLowerCase()) {
             flg = false;
             break;
           }
@@ -439,14 +190,23 @@ Suggest.Local.prototype = {
       }
     }
 
-    var search_cnt = 0;
     if (this.suggestList){
-      search_cnt = this.suggestList.length - this.hintList.length - this.favoriteList.length;
+      for (var i in this.hintList){
+        if (this.isMatchKind(this.hintList[i])){
+          countHintList++;
+        }
+      }
+      for (var i in this.favoriteList){
+        if (this.isMatchKind(this.favoriteList[i])){
+          countFavoriteList++;
+        }
+      }
+      search_cnt = this.suggestList.length - countHintList - countFavoriteList;
     }
     if (search_cnt == 1) {
-      this.setStyleActive(this.suggestList[this.hintList.length + this.favoriteList.length]);
-      hiddenKeyText = this.candidateList[this.suggestIndexList[this.hintList.length + this.favoriteList.length]][2];
-      this.activePosition = this.hintList.length + this.favoriteList.length;
+      this.setStyleActive(this.suggestList[countHintList + countFavoriteList]);
+      hiddenKeyText = this.candidateList[this.suggestIndexList[countHintList + countFavoriteList]].name;
+      this.activePosition = countHintList + countFavoriteList;
       flg = false;
     }
 
@@ -472,18 +232,16 @@ Suggest.Local.prototype = {
       }
     } else if (element.id == this.clearElm.id) {
       this.setInputText('');
-      clear_flg = false;
+      refresh_flg = false;
       this.input.focus();
       this.search();
       if (this.pcFlg) {
         this.scrollArea.scrollTop = 0;
       }
     } else if (element.id == this.mapElm.id) {
-      if (navigator.geolocation) {
-        document.getElementById("GeolocationMap").submit();
-      } else {
-        alert(geolocation_err1);
-      }
+      var elem_wayf = this._getElement(wayfdiv_id);
+      elem_wayf.style.display = 'none';
+      displayMapIdP(false);
     }
   },
 
@@ -552,10 +310,10 @@ Suggest.Local.prototype = {
     var text = this.getInputText();
 
     if (text == null || text == this.initDisp) return;
-    if (!this.discofeedFlg || !geolocation_flg || !clear_flg){
-      this.candidateList = inc_search_list;
-      this.favoriteList = favorite_list;
-      this.hintList = hint_list;
+    if (!geolocation_flg || !refresh_flg ){
+      this.candidateList = json_idp_list;
+      this.favoriteList = json_idp_favoritelist;
+      this.hintList = json_idp_hintlist;
       if (this.candidateList.length > 0) {
         // favorite IdP List
         if (this.favoriteList.length > 0) {
@@ -566,12 +324,14 @@ Suggest.Local.prototype = {
           this.candidateList = this.hintList.concat(this.candidateList);
         }
       }
-      if (this.candidateList.length == 0) {
-        this.setInputText(this.initDisp);
-      }
-      this.discofeedFlg = true;
       geolocation_flg = true;
-      clear_flg = true;
+      refresh_flg = true;
+    }
+//    if (!discofeed_flg){
+//      this.candidateList = [];
+//    }
+    if (this.candidateList.length == 0) {
+      this.setInputText(this.initDisp);
     }
 
     this.hookBeforeSearch(text);
@@ -588,25 +348,47 @@ Suggest.Local.prototype = {
   _search: function(text) {
 
     var resultList = [];
-    var temp; 
+    var temp;
+    var chkFlg;
     this.suggestIndexList = [];
-    for (var i = 0, length = this.candidateList.length; i < length; i++) {
-      if (selkind != '' && selkind != 'all' && selkind != this.candidateList[i][8]){
-        continue;
-      }
-      for (var j = 10, length2 = this.candidateList[i].length; j < length2; j++) {
-        if (text == '' ||
-             this.isMatch(this.candidateList[i][j], text) != null ||
-             this.candidateList[i][1] == this.hintIdpGroup ||
-             this.candidateList[i][1] == this.favoriteIdpGroup) {
-          resultList.push(this.candidateList[i]);
-          this.suggestIndexList.push(i);
-          break;
+    for (var i in this.candidateList){
+      if (this.isMatchKind(this.candidateList[i])){
+        if (this.embeddedFlg == false ||
+             isAllowedCategory(this.candidateList[i].categoryKey)){
+          if (text == '' ||
+               this.candidateList[i].categoryName == this.hintIdpGroup ||
+               this.candidateList[i].categoryName == this.favoriteIdpGroup) {
+            resultList.push(this.candidateList[i]);
+            this.suggestIndexList.push(i);
+          } else {
+            for (var j in this.candidateList[i].search){
+              if (this.isMatch(this.candidateList[i].search[j], text) != null) {
+                resultList.push(this.candidateList[i]);
+                this.suggestIndexList.push(i);
+                break;
+              }
+            }
+          }
         }
       }
       if (this.dispMax != 0 && resultList.length >= this.dispMax) break;
     }
     return resultList;
+  },
+
+  isMatchKind: function(chkIdP) {
+    var chkFlg = false;
+    if (selkind == '' || selkind == 'all') {
+      chkFlg = true;
+    } else {
+      for (var i in chkIdP.kind){
+        if (selkind == chkIdP.kind[i]){
+          chkFlg = true;
+          break;
+        }
+      }
+    }
+    return chkFlg;
   },
 
   isMatch: function(value, pattern) {
@@ -645,29 +427,29 @@ Suggest.Local.prototype = {
     }
     var oldGroup = '';
     $('#' + this.suggestArea.id).css('width', '');
-    for (var i = 0, length = resultList.length; i < length; i++) {
-      if (this.showgrp && oldGroup != resultList[i][1]) {
+    for (var i in resultList){
+      if (this.showgrp && oldGroup != resultList[i].categoryName) {
         var element = document.createElement(this.listTagName);
-        if (resultList[i][1] == this.hintIdpGroup) {
+        if (resultList[i].categoryName == this.hintIdpGroup) {
           element.className = this.classGroupHint;
           element.innerHTML = '&nbsp;' + this.hintIdpGroup;
-        } else if (resultList[i][1] == this.favoriteIdpGroup) {
+        } else if (resultList[i].categoryName == this.favoriteIdpGroup) {
           element.className = this.classGroupFavorite;
           element.innerHTML = '&nbsp;' + this.favoriteIdpGroup;
         } else {
           element.className = this.classGroup;
-          element.innerHTML = '&nbsp;' + resultList[i][1];
+          element.innerHTML = '&nbsp;' + resultList[i].categoryName;
         }
         this.suggestArea.appendChild(element);
-        oldGroup = resultList[i][1];
+        oldGroup = resultList[i].categoryName;
       }
         
       var element1 = document.createElement(this.listTagName);
       var element2 = document.createElement(this.listTagName);
-      if (resultList[i][1] == this.hintIdpGroup) {
+      if (resultList[i].categoryName == this.hintIdpGroup) {
         element1.className = this.classIdPNmHint;
         element2.className = this.classIdPNmHint;
-      } else if (resultList[i][1] == this.favoriteIdpGroup) {
+      } else if (resultList[i].categoryName == this.favoriteIdpGroup) {
         element1.className = this.classIdPNmFavorite;
         element2.className = this.classIdPNmFavorite;
       } else {
@@ -676,14 +458,14 @@ Suggest.Local.prototype = {
       }
 
       var logo = '';
-      if (resultList[i][3] && resultList[i][3] != '') {
-        logo = '&nbsp;<span style="vertical-align: middle; padding:0px; margin:0px;"><img src="' + resultList[i][3] + '" height="18"/></span>';
+      if (resultList[i].logoURL && resultList[i].logoURL != '') {
+        logo = '&nbsp;<span style="vertical-align: middle; padding:0px; margin:0px;"><img src="' + resultList[i].logoURL + '" height="18"/></span>';
       }
      
       if (this.pcFlg) {
-        element1.innerHTML = resultList[i][2] + logo;
+        element1.innerHTML = resultList[i].name + logo;
       } else {
-        element1.innerHTML = '<a onclick="">' + resultList[i][2] + '</a>' + logo;
+        element1.innerHTML = '<a onclick="">' + resultList[i].name + '</a>' + logo;
       }
 
       this.suggestArea.appendChild(element1);
@@ -693,7 +475,7 @@ Suggest.Local.prototype = {
       this._addEvent(element1, 'mouseout', this._bindEvent(this.listMouseOut, i));
 
       var regurl = '';
-      if ((typeof wayf_sp_entityID != 'undefined') && (typeof wayf_return_url != 'undefined') && (resultList[i][7] != '')) {
+      if ((typeof wayf_sp_entityID != 'undefined') && (typeof wayf_return_url != 'undefined') && (resultList[i].registrationURL != '')) {
         if (this.pcFlg) {
           element2.innerHTML = '<div id="reg_a" class="default">' + reg_button + '</div>';
         } else {
@@ -799,7 +581,7 @@ Suggest.Local.prototype = {
     this.oldText = this.getInputText();
 
     this.suggestIndexList = [];
-    for (var i = 0, length = this.candidateList.length; i < length; i++) {
+    for (var i in this.candidateList){
       this.suggestIndexList.push(i);
     }
 
@@ -862,11 +644,8 @@ Suggest.Local.prototype = {
   keyEventOther: function(event) {},
 
   changeActive: function(index) {
-
     this.setStyleActive(this.suggestList[index]);
-
-    this.setInputText(this.candidateList[this.suggestIndexList[index]][2]);
-
+    this.setInputText(this.candidateList[this.suggestIndexList[index]].name);
     this.oldText = this.getInputText();
     this.input.focus();
     this.selectElm.disabled = false;
@@ -896,11 +675,14 @@ Suggest.Local.prototype = {
   },
 
   listClick2: function(event, index) {
-    var regURL = this.candidateList[this.suggestIndexList[index]][7];
-    location.href = regURL + '?providerId=' + encodeURIComponent(wayf_sp_entityID) 
-                           + '&target=' + encodeURIComponent(wayf_return_url)
-                           + '&samlDSURL=' + encodeURIComponent(wayf_sp_samlDSURL);
-
+    var regURL = this.candidateList[this.suggestIndexList[index]].registrationURL;
+    var return_url = wayf_sp_samlDSURL + getGETArgumentSeparator(wayf_sp_samlDSURL);
+    return_url += 'target=' + encodeURIComponent(wayf_return_url);
+    return_url += '&amp;entityID=' + encodeURIComponent(this.candidateList[this.suggestIndexList[index]].entityid);
+    regURL += '?entityID=' + encodeURIComponent(wayf_sp_entityID);
+    regURL += '&amp;return=' + encodeURIComponent(return_url);
+    location.href = regURL;
+    
     this.closeList();
     this.changeUnactive();
     this.activePosition = index;
@@ -945,8 +727,21 @@ Suggest.Local.prototype = {
   },
 
   setStyleUnactive: function(element, index) {
-    if (index < this.hintList.length + this.favoriteList.length){
-      if (this.hintList.length > 0 && index < this.hintList.length){
+    var countHintList = 0;
+    var countFavoriteList = 0;
+    for (var i in this.hintList){
+      if (this.isMatchKind(this.hintList[i])){
+        countHintList++;
+      }
+    }
+    for (var i in this.favoriteList){
+      if (this.isMatchKind(this.favoriteList[i])){
+        countFavoriteList++;
+      }
+    }
+
+    if (index < countHintList + countFavoriteList){
+      if (countHintList > 0 && index < countHintList){
         element.className = this.classIdPNmHint;
       } else {
         element.className = this.classIdPNmFavorite;

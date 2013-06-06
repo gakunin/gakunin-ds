@@ -9,17 +9,23 @@
 	<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;" />
 	
 	<link rel="stylesheet" href="<?php echo $incsearchCssURL ?>" type="text/css" />
+	<link rel="stylesheet" href="<?php echo $geolocationCssURL ?>" type="text/css" />
+
 	<script type="text/javascript" src="<?php echo $ajaxLibURL ?>"></script>
 	<script type="text/javascript" src="<?php echo $ajaxFlickLibURL ?>"></script>
+	<script type="text/javascript" src="<?php echo $googleMapLibURL ?>"></script>
+	<script type="text/javascript" src="<?php echo $geolocationJsURL ?>"></script>
+	<script type="text/javascript" src="<?php echo $commonJsURL ?>"></script>
 	<script type="text/javascript" src="<?php echo $incsearchLibURL ?>"></script>
 	<script language="JavaScript" type="text/javascript">
 	<!--
 
 <?php getSearchIdPList(); ?>
-	
-	var inc_search_list = [ <?php echo $IncSearchList ?> ];
-	var favorite_list = [];
-	var hint_list = [ <?php echo $IncSearchHintList ?> ];
+
+	var json_category_list = {<?php echo $JSONIncCategoryList ?>};
+	var json_idp_list = [<?php echo $JSONIncIdPList ?>];
+	var json_idp_favoritelist = [];
+	var json_idp_hintlist = [<?php echo $JSONIncIdPHintList ?>];
 	var initdisp = '<?php echo $InitDisp ?>';
 	var dispDefault = '<?php echo $selIdP ?>';
 	var dispidp = '';
@@ -32,12 +38,61 @@
 	var favorite_idp_group = '';
 	var hint_idp_group = '<?php echo $hintIDPString ?>';
 	var wayf_show_categories = true;
+	
+	var wayfdiv_id = 'container';
+	var reg_button = '<?php echo addslashes(getLocalString('reg_button')); ?>';
+	var geolocation_err1 = '<?php echo addslashes(getLocalString('geolocation_err1')); ?>';
+	var geolocation_err2 = '<?php echo addslashes(getLocalString('geolocation_err2')); ?>';
+	var geolocation_err3 = '<?php echo addslashes(getLocalString('geolocation_err3')); ?>';
+	var geolocation_err4 = '<?php echo addslashes(getLocalString('geolocation_err4')); ?>';
+	var close_button = '<?php echo addslashes(getLocalString('close_button')); ?>';
+	var geolocation_button = '<?php echo addslashes(getLocalString('geolocation_button')); ?>';
+	var no_hint_msg = '<?php echo addslashes(getLocalString('no_hint_msg')); ?>';
+	var no_geolocation_msg = '<?php echo addslashes(getLocalString('no_geolocation_msg')); ?>';
+	var near_idp = '<?php echo addslashes(getLocalString('near_idp')); ?>';
+	
+<?php printJscode_GlobalVariables(); ?>
+
+	// It adds it to window event.
+	function start() {
+		suggest = new Suggest.Local(
+			"keytext",							// element id of input area
+			"view_incsearch",					// element id of IdP list display area
+			"view_incsearch_animate",			// element id of IdP list display animate area
+			"view_incsearch_scroll",			// element id of IdP list display scroll area
+			json_idp_list,						// IdP list
+			json_idp_favoritelist,				// IdP list (Favorite)
+			json_idp_hintlist,					// IdP list (Hint IP, Domain)
+			"dropdown_img",						// element id of dropdown image
+			"geolocation_img",					// element id of geolocation image
+			"wayf_submit_button",				// element id of select button
+			"map_a",							// element id of map
+			"clear_a",							// element id of clear
+			initdisp,							// Initial display of input area
+			dispDefault,						// Select IdP display of input area
+			dropdown_down,						// URL of deropdown down image
+			dropdown_up,						// URL of deropdown up image
+			geolocation_off,					// URL of geolocation off image
+			geolocation_on,						// URL of geolocation on image
+			favorite_idp_group,					// favorite idp list group
+			hint_idp_group,						// hint idp list group
+			false,								// Embedded or Central Flg
+			{
+				dispMax: 500,					// option display IdP Max
+				showgrp: wayf_show_categories	// option show category
+			}
+		);
+	}
+	
+	window.addEventListener ?
+		window.addEventListener('load', start, false) :
+		window.attachEvent('onload', start);	
+
 	if (dispDefault == ''){
 		dispidp = initdisp;
 	} else {
 		dispidp = dispDefault;
 	}
-        var selkind = '';
 	
 	// Central DS: Selection IdP check
 	function checkSelectIdP(){
@@ -47,11 +102,11 @@
 		
 		if (hiddenKeyText != '') idp_name = hiddenKeyText.toLowerCase();
 		if (initdisp != idp_name) {
-			for (var i = 0, len = inc_search_list.length; i < len; i++) {
-				for (var j = 3, len2 = inc_search_list[i].length; j < len2; j++) {
-					var list_idp_name = inc_search_list[i][j].toLowerCase();
+			for (var i in json_idp_list){
+				for (var j in json_idp_list[i].search){
+					var list_idp_name = json_idp_list[i].search[j].toLowerCase();
 					if (idp_name == list_idp_name) {
-						document.getElementById('user_idp').value = inc_search_list[i][0];
+						document.getElementById('user_idp').value = json_idp_list[i].entityid;
 						chkFlg = true;
 						break;
 					}
@@ -88,16 +143,6 @@
 		}
 	}
 	
-	function changeKind(){
-		for(i = 0; i < IdPList.kindgroup.length; i++){
-			if(IdPList.kindgroup[i].checked) {
-				selkind = IdPList.kindgroup[i].value;
-				break;
-			}
-		}
-	}
-
-	
 	-->
 	</script>
 	<style type="text/css">
@@ -108,7 +153,11 @@
 </head>
 
 <body>
-
+<div id="mapframe" style="display:none;">
+	<div id="mapleft" class="mframe"></div>
+	<div id="mapcenter" class="mframe"></div>
+	<div id="mapright"></div>
+</div>
 <div id="container">
 	<div class="box">
 		<div id="header">

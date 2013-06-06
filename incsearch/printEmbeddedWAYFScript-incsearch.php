@@ -8,8 +8,9 @@ function printEmbeddedWAYFScript_IncSearch(){
 	global $selectedIDP, $IDProviders, $redirectCookieName, $redirectStateCookieName, $federationName;
 	global $cookieSecurity;
 	global $safekind, $selIdP, $incsearchLibURL, $incsearchCssURL, $alertURL, $dropdownUpURL, $dropdownDnURL, $ajaxLibURL, $ajaxFlickLibURL;
-	global $mduiHintIDPs, $useMduiHintMax, $geolocationOffURL, $geolocationOnURL, $geolocationMapURL;
-	global $IncSearchList, $IncSearchHintList, $JSONIdPList, $IdPHintList, $selIdP, $InitDisp, $hintIDPString, $IDProvidersKind;
+	global $mduiHintIDPs, $useMduiHintMax, $geolocationOffURL, $geolocationOnURL;
+	global $JSONIdPList, $JSONIncCategoryList, $JSONIncIdPList, $JSONIncIdPHintList, $IdPHintList, $selIdP, $InitDisp, $hintIDPString, $IDProvidersKind;
+	global $googleMapLibURL, $geolocationJsURL, $geolocationCssURL, $commonJsURL;
 	
 	// Get some values that are used in the script
 	$loginWithString = getLocalString('login_with');
@@ -37,6 +38,11 @@ function printEmbeddedWAYFScript_IncSearch(){
 	$geolocationErr3 = addslashes(getLocalString('geolocation_err3'));
 	$geolocationErr4 = addslashes(getLocalString('geolocation_err4'));
 	$categoryRadio = addslashes(getLocalString('category_radio'));
+	$closeString = addslashes(getLocalString('close_button'));
+	$geolocationString = addslashes(getLocalString('geolocation_button'));
+	$noHintMsg = addslashes(getLocalString('no_hint_msg'));
+	$noGeolocationMsg = addslashes(getLocalString('no_geolocation_msg'));
+	$nearIdPString = addslashes(getLocalString('near_idp'));
 	
 	getSearchIdPList();
 	
@@ -84,11 +90,16 @@ var wayf_use_disco_feed;
 var wayf_discofeed_url;
 var wayf_html = "";
 var wayf_idps = { {$JSONIdPList} };
-var wayf_hint_list = [ {$IdPHintList} ];
-var inc_search_list = [];
-var favorite_list = [];
-var hint_list = [];
-var submit_check_list = [];
+
+var wayf_incidps = [{$JSONIncIdPList}];
+var wayf_incidps_hint = [{$JSONIncIdPHintList}];
+
+var json_category_list = {{$JSONIncCategoryList}};
+var json_idp_list = new Array();
+var json_idp_favoritelist = new Array();
+var json_idp_hintlist = new Array();
+
+var submit_check_list = new Array();
 var safekind = '{$safekind}';
 var allIdPList = '';
 var initdisp = '{$InitDisp}';
@@ -99,24 +110,64 @@ var dropdown_up = '{$dropdownUpURL}';
 var dropdown_down = '{$dropdownDnURL}';
 var geolocation_off = '{$geolocationOffURL}';
 var geolocation_on = '{$geolocationOnURL}';
+var hintmax = '{$useMduiHintMax}';
 var favorite_idp_group = '{$mostUsedIdPsString}';
 var hint_idp_group = '{$hintIDPString}';
-var hintmax = '{$useMduiHintMax}';
+
+var wayfdiv_id = 'wayf_div';
 var reg_button = '{$regString}';
 var geolocation_err1 = '{$geolocationErr1}';
 var geolocation_err2 = '{$geolocationErr2}';
 var geolocation_err3 = '{$geolocationErr3}';
 var geolocation_err4 = '{$geolocationErr4}';
-var selkind = '';
+var close_button = '{$closeString}';
+var geolocation_button = '{$geolocationString}';
+var no_hint_msg = '{$noHintMsg}';
+var no_geolocation_msg = '{$noGeolocationMsg}';
+var near_idp = '{$nearIdPString}';
 
-function changeKind(){
-	for(i = 0; i < IdPList.kindgroup.length; i++) {
-		if(IdPList.kindgroup[i].checked) {
-			selkind = IdPList.kindgroup[i].value;
-			break;
+SCRIPT;
+
+	printJscode_GlobalVariables();
+
+	echo <<<SCRIPT
+
+// It adds it to window event.
+function start() {
+	discofeed_flg = false;
+	checkDiscofeed();
+	suggest = new Suggest.Local(
+		"keytext",							// element id of input area
+		"view_incsearch",					// element id of IdP list display area
+		"view_incsearch_animate",			// element id of IdP list display animate area
+		"view_incsearch_scroll",			// element id of IdP list display scroll area
+		json_idp_list,						// IdP list
+		json_idp_favoritelist,				// IdP list (Favorite)
+		json_idp_hintlist,					// IdP list (Hint IP, Domain)
+		"dropdown_img",						// element id of dropdown image
+		"geolocation_img",					// element id of geolocation image
+		"wayf_submit_button",				// element id of select button
+		"map_a",							// element id of map
+		"clear_a",							// element id of clear
+		initdisp,							// Initial display of input area
+		dispDefault,						// Select IdP display of input area
+		dropdown_down,						// URL of deropdown down image
+		dropdown_up,						// URL of deropdown up image
+		geolocation_off,					// URL of geolocation off image
+		geolocation_on,						// URL of geolocation on image
+		favorite_idp_group,					// favorite idp list group
+		hint_idp_group,						// hint idp list group
+		true,								// Embedded or Central Flg
+		{
+			dispMax: 500,					// option display IdP Max
+			showgrp: wayf_show_categories	// option show category
 		}
-	}
+	);
 }
+
+window.addEventListener ?
+	window.addEventListener('load', start, false) :
+	window.attachEvent('onload', start);
 
 // Define functions
 function submitForm(){
@@ -126,26 +177,28 @@ function submitForm(){
 	var chkFlg = false;
 	if (hiddenKeyText != '') idp_name = hiddenKeyText.toLowerCase();
 
-	if (inc_search_list.length > 0) {
-		submit_check_list = inc_search_list;
+if (discofeed_flg){
+	if (json_idp_list.length > 0) {
+		submit_check_list = json_idp_list;
 	}
-	if (favorite_list.length > 0) {
-		submit_check_list = favorite_list.concat(submit_check_list);
+	if (json_idp_favoritelist.length > 0) {
+		submit_check_list = json_idp_favoritelist.concat(submit_check_list);
 	}
-	if (hint_list.length > 0) {
-		submit_check_list = hint_list.concat(submit_check_list);
+	if (json_idp_hintlist.length > 0) {
+		submit_check_list = json_idp_hintlist.concat(submit_check_list);
 	}
+}
 	
 	for (var i=0; i<submit_check_list.length; i++){
-		for (var j = 10, len2 = submit_check_list[i].length; j < len2; j++) {
-			var list_idp_name = submit_check_list[i][j].toLowerCase();
+		for (var j = 0, len2 = submit_check_list[i].search.length; j < len2; j++) {
+			var list_idp_name = submit_check_list[i].search[j].toLowerCase();
 			if (idp_name == list_idp_name){
-				NonFedEntityID = submit_check_list[i][0];
-				document.getElementById('user_idp').value = submit_check_list[i][0];
+				NonFedEntityID = submit_check_list[i].entityid;
+				document.getElementById('user_idp').value = submit_check_list[i].entityid;
 				chkFlg = true;
 				if (safekind > 0 && safekind != 3){
 					// Store SAML domain cookie for this foreign IdP
-					setCookie('_saml_idp', encodeBase64(submit_check_list[i][0]) , 100);
+					setCookie('_saml_idp', encodeBase64(submit_check_list[i].entityid) , 100);
 				}
 				break;
                 	}
@@ -209,7 +262,7 @@ function submitForm(){
         } else {
 		if (safekind == 0 || safekind == 3){
 			// delete local cookie
-			setCookie('_saml_idp', encodeBase64(submit_check_list[i][0]), -1);
+			setCookie('_saml_idp', encodeBase64(submit_check_list[i].entityid), -1);
 		}
                 // User chose federation IdP entry
                 document.IdPList.submit();
@@ -222,11 +275,14 @@ function writeHTML(a){
 }
 
 function pushIncSearchList(IdP){
-	inc_search_list.push(wayf_idps[IdP].search.slice());
-	for(var i in wayf_hint_list){
-		if (wayf_hint_list[i] == IdP) {
-			hint_list.push(wayf_idps[IdP].search.slice());
-			hint_list[hint_list.length - 1][1] = hint_idp_group;
+	for(var i in wayf_incidps){
+		if (wayf_incidps[i].entityid == IdP) {
+			json_idp_list.push(wayf_incidps[i]);
+		}
+	}
+	for(var j in wayf_incidps_hint){
+		if (wayf_incidps_hint[j].entityid == IdP) {
+			json_idp_hintlist.push(wayf_incidps_hint[j]);
 		}
 	}
 }
@@ -777,6 +833,12 @@ function getGETArgumentSeparator(url){
 		return;
 	}
 	
+	writeHTML('<div id="mapframe" style="display:none;">');
+	writeHTML('	<div id="mapleft" class="mframe"></div>');
+	writeHTML('	<div id="mapcenter" class="mframe"></div>');
+	writeHTML('	<div id="mapright"></div>');
+	writeHTML('</div>');
+	
 	// Now start generating the HTML for outer box
 	if(
 		wayf_hide_after_login 
@@ -786,7 +848,6 @@ function getGETArgumentSeparator(url){
 	} else {
 		writeHTML('<div id="wayf_div" style="background:' + wayf_background_color + ';border-style: solid;border-color: ' + wayf_border_color + ';border-width: 1px;padding: 10px;height: ' + wayf_height + ';width: ' + wayf_width + ';text-align: left;">');
 	}
-
 	
 	// Shall we display the logo
 	if (wayf_hide_logo != true){
@@ -901,9 +962,16 @@ SCRIPT;
 	
 	echo <<<SCRIPT
 		writeHTML('<link rel="stylesheet" href="{$incsearchCssURL}" type="text/css" />');
+		writeHTML('<link rel="stylesheet" href="{$geolocationCssURL}" type="text/css" />');
 		writeHTML('<script type="text/javascript" src="{$ajaxLibURL}"></script>');
 		writeHTML('<script type="text/javascript" src="{$ajaxFlickLibURL}"></script>');
+		writeHTML('<script type="text/javascript" src="{$googleMapLibURL}"></script>');
+		writeHTML('<script type="text/javascript" src="{$geolocationJsURL}"></script>');
+		writeHTML('<script type="text/javascript" src="{$commonJsURL}"></script>');
 		writeHTML('<script type="text/javascript" src="{$incsearchLibURL}"></script>');
+		writeHTML('<script language="JavaScript" type="text/javascript">');
+		writeHTML('	//$(function(){checkDiscofeed();});');
+		writeHTML('</script>');
 
 		writeHTML(form_start);
 		writeHTML('<input name="request_type" type="hidden" value="embedded">');
@@ -918,8 +986,8 @@ SCRIPT;
 			// Show additional IdPs in the order they are defined
 			for ( var i=0; i < wayf_most_used_idps.length; i++){
 				if (wayf_idps[wayf_most_used_idps[i]]){
-					favorite_list.push(wayf_idps[wayf_most_used_idps[i]].search.slice());
-					favorite_list[favorite_list.length - 1][1] = favorite_idp_group;
+					json_idp_favoritelist.push(json_idp_list[wayf_most_used_idps[i]]);
+					json_idp_favoritelist[json_idp_favoritelist.length - 1].categoryName = favorite_idp_group;
 				}
 			}
 		}
@@ -966,7 +1034,7 @@ SCRIPT;
 	
 	echo <<<SCRIPT
 		if (wayf_additional_idps.length > 0){
-			var listcnt = inc_search_list.length;
+			var listcnt = json_idp_list.length;
 			
 			// Sort Array
 			wayf_additional_idps.sort(sortEntities)
@@ -980,38 +1048,26 @@ SCRIPT;
 						&& wayf_additional_idps[i].entityID == last_idp
 						){
 						dispDefault = wayf_additional_idps[i].name;
-						inc_search_list[listcnt] = new Array();
-						inc_search_list[listcnt][0] = wayf_additional_idps[i].entityID;
-                                                inc_search_list[listcnt][1] = "{$otherFederationString}";
-						inc_search_list[listcnt][2] = wayf_additional_idps[i].name;
+						json_idp_list[listcnt] = new Array();
+						json_idp_list[listcnt].entityid = wayf_additional_idps[i].entityID;
+                                                json_idp_list[listcnt].categoryName = "{$otherFederationString}";
+						json_idp_list[listcnt].name = wayf_additional_idps[i].name;
 						if (wayf_additional_idps[i].LogoURL){
-							inc_search_list[listcnt][3] = wayf_additional_idps[i].LogoURL;
+							json_idp_list[listcnt].logoURL = wayf_additional_idps[i].LogoURL;
 						} else {
-							inc_search_list[listcnt][3] = '';
+							json_idp_list[listcnt].logoURL = '';
 						}
-						if (wayf_additional_idps[i].LogoHeight){
-							inc_search_list[listcnt][4] = wayf_additional_idps[i].LogoHeight;
-						} else {
-							inc_search_list[listcnt][4] = '';
-						}
-						if (wayf_additional_idps[i].LogoWidth){
-							inc_search_list[listcnt][5] = wayf_additional_idps[i].LogoWidth;
-						} else {
-							inc_search_list[listcnt][5] = '';
-						}
+						json_idp_list[listcnt].geolocation = new Array();
 						if (wayf_additional_idps[i].GeolocationHint){
-							inc_search_list[listcnt][6] = wayf_additional_idps[i].GeolocationHint;
-						} else {
-							inc_search_list[listcnt][6] = '';
+							json_idp_list[listcnt].geolocation = wayf_additional_idps[i].GeolocationHint;
 						}
 						if (wayf_additional_idps[i].RegistrationURL){
-							inc_search_list[listcnt][7] = wayf_additional_idps[i].RegistrationURL;
+							json_idp_list[listcnt].registrationURL = wayf_additional_idps[i].RegistrationURL;
 						} else {
-							inc_search_list[listcnt][7] = '';
+							json_idp_list[listcnt].registrationURL = '';
 						}
-						inc_search_list[listcnt][8] = '';
-						inc_search_list[listcnt][9] = '';
-						inc_search_list[listcnt][10] = wayf_additional_idps[i].name;
+						json_idp_list[listcnt].search = new Array();
+						json_idp_list[listcnt].search[0] = wayf_additional_idps[i].name;
 						listcnt++;
 					}
 					// If no IdP is known but the default IdP matches, use this entry
@@ -1021,72 +1077,48 @@ SCRIPT;
 						&& wayf_additional_idps[i].entityID == wayf_default_idp
 						){
 						dispDefault = wayf_additional_idps[i].name;
-						inc_search_list[listcnt] = new Array();
-						inc_search_list[listcnt][0] = wayf_additional_idps[i].entityID;
-                                                inc_search_list[listcnt][1] = "{$otherFederationString}";
-						inc_search_list[listcnt][2] = wayf_additional_idps[i].name;
+						json_idp_list[listcnt] = new Array();
+						json_idp_list[listcnt].entityid = wayf_additional_idps[i].entityID;
+                                                json_idp_list[listcnt].categoryName = "{$otherFederationString}";
+						json_idp_list[listcnt].name = wayf_additional_idps[i].name;
 						if (wayf_additional_idps[i].LogoURL){
-							inc_search_list[listcnt][3] = wayf_additional_idps[i].LogoURL;
+							json_idp_list[listcnt].logoURL = wayf_additional_idps[i].LogoURL;
 						} else {
-							inc_search_list[listcnt][3] = '';
+							json_idp_list[listcnt].logoURL = '';
 						}
-						if (wayf_additional_idps[i].LogoHeight){
-							inc_search_list[listcnt][4] = wayf_additional_idps[i].LogoHeight;
-						} else {
-							inc_search_list[listcnt][4] = '';
-						}
-						if (wayf_additional_idps[i].LogoWidth){
-							inc_search_list[listcnt][5] = wayf_additional_idps[i].LogoWidth;
-						} else {
-							inc_search_list[listcnt][5] = '';
-						}
+						json_idp_list[listcnt].geolocation = new Array();
 						if (wayf_additional_idps[i].GeolocationHint){
-							inc_search_list[listcnt][6] = wayf_additional_idps[i].GeolocationHint;
-						} else {
-							inc_search_list[listcnt][6] = '';
+							json_idp_list[listcnt].geolocation = wayf_additional_idps[i].GeolocationHint;
 						}
 						if (wayf_additional_idps[i].RegistrationURL){
-							inc_search_list[listcnt][7] = wayf_additional_idps[i].RegistrationURL;
+							json_idp_list[listcnt].registrationURL = wayf_additional_idps[i].RegistrationURL;
 						} else {
-							inc_search_list[listcnt][7] = '';
+							json_idp_list[listcnt].registrationURL = '';
 						}
-						inc_search_list[listcnt][8] = '';
-						inc_search_list[listcnt][9] = '';
-						inc_search_list[listcnt][10] = wayf_additional_idps[i].name;
+						json_idp_list[listcnt].search = new Array();
+						json_idp_list[listcnt].search[0] = wayf_additional_idps[i].name;
 						listcnt++;
 					} else if (wayf_additional_idps[i].name) {
-						inc_search_list[listcnt] = new Array();
-						inc_search_list[listcnt][0] = wayf_additional_idps[i].entityID;
-                                                inc_search_list[listcnt][1] = "{$otherFederationString}";
-						inc_search_list[listcnt][2] = wayf_additional_idps[i].name;
+						json_idp_list[listcnt] = new Array();
+						json_idp_list[listcnt].entityid = wayf_additional_idps[i].entityID;
+                                                json_idp_list[listcnt].categoryName = "{$otherFederationString}";
+						json_idp_list[listcnt].name = wayf_additional_idps[i].name;
 						if (wayf_additional_idps[i].LogoURL){
-							inc_search_list[listcnt][3] = wayf_additional_idps[i].LogoURL;
+							json_idp_list[listcnt].logoURL = wayf_additional_idps[i].LogoURL;
 						} else {
-							inc_search_list[listcnt][3] = '';
+							json_idp_list[listcnt].logoURL = '';
 						}
-						if (wayf_additional_idps[i].LogoHeight){
-							inc_search_list[listcnt][4] = wayf_additional_idps[i].LogoHeight;
-						} else {
-							inc_search_list[listcnt][4] = '';
-						}
-						if (wayf_additional_idps[i].LogoWidth){
-							inc_search_list[listcnt][5] = wayf_additional_idps[i].LogoWidth;
-						} else {
-							inc_search_list[listcnt][5] = '';
-						}
+						json_idp_list[listcnt].geolocation = new Array();
 						if (wayf_additional_idps[i].GeolocationHint){
-							inc_search_list[listcnt][6] = wayf_additional_idps[i].GeolocationHint;
-						} else {
-							inc_search_list[listcnt][6] = '';
+							json_idp_list[listcnt].geolocation = wayf_additional_idps[i].GeolocationHint;
 						}
 						if (wayf_additional_idps[i].RegistrationURL){
-							inc_search_list[listcnt][7] = wayf_additional_idps[i].RegistrationURL;
+							json_idp_list[listcnt].registrationURL = wayf_additional_idps[i].RegistrationURL;
 						} else {
-							inc_search_list[listcnt][7] = '';
+							json_idp_list[listcnt].registrationURL = '';
 						}
-						inc_search_list[listcnt][8] = '';
-						inc_search_list[listcnt][9] = '';
-						inc_search_list[listcnt][10] = wayf_additional_idps[i].name;
+						json_idp_list[listcnt].search = new Array();
+						json_idp_list[listcnt].search[0] = wayf_additional_idps[i].name;
 						listcnt++;
 					}
 				}
@@ -1203,20 +1235,20 @@ foreach ($IDProvidersKind as $key => $IDProviderKind){
 		writeHTML('</td>');
 		writeHTML('</tr>');
 		writeHTML('</table>');
-	
-		// Close form
-		writeHTML('</form>');
-		writeHTML('<form id="GeolocationMap" method="post" action="${geolocationMapURL}">');
-		writeHTML('<input type="hidden" id="idplist" name="idplist" value="">');
-		writeHTML('<input type="hidden" id="client" name="client" value="">');
-		writeHTML('<input type="hidden" id="action" name="action" value="' + wayf_authReq_URL + '">');
-		writeHTML('</form>');
 		
 	}  // End login check
 	
 	// Close box
 	writeHTML('</div>');
 	writeHTML('<div style="clear:both;"></div>');
+
+/*
+	document.write('<div id="mapframe" style="display:none;">');
+	document.write('	<div id="mapleft" class="mframe"></div>');
+	document.write('	<div id="mapcenter" class="mframe"></div>');
+	document.write('	<div id="mapright"></div>');
+	document.write('</div>');
+*/
 	
 	// Now output HTML all at once
 	document.write(wayf_html);
