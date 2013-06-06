@@ -5,11 +5,6 @@
 		<p class="promptMessage"><?php echo $promptMessage ?></p>
 <script language="JavaScript" type="text/javascript">
 <!--
-   var reg_button = '<?php echo addslashes(getLocalString('reg_button')); ?>';
-   var geolocation_err1 = '<?php echo addslashes(getLocalString('geolocation_err1')); ?>';
-   var geolocation_err2 = '<?php echo addslashes(getLocalString('geolocation_err2')); ?>';
-   var geolocation_err3 = '<?php echo addslashes(getLocalString('geolocation_err3')); ?>';
-   var geolocation_err4 = '<?php echo addslashes(getLocalString('geolocation_err4')); ?>';
    document.write('<input id="user_idp" type="hidden" name="user_idp" value=""/>');
    document.write('<table border="0" cellpadding="0" cellspacing="0">');
    document.write('	<tr>');
@@ -54,7 +49,7 @@
       $IdPKindName = addslashes($IDProviderKind['Name']);
     }
     $IdPKindChecked = $IDProviderKind['Default'];
-    print("document.write('                     <input type=\"radio\" tabindex=$tabindex name=\"kindgroup\" value=\"$key\" onclick=\"changeKind();\" $IdPKindChecked>$IdPKindName</input>');\n");
+    print("   document.write('			<input type=\"radio\" tabindex=$tabindex name=\"kindgroup\" value=\"$key\" onclick=\"changeKind();\" $IdPKindChecked>$IdPKindName</input>');\n");
     $tabindex++;
   }
 ?>
@@ -103,11 +98,6 @@
 		</div>
 </noscript>
 </div>
-</form>
-<form id="GeolocationMap" method="post" action="<?php echo $geolocationMapURL ?>">
-	<input type="hidden" id="idplist" name="idplist" value="">
-	<input type="hidden" id="client" name="client" value="">
-	<input type="hidden" id="action" name="action" value="<?php echo $actionURL ?>">
 </form>
 
 <p><?php echo getLocalString('additional_info') ?></p>

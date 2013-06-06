@@ -1,0 +1,134 @@
+div.mframe {
+	background-color: #FFFFFF;
+	box-shadow: 1px 1px 8px #999999;
+	border-radius: 13px;
+	-webkit-box-shadow: 1px 1px 8px #999999;
+	-webkit-border-radius: 13px;
+	-moz-box-shadow: 1px 1px 8px #999999;
+	-moz-border-radius: 13px;
+}
+
+div#mapframe {
+	position: relative;
+	float : center;
+	z-index: 90;
+	width:100%;
+	font-size: 90%;
+	top:0px;
+}
+
+div#mapleft{
+	position: relative;
+	float : left;
+	z-index: 91;
+	width:20%;
+	height: 590px;
+	text-align: left;
+	vertical-align: top;
+	background-color: lavender;
+	padding-top: 10px;
+}
+
+div#mapcenter{
+	position: relative;
+	float : left;
+	z-index: 92;
+	width: 75%;
+	height: 600px;
+	background-color: lavender;
+}
+
+div#mapright{
+	position: relative;
+	float : left;
+	z-index: 93;
+	width:5%;
+	height: 590px;
+	white-space: nowrap;
+	text-align: center;
+	vertical-align: middle;
+	padding-top: 10px;
+}
+
+div.mouseover{
+	background-Color: lightsteelblue;
+	box-shadow: 1px 1px 8px #999999;
+	border-radius: 13px;
+	-webkit-box-shadow: 1px 1px 8px #999999;
+	-webkit-border-radius: 13px;
+	-moz-box-shadow: 1px 1px 8px #999999;
+	-moz-border-radius: 13px;
+}
+
+div.mouseout{
+	background-color: lavender;
+}
+
+div#mapclose{
+	position: static;
+	text-align: center;
+	vertical-align: middle;
+	color: black;
+	font-size: 90%;
+	padding: 5px;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+div#mapgeolocation{
+	position: static;
+	text-align: center;
+	vertical-align: middle;
+	color: black;
+	font-size: 90%;
+	padding: 5px;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+div#titlehint{
+	background-color: chocolate;
+}
+
+div#titlegeolocation{
+	background-color: indianred;
+}
+
+div.title{
+	position:relative;
+	float: center;
+	width: 98%;
+	font-size: 90%;
+	color: white;
+	font-weight: bold;
+	text-align: center;
+	vertical-align:middle;
+	padding: 5px;
+}
+
+div.listhint{
+	width: 98%;
+	font-size: 100%;
+	text-align: left;
+	vertical-align:middle;
+	padding: 5px;
+}
+
+div.list{
+	float: left;
+	width: 70%;
+	font-size: 100%;
+	text-align: left;
+	vertical-align:middle;
+	padding: 5px 5px 5px 10px;
+}
+
+div.distance{
+	float: right;
+	width: 28%;
+	font-size: 80%;
+	text-align: right;
+	vertical-align:middle;
+	padding: 0px 10px 0px 0px;
+}
+

@@ -20,7 +20,8 @@ function printHeader(){
 	global $selectedIDP, $IDProviders;
 	global $useAutocompleteIdP, $selIdP, $incsearchCssURL, $incsearchLibURL, $dropdownUpURL, $dropdownDnURL, $ajaxLibURL, $ajaxFlickLibURL;
 	global $mduiHintIDPs, $geolocationOffURL, $geolocationOnURL, $useMduiHintMax;
-	global $IncSearchList, $IncSearchHintList, $JSONIdPList, $IdPHintList, $selIdP, $InitDisp, $hintIDPString;
+	global $IncSearchList, $IncSearchHintList, $JSONIdPList, $JSONIncCategoryList, $JSONIncIdPList, $JSONIncIdPHintList, $IdPHintList, $selIdP, $InitDisp, $hintIDPString;
+	global $googleMapLibURL, $geolocationJsURL, $geolocationCssURL, $commonJsURL;
 	
 	// Check if custom header template exists
 	if(file_exists('custom-header.php')){
@@ -41,7 +42,7 @@ function printHeader(){
 function printWAYF(){
 	
 	global $selectedIDP, $language, $IDProviders, $redirectCookieName, $imageURL, $redirectStateCookieName, $showPermanentSetting;
-	global $useAutocompleteIdP, $selIdP, $geolocationMapURL, $SProviders, $IDProvidersKind;
+	global $useAutocompleteIdP, $selIdP, $SProviders, $IDProvidersKind;
 	
 	if (!isset($showPermanentSetting)){
 		$showPermanentSetting = false;

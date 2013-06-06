@@ -64,6 +64,11 @@ $langStrings['en'] = array (
 'geolocation_err3' => 'Location of the device I can not determine',
 'geolocation_err4' => 'Timed out',
 'category_radio' => 'Filter:',
+'close_button' => 'Close',
+'geolocation_button' => 'Location',
+'no_hint_msg' => 'No hint IdP.',
+'no_geolocation_msg' => 'Because you did not get your location, list of near IdP can not be displayed.<br />location can get a button to the right of the map.',
+'near_idp' => 'IdP of near order',
 );
 
 
@@ -293,6 +298,11 @@ $langStrings['ja'] = array (
 'geolocation_err3' => 'デバイスの位置が判定できません',
 'geolocation_err4' => 'タイムアウトしました',
 'category_radio' => '絞り込み:',
+'close_button' => '閉じる',
+'geolocation_button' => '現在地',
+'no_hint_msg' => 'IPアドレス、またはドメイン名によるヒント表示がありません。',
+'no_geolocation_msg' => '現在地を取得していない為、近い順の所属機関リストが表示できません。<br />現在地は、地図の右にある現在地ボタンより取得できます。',
+'near_idp' => '現在地より近い順',
 );
 
 ?>

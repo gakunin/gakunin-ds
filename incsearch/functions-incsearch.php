@@ -19,13 +19,13 @@ function getDomainNameFromURIHint_IncSearch($HintKeyList){
 	
 	// Return first matching IdP entityID that contains the client domain name
 	foreach ($IDProviders as $key => $idp){
-		if (is_array($idp) && array_key_exists("DomainHint", $idp)) {
-			foreach( $idp["DomainHint"] as $domainhint ) {
-				if (count($HintKeyList) == $useMduiHintMax) {
+		if (is_array($idp) && array_key_exists("DomainHint", $idp)){
+			foreach( $idp["DomainHint"] as $domainhint ){
+				if (count($HintKeyList) == $useMduiHintMax){
 					return $HintKeyList;
 				}
-				if ((!empty($domainhint)) && (preg_match('/'.$domainhint.'$/', $hostname))){
-					if (!checkHintIDP($key, $HintKeyList)) {
+				if ((!empty($domainhint)) && (preg_match('/'.$domainhint.'$/', $clientHostname))){
+					if (!checkHintIdP($key, $HintKeyList)){
 						array_push($HintKeyList, $key);
 					}
 				}
@@ -35,25 +35,25 @@ function getDomainNameFromURIHint_IncSearch($HintKeyList){
 	
 	// No matching entityID was found
 	return $HintKeyList;
-
+	
 }
 
 /******************************************************************************/
 // Determines the IdP according to the IP address if possible
-function getIPAdressHint_IncSearch($HintKeyList) {
-
+function getIPAdressHint_IncSearch($HintKeyList){
+	
 	global $IDProviders, $useMduiHintMax;
-
-	foreach($IDProviders as $key => $idp) {
-		if (is_array($idp) && array_key_exists("IPHint", $idp)) {
+	
+	foreach($IDProviders as $key => $idp){
+		if (is_array($idp) && array_key_exists("IPHint", $idp)){
 			$clientIP = $_SERVER["REMOTE_ADDR"];
 
-			foreach( $idp["IPHint"] as $network ) {
-				if (count($HintKeyList) == $useMduiHintMax) {
+			foreach( $idp["IPHint"] as $network ){
+				if (count($HintKeyList) == $useMduiHintMax){
 					return $HintKeyList;
 				}
-				if (isIPinCIDRBlock($network, $clientIP)) {
-					if (!checkHintIDP($key, $HintKeyList)) {
+				if (isIPinCIDRBlock($network, $clientIP)){
+					if (!checkHintIdP($key, $HintKeyList)){
 						array_push($HintKeyList, $key);
 					}
 				}
@@ -63,34 +63,72 @@ function getIPAdressHint_IncSearch($HintKeyList) {
 	return $HintKeyList;
 }
 
-function checkHintIDP($HintKey, $HintKeyList) {
-
-	foreach($HintKeyList as $key) {
-		if ($HintKey == $key) {
+function checkHintIdP($entityID, $IdPList){
+	
+	foreach($IdPList as $key){
+		if ($entityID == $key){
 			return true;
 		}
 	}
 	return false;
-
+	
 }
-
 
 function getSearchIdPList() {
 	
 	global $IDProviders, $langStrings, $language, $selectedIDP, $mduiHintIDPs;
-	global $IncSearchList, $IncSearchHintList, $JSONIdPList, $IdPHintList;
+	global $JSONIdPList, $JSONIncCategoryList, $JSONIncIdPList, $JSONIncIdPHintList, $IdPHintList;
 	global $selIdP, $InitDisp, $hintIDPString, $IDProvidersKind;
 	
 	$IncSearchArray = array();
 	$IncSearchHintArray = array();
+	$JSONCategoryArray = array();
 	$JSONIdPArray = array();
-
+	$JSONIncIdPArray = array();
+	$JSONIncIdPHintArray = array();
+	
 	$IdPHintList = '';
 	$selIdP = '';
 	$InitDisp = addslashes(getLocalString('select_idp'));
 	$hintIDPString = addslashes(getLocalString('hint_idp'));
 	
+	$idpIndex = 0;
+	$idphintIndex = 0;
+	
 	foreach ($IDProviders as $key => $IDProvider){
+		
+		// Get IdP Type(Category key)
+		$IdPType = isset($IDProviders[$key]['Type']) ? $IDProviders[$key]['Type'] : '';
+		
+		// Skip non-IdP & non-Category entries
+		if ($IdPType == ''){
+			continue;
+		}
+		
+		$CategoryName = '';
+		$CategoryGeolocation = '';
+		$CategoryMapscale = '';
+		
+		// Get Category entries
+		if ($IdPType == 'category'){
+			if (isset($IDProvider[$language]['Name'])){
+				$CategoryName = addslashes($IDProvider[$language]['Name']);
+			} else {
+				$CategoryName = addslashes($IDProvider['Name']);
+			}
+			$CategoryGeolocation = isset($IDProvider['Geolocation']) ? addslashes($IDProvider['Geolocation']) : '';
+			$CategoryMapscale = isset($IDProvider['Mapscale']) ? addslashes($IDProvider['Mapscale']) : 5;
+			$JSONIncCategoryArray[] = <<<ENTRY
+
+	"{$key}":{
+		name:"{$CategoryName}",
+		geolocation:"{$CategoryGeolocation}",
+		mapscale:{$CategoryMapscale}
+		}
+ENTRY;
+			
+			continue;
+		}
 		
 		// Get IdP Name
 		if (isset($IDProvider[$language]['Name'])){
@@ -99,10 +137,10 @@ function getSearchIdPList() {
 			$IdPName = addslashes($IDProvider['Name']);
 		}
 		
+		// Get Select IdP Name
 		if ($selIdP == ''){
 			$selIdP = ($selectedIDP == $key) ? $IdPName : '' ;
 		}
-		$IdPType = isset($IDProviders[$key]['Type']) ? $IDProviders[$key]['Type'] : '';
 		
 		// SSO
 		if (isset($IDProvider['SSO'])){
@@ -111,13 +149,9 @@ function getSearchIdPList() {
 			$IdPSSO = '';
 		}
 		
-		// Skip non-IdP entries
-		if ($IdPType == '' || $IdPType == 'category'){
-			continue;
-		}
-		
 		// Set IdP Category
-		$IdPCategory = '';
+		$IdPCategoryName = '';
+		$IdPCategoryKey = '';
 		$IDProviders2 = $IDProviders;
 		foreach ($IDProviders2 as $key2 => $IDProvider2){
 			$IdPType2 = isset($IDProviders2[$key2]['Type']) ? $IDProviders2[$key2]['Type'] : '';
@@ -125,45 +159,49 @@ function getSearchIdPList() {
 			if ($IdPType2 == 'category' && $IdPType == $key2){
 				// Get IdP Category Name
 				if (isset($IDProvider2[$language]['Name'])){
-					$IdPCategory = addslashes($IDProvider2[$language]['Name']);
+					$IdPCategoryName = addslashes($IDProvider2[$language]['Name']);
 				} else {
-					$IdPCategory = addslashes($IDProvider2['Name']);
+					$IdPCategoryName = addslashes($IDProvider2['Name']);
 				}
-				if (!empty($IdPKind)){
-					break;
-				}
+				$IdPCategoryKey = addslashes($key2);
+				break;
 			}
 		}
 		
 		// Set IdP Kind
+		$IdPKind = '';
 		if (isset($IDProvider['AttributeValue'])){
-			$IdPKindCheckFlg = false;
-			$IdPKind = addslashes($IDProvider['AttributeValue']);
-			foreach ($IDProvidersKind as $key3 => $IDProviderKind){
-				if ($IdPKind == $key3){
-					$IdPKindCheckFlg = true;
-					break;
+			foreach($IDProvider['AttributeValue'] as $IDPAttributeValue){
+				foreach ($IDProvidersKind as $kindkey => $IDProviderKind){
+					$IdPKindCheckFlg = false;
+					if ($IDPAttributeValue == $kindkey){
+						if (empty($IdPKind)){
+							$IdPKind = '"'.$IDPAttributeValue.'"';
+						} else {
+							$IdPKind .= ', "'.$IDPAttributeValue.'"';
+						}
+						$IdPKindCheckFlg = true;
+						break;
+					}
+				}
+				if (!$IdPKindCheckFlg){
+					if (empty($IdPKind)){
+						$IdPKind = '"others"';
+					} else {
+						$IdPKind .= ', "others"';
+					}
 				}
 			}
-			if (!$IdPKindCheckFlg){
-				$IdPKind = 'others';
-			}
 		} else {
-			$IdPKind = 'others';
+			$IdPKind = '"others"';
 		}
 		
-		// Get IdP Logo URL and Size
+		// Get IdP Logo URL
 		$IdPLogoURL = '';
-		$IdPLogoHeight = '';
-		$IdPLogoWidth = '';
 		if (isset($IDProvider[$language]['Logo'])){
 			$IdPLogoURL = $IDProvider[$language]['Logo']['url'];
-			$IdPLogoHeight = $IDProvider[$language]['Logo']['height'];
-			$IdPLogoWidth = $IDProvider[$language]['Logo']['width'];
 		} elseif (isset($IDProvider['Logo'])) {
 			$IdPLogoURL = $IDProvider['Logo']['url'];
-			$IdPLogoHeight = $IDProvider['Logo']['height'];
-			$IdPLogoWidth = $IDProvider['Logo']['width'];
 		}
 		
 		// Get GeolocationHint latitude and longitude
@@ -171,9 +209,9 @@ function getSearchIdPList() {
 		if (isset($IDProvider['GeolocationHint'])){
 			foreach($IDProvider['GeolocationHint'] as $geolocation){
 				if (empty($IdPGeolocationHint)){
-					$IdPGeolocationHint = $geolocation;
+					$IdPGeolocationHint = '"'.$geolocation.'"';
 				} else {
-					$IdPGeolocationHint = $IdPGeolocationHint.';'.$geolocation;
+					$IdPGeolocationHint .= ', "'.$geolocation.'"';
 				}
 			}
 		}
@@ -189,7 +227,7 @@ function getSearchIdPList() {
 					if (empty($SearchIdPName)){
 						$SearchIdPName = '"'.addslashes($value['Name']).'"';
 					} else {
-						$SearchIdPName = $SearchIdPName.', "'.addslashes($value['Name']).'"';
+						$SearchIdPName .= ', "'.addslashes($value['Name']).'"';
 					}
 					break;
 				}
@@ -199,55 +237,86 @@ function getSearchIdPList() {
 			$SearchIdPName = '"'.$IdPName.'"';
 		}
 		
-		$IncSearchAdd = <<<ENTRY
-, "{$IdPLogoURL}", "{$IdPLogoHeight}", "{$IdPLogoWidth}", "{$IdPGeolocationHint}", "{$IdPRegistrationURL}", "{$IdPKind}", "", {$SearchIdPName}
-ENTRY;
-
-		$IncSearchIDP = <<<ENTRY
-"{$key}", "{$IdPCategory}", "{$IdPName}"{$IncSearchAdd}
-ENTRY;
-		
-		$IncSearchArray[] = <<<ENTRY
-
-	[
-		{$IncSearchIDP}
-	]
-ENTRY;
-
-		foreach ($mduiHintIDPs as $hintIDP) {
-			if ($key == $hintIDP) {
-				$IncSearchHintArray[] = <<<ENTRY
-
-	[
-		"{$key}", "{$hintIDPString}", "{$IdPName}"{$IncSearchAdd}
-	]
-ENTRY;
-				if (empty($IdPHintList)) {
-					$IdPHintList = '"'.$hintIDP.'"';
-				} else {
-					$IdPHintList = $IdPHintList.', "'.$hintIDP.'"';
-				}
-			}
-		}
-		
 		$JSONIdPArray[] = <<<ENTRY
 
 	"{$key}":{
 		type:"{$IdPType}",
 		name:"{$IdPName}",
-		search:[{$IncSearchIDP}],
 		SAML1SSOurl:"{$IdPSSO}"
 		}
 ENTRY;
+	
+		$JSONIdPList = join(',', $JSONIdPArray);
 
+		
+		$JSONIncIdPArray[] = <<<ENTRY
+
+	{
+		entityid:"{$key}",
+		type:"{$IdPType}",
+		name:"{$IdPName}",
+		search:[{$SearchIdPName}],
+		SAML1SSOurl:"{$IdPSSO}",
+		categoryName:"{$IdPCategoryName}",
+		categoryKey:"{$IdPCategoryKey}",
+		kind:[{$IdPKind}],
+		logoURL:"{$IdPLogoURL}",
+		geolocation:[{$IdPGeolocationHint}],
+		registrationURL:"${IdPRegistrationURL}"
+	}
+ENTRY;
+		
+		if (count($mduiHintIDPs) > 0){
+			foreach ($mduiHintIDPs as $hintIDP) {
+				if ($key == $hintIDP) {
+					$JSONIncIdPHintArray[] = <<<ENTRY
+
+	{
+		entityid: "{$key}",
+		type: "{$IdPType}",
+		name: "{$IdPName}",
+		search: [{$SearchIdPName}],
+		SAML1SSOurl: "{$IdPSSO}",
+		categoryName:"{$hintIDPString}",
+		categoryKey:"{$IdPCategoryKey}",
+		kind: [{$IdPKind}],
+		logoURL: "{$IdPLogoURL}",
+		geolocation: [{$IdPGeolocationHint}],
+		registrationURL: "${IdPRegistrationURL}"
+	}
+ENTRY;
+					break;
+				}
+			}
+		}
 	}
 	
-	$IncSearchList = join(',', $IncSearchArray);
-	$IncSearchHintList = join(',', $IncSearchHintArray);
 	$JSONIdPList = join(',', $JSONIdPArray);
+	$JSONIncCategoryList = join(',', $JSONIncCategoryArray);
+	$JSONIncIdPList = join(',', $JSONIncIdPArray);
+	$JSONIncIdPHintList = join(',', $JSONIncIdPHintArray);
 	$selIdP = ($selIdP == '') ? $InitDisp : $selIdP ;
 	
 }
 
+function printJscode_GlobalVariables(){
+	echo <<<SCRIPT
+	
+	var suggest = '';
+	var selkind = '';
+	var old_hint_list = new Array();
+	var refresh_flg = true;
+	var discofeed_flg = true;
+	var geolocation_ngflg = false;
+	var geolocation_flg = true;
+	var geolocation_ngflg = false;
+	var hintGeolocationFlg = false;
+	var myMap = '';
+	var markersList = new Array();
+	var infowindowsList = new Array();
+	var clientGeolocation = '';
+	
+SCRIPT;
+}
 
 ?>
