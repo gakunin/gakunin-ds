@@ -35,7 +35,7 @@ function checkDiscofeed(){
 				xdr.onload = function(){
 					setDiscofeedList(eval("(" + xdr.responseText + ")"));
 				}
-				xdr.timeout = 3;
+				xdr.timeout = 10;
 				xdr.open("get", wayf_discofeed_url, true);
 				xdr.send( null );
 			} else {
@@ -45,7 +45,7 @@ function checkDiscofeed(){
 						url: wayf_discofeed_url,
 						dataType: 'json',
 						async: true,
-						timeout: 3000,
+						timeout: 10000,
 						success: function(json) {
 							setDiscofeedList(json);
 						},
