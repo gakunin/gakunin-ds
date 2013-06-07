@@ -69,14 +69,14 @@ if (typeof(wayf_discofeed_url) != "undefined" && wayf_discofeed_url != ''){
     xdr.onload = function(){
         setDiscofeedList(eval("(" + xdr.responseText + ")"));
     }
-    xdr.open("get", wayf_discofeed_url, true);
+    xdr.open("get", wayf_discofeed_url, false);
     xdr.send( null );
   } else {
     $.ajax({
       type: 'get',
       url: wayf_discofeed_url,
       dataType: 'json',
-      async: true,
+      async: false,
       success: function(json) {
         setDiscofeedList(json);
       }
