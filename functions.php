@@ -371,6 +371,7 @@ function getNetMatch($network, $ip) {
 	$ip_arr = explode('/', $network);
 	$network_long = ip2long($ip_arr[0]);
 	
+	if (sizeof($ip_arr) == 1) $ip_arr[1] = 32;
 	$x = ip2long($ip_arr[1]);
 	$mask = long2ip($x) == $ip_arr[1] ? $x : 0xffffffff << (32 - $ip_arr[1]);
 	$ip_long = ip2long($ip);
