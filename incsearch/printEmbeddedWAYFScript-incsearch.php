@@ -134,7 +134,6 @@ SCRIPT;
 
 // It adds it to window event.
 function start() {
-	discofeed_flg = false;
 	checkDiscofeed();
 	suggest = new Suggest.Local(
 		"keytext",							// element id of input area

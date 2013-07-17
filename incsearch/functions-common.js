@@ -17,10 +17,11 @@ function getMatchIdPList(json, list){
 }
 
 function setDiscofeedList(json){
-	if (!json) return;
-	json_idp_list = getMatchIdPList(json, json_idp_list);
-	json_idp_favoritelist = getMatchIdPList(json, json_idp_favoritelist);
-	json_idp_hintlist = getMatchIdPList(json, json_idp_hintlist);
+	if (json){
+		json_idp_list = getMatchIdPList(json, json_idp_list);
+		json_idp_favoritelist = getMatchIdPList(json, json_idp_favoritelist);
+		json_idp_hintlist = getMatchIdPList(json, json_idp_hintlist);
+	}
 	discofeed_flg = true;
 	refresh_flg = false;
 }
@@ -29,6 +30,7 @@ function setDiscofeedList(json){
 function checkDiscofeed(){
 	if (typeof(wayf_use_disco_feed) == "undefined" || wayf_use_disco_feed){
 		if (typeof(wayf_discofeed_url) != "undefined" && wayf_discofeed_url != ''){
+			discofeed_flg = false;
 			var urldomain = wayf_discofeed_url.split('/')[2];
 			if(location.hostname != urldomain && window.XDomainRequest){
 				var xdr = new XDomainRequest();
