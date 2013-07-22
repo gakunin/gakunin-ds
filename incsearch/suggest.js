@@ -310,7 +310,7 @@ Suggest.Local.prototype = {
     var text = this.getInputText();
 
     if (text == null || text == this.initDisp) return;
-    if (!geolocation_flg || !refresh_flg ){
+    if ((!geolocation_flg || !refresh_flg ) && discofeed_flg){
       this.candidateList = json_idp_list;
       this.favoriteList = json_idp_favoritelist;
       this.hintList = json_idp_hintlist;
