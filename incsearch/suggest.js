@@ -71,8 +71,7 @@ Suggest.Local.prototype = {
       '': this.getInputText();
     this.searchFlg = false;
     this.noMatch = true;
-    this.pcFlg = true;
-    this.geoFlg = true;
+    this.userAgentFlg = 0;
 
     if (this.candidateList.length > 0) {
       // favorite IdP List
@@ -124,7 +123,9 @@ Suggest.Local.prototype = {
     $('#' + this.animateArea.id).hide();
     this.checkUserAgent();
     this.checkNoMatch(this.oldText);
-    this.touchScroll();
+    if (this.userAgentFlg == 1){
+      this.touchScroll();
+    }
 
     this.geolocationImgElm.src = this.geoOffImgURL;
 
@@ -157,16 +158,15 @@ Suggest.Local.prototype = {
   },
 
   checkUserAgent: function() {
-    if (navigator.userAgent.indexOf('iPhone') > 0 || 
-        navigator.userAgent.indexOf('iPad') > 0 ||
-        navigator.userAgent.indexOf('iPod') > 0 ||
-        navigator.userAgent.indexOf('Android') > 0) {
-      this.pcFlg = false;
+    if (navigator.userAgent.indexOf('Android 2') > 0){
+      this.userAgentFlg = 1;
+    } else if (navigator.userAgent.indexOf('iPhone') > 0 ||
+               navigator.userAgent.indexOf('iPad') > 0 ||
+               navigator.userAgent.indexOf('iPod') > 0 ||
+               navigator.userAgent.indexOf('Android') > 0) {
+      this.userAgentFlg = 2;
     } else {
-      this.pcFlg = true;
-    }
-    if (navigator.userAgent.indexOf('MSIE') > 0) {
-      this.geoFlg = false; 
+      this.userAgentFlg = 0;
     }
   },
 
@@ -235,7 +235,7 @@ Suggest.Local.prototype = {
       refresh_flg = false;
       this.input.focus();
       this.search();
-      if (this.pcFlg) {
+      if (this.userAgentFlg == 0) {
         this.scrollArea.scrollTop = 0;
       }
     } else if (element.id == this.mapElm.id) {
@@ -327,9 +327,6 @@ Suggest.Local.prototype = {
       geolocation_flg = true;
       refresh_flg = true;
     }
-//    if (!discofeed_flg){
-//      this.candidateList = [];
-//    }
     if (this.candidateList.length == 0) {
       this.setInputText(this.initDisp);
     }
@@ -422,7 +419,7 @@ Suggest.Local.prototype = {
     this.suggestList = [];
     this.inputValueBackup = this.input.value;
 
-    if (!this.pcFlg) {
+    if (this.userAgentFlg == 1) {
       $('#' + this.scrollArea.id).flickable('disable');
     }
     var oldGroup = '';
@@ -462,7 +459,7 @@ Suggest.Local.prototype = {
         logo = '&nbsp;<span style="vertical-align: middle; padding:0px; margin:0px;"><img src="' + resultList[i].logoURL + '" height="18"/></span>';
       }
      
-      if (this.pcFlg) {
+      if (this.userAgentFlg == 0) {
         element1.innerHTML = resultList[i].name + logo;
       } else {
         element1.innerHTML = '<a onclick="">' + resultList[i].name + '</a>' + logo;
@@ -476,7 +473,7 @@ Suggest.Local.prototype = {
 
       var regurl = '';
       if ((typeof wayf_sp_entityID != 'undefined') && (typeof wayf_return_url != 'undefined') && (resultList[i].registrationURL != '')) {
-        if (this.pcFlg) {
+        if (this.userAgentFlg == 0) {
           element2.innerHTML = '<div id="reg_a" class="default">' + reg_button + '</div>';
         } else {
           element2.innerHTML = '<a id="reg_a" class="default" onclick="">' + reg_button + '</a>';
@@ -494,12 +491,13 @@ Suggest.Local.prototype = {
     this.dnupImgElm.src = this.upImgURL;
     $('#' + this.animateArea.id).slideDown(this.dispListTime);
     var scrollbarWidth = 0;
-    if (this.pcFlg) scrollbarWidth = 18;
+    if (this.userAgentFlg == 0) scrollbarWidth = 19;
     var scrollAreaWidth = Number($('#' + this.scrollArea.id).css('width').replace('px', ''));
-    if (scrollAreaWidth > Number($('#' + this.suggestArea.id).css('width').replace('px', ''))) {
+    var suggestAreaWidth = Number($('#' + this.suggestArea.id).css('width').replace('px', ''));
+    if (scrollAreaWidth > suggestAreaWidth) {
       $('#' + this.suggestArea.id).css('width', scrollAreaWidth - scrollbarWidth + 'px');
     }
-    if (!this.pcFlg) {
+    if (this.userAgentFlg == 1) {
       $('#' + this.scrollArea.id).flickable('enable');
       $('#' + this.scrollArea.id).flickable('disable');
       $('#' + this.scrollArea.id).flickable('enable');
