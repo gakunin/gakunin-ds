@@ -137,7 +137,7 @@ Suggest.Local.prototype = {
       '': this.getInputText();
     this.searchFlg = false;
     this.noMatch = true;
-    this.pcFlg = true;
+    this.userAgentFlg = 0;
     this.discofeedFlg = false;
 
     if (this.candidateList.length > 0) {
@@ -179,7 +179,9 @@ Suggest.Local.prototype = {
     $('#' + this.animateArea.id).hide();
     this.checkUserAgent();
     this.checkNoMatch(this.oldText);
-    this.touchScroll();
+    if (this.userAgentFlg == 1){
+      this.touchScroll();
+    }
 
   },
 
@@ -210,13 +212,15 @@ Suggest.Local.prototype = {
   },
 
   checkUserAgent: function() {
-    if (navigator.userAgent.indexOf('iPhone') > 0 || 
-        navigator.userAgent.indexOf('iPad') > 0 ||
-        navigator.userAgent.indexOf('iPod') > 0 ||
-        navigator.userAgent.indexOf('Android') > 0) {
-      this.pcFlg = false;
+    if (navigator.userAgent.indexOf('Android 2') > 0){
+      this.userAgentFlg = 1;
+    } else if (navigator.userAgent.indexOf('iPhone') > 0 ||
+               navigator.userAgent.indexOf('iPad') > 0 ||
+               navigator.userAgent.indexOf('iPod') > 0 ||
+               navigator.userAgent.indexOf('Android') > 0) {
+      this.userAgentFlg = 2;
     } else {
-      this.pcFlg = true;
+      this.userAgentFlg = 0;
     }
   },
 
@@ -419,7 +423,7 @@ Suggest.Local.prototype = {
     this.suggestList = [];
     this.inputValueBackup = this.input.value;
 
-    if (!this.pcFlg) {
+    if (this.userAgentFlg == 1) {
       $('#' + this.scrollArea.id).flickable('disable');
     }
     var oldGroup = '';
@@ -449,7 +453,7 @@ Suggest.Local.prototype = {
       } else {
         element.className = this.classIdPNm;
       }
-      if (this.pcFlg) {
+      if (this.userAgentFlg == 0) {
         element.innerHTML = resultList[i][2];
       } else {
         element.innerHTML = '<a onclick="">' + resultList[i][2] + '</a>';
@@ -467,12 +471,13 @@ Suggest.Local.prototype = {
     this.dnupImgElm.src = this.upImgURL;
     $('#' + this.animateArea.id).slideDown(this.dispListTime);
     var scrollbarWidth = 0;
-    if (this.pcFlg) scrollbarWidth = 18;
+    if (this.userAgentFlg == 0) scrollbarWidth = 19;
     var scrollAreaWidth = Number($('#' + this.scrollArea.id).css('width').replace('px', ''));
-    if (scrollAreaWidth > Number($('#' + this.suggestArea.id).css('width').replace('px', ''))) {
+    var suggestAreaWidth = Number($('#' + this.suggestArea.id).css('width').replace('px', ''));
+    if (scrollAreaWidth > suggestAreaWidth) {
       $('#' + this.suggestArea.id).css('width', scrollAreaWidth - scrollbarWidth + 'px');
     }
-    if (!this.pcFlg) {
+    if (this.userAgentFlg == 1) {
       $('#' + this.scrollArea.id).flickable('enable');
       $('#' + this.scrollArea.id).flickable('disable');
       $('#' + this.scrollArea.id).flickable('enable');
