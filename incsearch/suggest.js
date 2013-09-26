@@ -19,8 +19,8 @@ function checkDiscofeedList(json, list){
   var index = 0;
   var matchFlg = false;
 
-  for (var i in json) {
-    for (var j = 0, length = list.length; j < length; j++) {
+  for (var j = 0, length = list.length; j < length; j++) {
+    for (var i in json) {
       if (json[i].entityID == list[j][0]) {
         newList[index] = list[j];
         matchFlg = true;
