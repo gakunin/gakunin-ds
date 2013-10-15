@@ -150,7 +150,7 @@ $IDProviders['others'] = array (
 // 全て
 $IDProvidersKind['all'] = array (
 		'Type' => 'kind',
-		'en' => array ('Name' => 'all'),
+		'en' => array ('Name' => 'All'),
 		'ja' => array ('Name' => '全て'),
 		'Name' => 'All',
 		'Default' => 'checked',
@@ -159,9 +159,9 @@ $IDProvidersKind['all'] = array (
 
 //
 // 大学
-$IDProvidersKind['university'] = array (
+$IDProvidersKind['category:organizationType:university'] = array (
 		'Type' => 'kind',
-		'en' => array ('Name' => 'university'),
+		'en' => array ('Name' => 'University'),
 		'ja' => array ('Name' => '大学'),
 		'Name' => 'University',
 		'Default' => '',
@@ -170,42 +170,42 @@ $IDProvidersKind['university'] = array (
 
 //
 // 短大
-$IDProvidersKind['tertiaryb'] = array (
+$IDProvidersKind['category:organizationType:juniorCollege'] = array (
 		'Type' => 'kind',
-		'en' => array ('Name' => 'tertiaryb'),
+		'en' => array ('Name' => 'JuniorCollege'),
 		'ja' => array ('Name' => '短大'),
-		'Name' => 'Tertiaryb',
+		'Name' => 'JuniorCollege',
 		'Default' => '',
 		'Index' => '012',
 );
 
 //
 // 高専
-$IDProvidersKind['uppersecondary'] = array (
+$IDProvidersKind['category:organizationType:techCollege'] = array (
 		'Type' => 'kind',
-		'en' => array ('Name' => 'uppersecondary'),
+		'en' => array ('Name' => 'TechCollege'),
 		'ja' => array ('Name' => '高専'),
-		'Name' => 'Uppersecondary',
+		'Name' => 'TechCollege',
 		'Default' => '',
 		'Index' => '013',
 );
 
 //
 // 研究所
-$IDProvidersKind['vho'] = array (
+$IDProvidersKind['category:organizationType:researchInstitution'] = array (
 		'Type' => 'kind',
-		'en' => array ('Name' => 'vho'),
+		'en' => array ('Name' => 'ResearchInstitution'),
 		'ja' => array ('Name' => '研究所'),
-		'Name' => 'Vho',
+		'Name' => 'ResearchInstitution',
 		'Default' => '',
 		'Index' => '014',
 );
 
 //
 // その他
-$IDProvidersKind['others'] = array (
+$IDProvidersKind['category:organizationType:others'] = array (
 		'Type' => 'kind',
-		'en' => array ('Name' => 'others'),
+		'en' => array ('Name' => 'Others'),
 		'ja' => array ('Name' => 'その他'),
 		'Name' => 'Others',
 		'Default' => '',

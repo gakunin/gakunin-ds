@@ -330,6 +330,22 @@ function processIDPRoleDescriptor($IDPRoleDescriptorNode){
 	$MDUIKeywords = getMDUIKeywords($IDPRoleDescriptorNode);
 	foreach ($MDUIKeywords as $lang => $keywords){
 		$IDP[$lang]['Keywords'] = $keywords;
+		if ($lang == 'en') {
+			$Entity = Array();
+			$keywordsArray = explode(' ', $keywords);
+			foreach ($keywordsArray as $value){
+				if (preg_match("/^category:organizationType:/", $value)) {
+					$Entity[] = $value;
+				}
+			}
+			if (empty($Entity)) {
+				$Entity[] = 'category:organizationType:others';
+			}
+			$IDP['OrganizationType'] = $Entity;
+		}
+	}
+	if (!isset($IDP['OrganizationType'])) {
+		$IDP['OrganizationType'] = array('category:organizationType:others');
 	}
 	
 	// Get Logos
@@ -340,12 +356,6 @@ function processIDPRoleDescriptor($IDPRoleDescriptorNode){
 		} else {
 			$IDP[$lang]['Logo'] = $value;
 		}
-	}
-	
-	// Get AttributeValue 
-	$SAMLAttributeValues = getSAMLAttributeValues($IDPRoleDescriptorNode);
-	if ($SAMLAttributeValues){
-		$IDP['AttributeValue'] = $SAMLAttributeValues;
 	}
 	
 	// Get IPHints 
@@ -563,21 +573,6 @@ function getMDUILogos($RoleDescriptorNode){
 			$lang = '';
 		}
 		$Entity[$lang] = $Item;
-	}
-	
-	return $Entity;
-}
-
-
-/******************************************************************************/
-// Get MD Attribute Value(kind) from RoleDescriptor
-function getSAMLAttributeValues($RoleDescriptorNode){
-	
-	$Entity = Array();
-	
-	$SAMLAttributeValues = $RoleDescriptorNode->getElementsByTagNameNS('urn:oasis:names:tc:SAML:2.0:assertion', 'AttributeValue');
-	foreach( $SAMLAttributeValues as $SAMLAttributeValuesEntry ){
-		$Entity[] = trim($SAMLAttributeValuesEntry->nodeValue);
 	}
 	
 	return $Entity;

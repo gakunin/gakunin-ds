@@ -170,30 +170,24 @@ ENTRY;
 		
 		// Set IdP Kind
 		$IdPKind = '';
-		if (isset($IDProvider['AttributeValue'])){
-			foreach($IDProvider['AttributeValue'] as $IDPAttributeValue){
+		if (isset($IDProvider['OrganizationType'])){
+			foreach($IDProvider['OrganizationType'] as $IDPOrganizationType){
 				foreach ($IDProvidersKind as $kindkey => $IDProviderKind){
-					$IdPKindCheckFlg = false;
-					if ($IDPAttributeValue == $kindkey){
+					if ($IDPOrganizationType == $kindkey){
 						if (empty($IdPKind)){
-							$IdPKind = '"'.$IDPAttributeValue.'"';
+							$IdPKind = '"'.$IDPOrganizationType.'"';
 						} else {
-							$IdPKind .= ', "'.$IDPAttributeValue.'"';
+							$IdPKind .= ', "'.$IDPOrganizationType.'"';
 						}
-						$IdPKindCheckFlg = true;
 						break;
 					}
 				}
-				if (!$IdPKindCheckFlg){
-					if (empty($IdPKind)){
-						$IdPKind = '"others"';
-					} else {
-						$IdPKind .= ', "others"';
-					}
-				}
+			}
+			if (empty($IdPKind)){
+				$IdPKind = '"category:organizationType:others"';
 			}
 		} else {
-			$IdPKind = '"others"';
+			$IdPKind = '"category:organizationType:others"';
 		}
 		
 		// Get IdP Logo URL
