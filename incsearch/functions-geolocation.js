@@ -2,6 +2,53 @@ jQuery.noConflict();
 
 var null_distance = 9999999999;
 
+// Denshi Kokudo V4
+function CJ4BaseMapType() {
+
+        var dataset = [
+                null,null,null,null,null,
+                "JAIS","JAIS","JAIS","JAIS",
+                "BAFD1000K","BAFD1000K","BAFD1000K",
+                "BAFD200K","BAFD200K","BAFD200K",
+                "DJBMM","DJBMM","DJBMM",
+                "FGD"
+        ] ;
+
+        CJ4BaseMapType.prototype.tileSize = new google.maps.Size(256,256);
+        CJ4BaseMapType.prototype.minZoom = 5;
+        CJ4BaseMapType.prototype.maxZoom = 18;
+        CJ4BaseMapType.prototype.name = 'CJ4';
+        CJ4BaseMapType.prototype.alt = 'Denshi Kokudo V4';
+
+        CJ4BaseMapType.prototype.getTile = function( tileXY, zoom, ownerDocument ) {
+                var tileImage = ownerDocument.createElement('img');
+
+                var xID =  tileXY.x + "";
+                var yID =  tileXY.y + "";
+                xID = "0000000".substr(0, (7- xID.length)) + xID;
+                yID = "0000000".substr(0, (7- yID.length)) + yID;
+
+                var fileName = xID + yID + ".png";
+                var dir = "";
+                for( var i = 0; i < 6; i++ ) {
+                        dir += xID.charAt(i) + yID.charAt(i) + "/";
+                }
+
+                var url= "http://cyberjapandata.gsi.go.jp/sqras/all/"
+                        + dataset[zoom] + "/latest/" + zoom + "/" + dir
+                        + fileName;
+
+                tileImage.src = url;
+                tileImage.style.width  = this.tileSize.width  + 'px';
+                tileImage.style.height = this.tileSize.height + 'px';
+
+                return tileImage;
+        };
+}
+
+var cj4Type = new CJ4BaseMapType();
+var cj4LOGO = null;
+
 function clone(obj) { 
     if (null == obj || "object" != typeof obj) return obj; 
     var copy = obj.constructor(); 
@@ -438,9 +485,18 @@ function createMap(clientCenterFlg){
 											zoom: json_category_list[hintCategoryKey].mapscale,
 											center: new google.maps.LatLng(arrayLatLng[0], arrayLatLng[1]),
 											scaleControl: true,
-											mapTypeId: google.maps.MapTypeId.ROADMAP
+											mapTypeControl: false,
+											streetViewControl: false,
+											mapTypeId: 'cj4'
 										}
 									);
+		myMap.mapTypes.set( 'cj4', cj4Type );
+		
+		// Denshi Kokudo LOGO
+		cj4LOGO = document.createElement('div');
+		cj4LOGO.innerHTML = "<a href='http://portal.cyberjapan.jp/' target='_blank' ><img src='http://cyberjapan.jp/images/icon01.gif' width='32' height='32' alt='Denshi Kokudo'></a>";
+		cj4LOGO.style.display = "inline";
+		myMap.controls[ google.maps.ControlPosition.BOTTOM_LEFT ].push(cj4LOGO);
 		
 		for (var i in json_idp_list){
 			var openFlg = false;
