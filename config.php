@@ -197,13 +197,15 @@ $geolocationOffURL = $imageURL.'/geolocation_off.png';
 $geolocationOnURL = $imageURL.'/geolocation_on.png';
 
 $incsearchURL = 'https://ds.gakunin.nii.ac.jp/GakuNinDS/incsearch';
+$incsearchPhpURL = $incsearchURL.'/functions-incsearch.php';
 $incsearchLibURL = $incsearchURL.'/suggest.js';
 $incsearchCssURL = $incsearchURL.'/suggest.css';
 $ajaxLibURL = $incsearchURL.'/jquery.js';
 $ajaxFlickLibURL = $incsearchURL.'/jquery.flickable.js';
-
-$geolocationMapURL = 'https://shib-sample.secioss.co.jp/DS2/geolocationmap.php';
-
+$googleMapLibURL = 'https://maps.google.com/maps/api/js?sensor=false';
+$geolocationJsURL = $incsearchURL.'/functions-geolocation.js';
+$geolocationCssURL = $incsearchURL.'/geolocation.css';
+$commonJsURL = $incsearchURL.'/functions-common.js';
 
 // 5. Files and path settings
 //***************************
@@ -246,11 +248,6 @@ $WAYFLogFile = 'logs/wayf.log';
 
 // A Kerboros-protected soft link back to this script!
 //$kerberosRedirectURL = '/SWITCHaai/kerberosRedirect.php';
-
-// Geolocation Map Display Width(default auto)
-$geolocationMapWidth = 'auto';
-// Geolocation Map Display Height(default 500px)
-$geolocationMapHeight = '500px';
 
 // Development mode settings
 //**************************
