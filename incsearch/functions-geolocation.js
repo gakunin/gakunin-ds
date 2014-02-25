@@ -46,7 +46,7 @@ function CJ4BaseMapType() {
         };
 }
 
-var cj4Type = new CJ4BaseMapType();
+var cj4Type = null;
 var cj4LOGO = null;
 
 function clone(obj) { 
@@ -490,6 +490,7 @@ function createMap(clientCenterFlg){
 											mapTypeId: 'cj4'
 										}
 									);
+                if (!cj4Type) cj4Type = new CJ4BaseMapType();
 		myMap.mapTypes.set( 'cj4', cj4Type );
 		
 		// Denshi Kokudo LOGO
