@@ -1234,6 +1234,9 @@ foreach ($IDProvidersKind as $key => $IDProviderKind){
 		writeHTML('</td>');
 		writeHTML('</tr>');
 		writeHTML('</table>');
+	
+		// Close form
+		writeHTML('</form>');
 		
 	}  // End login check
 	
@@ -1241,14 +1244,6 @@ foreach ($IDProvidersKind as $key => $IDProviderKind){
 	writeHTML('</div>');
 	writeHTML('<div style="clear:both;"></div>');
 
-/*
-	document.write('<div id="mapframe" style="display:none;">');
-	document.write('	<div id="mapleft" class="mframe"></div>');
-	document.write('	<div id="mapcenter" class="mframe"></div>');
-	document.write('	<div id="mapright"></div>');
-	document.write('</div>');
-*/
-	
 	// Now output HTML all at once
 	document.write(wayf_html);
 })()
