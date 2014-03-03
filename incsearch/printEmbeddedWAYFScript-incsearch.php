@@ -287,11 +287,11 @@ function pushIncSearchList(IdP){
 }
 
 function isAllowedType(IdP, type){
-	for ( var i=0; i<= wayf_hide_categories.length; i++){
+	for ( var i=0; i<wayf_hide_categories.length; i++){
 		
 		if (wayf_hide_categories[i] == type || wayf_hide_categories[i] == "all" ){
 			
-			for ( var i=0; i <= wayf_unhide_idps.length; i++){
+			for ( var i=0; i<wayf_unhide_idps.length; i++){
 				// Show IdP if it has to be unhidden
 				if (wayf_unhide_idps[i] == IdP){
 					return true;
@@ -312,7 +312,7 @@ function isAllowedCategory(category){
 		return true;
 	}
 	
-	for ( var i=0; i<= wayf_hide_categories.length; i++){
+	for ( var i=0; i<wayf_hide_categories.length; i++){
 		
 		if (wayf_hide_categories[i] == category || wayf_hide_categories[i] == "all" ){
 			return false;
@@ -325,7 +325,7 @@ function isAllowedCategory(category){
 
 function isAllowedIdP(IdP){
 	
-	for ( var i=0; i<=wayf_hide_idps.length; i++){
+	for ( var i=0; i<wayf_hide_idps.length; i++){
 		if (wayf_hide_idps[i] == IdP){
 			return false;
 		}
