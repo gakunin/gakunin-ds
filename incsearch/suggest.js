@@ -178,7 +178,7 @@ Suggest.Local.prototype = {
 
     if (text != '') {
       for (var i in this.candidateList){
-        for (var j in this.candidateList.search){
+        for (var j in this.candidateList[i].search){
           if (text.toLowerCase() == this.candidateList[i].search[j].toLowerCase()) {
             flg = false;
             break;
@@ -340,6 +340,10 @@ Suggest.Local.prototype = {
     }
     this.checkNoMatch(this.getInputText());
     this.selectElm.disabled = this.noMatch;
+    if (!this.noMatch) {
+      this.activePosition = 0;
+      this.changeActive(0);
+    }
   },
 
   _search: function(text) {
