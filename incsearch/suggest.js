@@ -340,10 +340,6 @@ Suggest.Local.prototype = {
     }
     this.checkNoMatch(this.getInputText());
     this.selectElm.disabled = this.noMatch;
-    if (!this.noMatch) {
-      this.activePosition = 0;
-      this.changeActive(0);
-    }
   },
 
   _search: function(text) {
@@ -381,7 +377,7 @@ Suggest.Local.prototype = {
     var chkFlg = false;
     if (selkind == '' || selkind == 'all') {
       chkFlg = true;
-    } else {
+    } else if (typeof chkIdP.kind != "undefined"){
       for (var i=0; i<chkIdP.kind.length; i++){
         if (selkind == chkIdP.kind[i]){
           chkFlg = true;
