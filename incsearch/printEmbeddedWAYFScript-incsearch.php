@@ -274,12 +274,12 @@ function writeHTML(a){
 }
 
 function pushIncSearchList(IdP){
-	for(var i in wayf_incidps){
+	for (var i=0; i<wayf_incidps.length; i++){
 		if (wayf_incidps[i].entityid == IdP) {
 			json_idp_list.push(wayf_incidps[i]);
 		}
 	}
-	for(var j in wayf_incidps_hint){
+	for (var j=0; j<wayf_incidps_hint.length; j++){
 		if (wayf_incidps_hint[j].entityid == IdP) {
 			json_idp_hintlist.push(wayf_incidps_hint[j]);
 		}

@@ -77,7 +77,7 @@ function addGeoHintList(){
 	if (hintmax > json_idp_hintlist.length) {
 		var clientLatLng = new Array();
 		old_hint_list = new Array();
-		for (var i in json_idp_hintlist) {
+		for (var i=0; i<json_idp_hintlist.length; i++) {
 			old_hint_list.push(clone(json_idp_hintlist[i]));
 		}
 		hintGeolocationFlg = true;
@@ -92,7 +92,7 @@ function addGeoHintList(){
 
 function delGeoHintList(){
 	json_idp_hintlist = new Array();
-	for (var i in old_hint_list) {
+	for (var i=0; i<old_hint_list.length; i++) {
 		json_idp_hintlist.push(clone(old_hint_list[i]));
 	}
 	document.getElementById("geolocation_img").src = geolocation_off;
@@ -155,20 +155,20 @@ function checkGeolocation(clientIdo, clientKeido) {
 	var tmp_idp_list = [];
 
 	clientGeolocation = clientIdo + ',' + clientKeido;
-	for (var i in json_idp_list){
+	for (var i=0; i<json_idp_list.length; i++){
 		var min_kyori = null_distance;
 		if ( json_idp_list[i].geolocation.length > 0) {
 			var cur_kyori = 0;
 			var latlon = [];
 			var doubleFlg = false;
-			for (var j in json_idp_hintlist){
+			for (var j=0; j<json_idp_hintlist.length; j++){
 				if (json_idp_list[i].entityid == json_idp_hintlist[j].entityid){
 					doubleFlg = true;
 					break;
 				}
 			}
 			if (!doubleFlg){
-				for (var j in json_idp_list[i].geolocation){
+				for (var j=0; j<json_idp_list[i].geolocation.length; j++){
 					latlon = json_idp_list[i].geolocation[j].split(",");
 					cur_kyori = getDistance(clientIdo, clientKeido, latlon[0], latlon[1], 10);
 					if (min_kyori > cur_kyori){
@@ -187,7 +187,7 @@ function checkGeolocation(clientIdo, clientKeido) {
 		if (x < y) return -1;
 		return 0;
 	});
-	for (var i in geohint_list){
+	for (var i=0; i<geohint_list.length; i++){
 		if (hintmax > json_idp_hintlist.length && geohint_list[i].distance != null_distance){
 			geohint_list[i].categoryName = hint_idp_group;
 			json_idp_hintlist.push(clone(geohint_list[i]));
@@ -313,7 +313,7 @@ function createList(){
 		elmLeft_msg.innerHTML = no_hint_msg;
 		elmLeft_frm.appendChild(elmLeft_msg);
 	} else {
-		for (var i in json_idp_list){
+		for (var i=0; i<json_idp_list.length; i++){
 			if (hintIdPName == json_idp_list[i].name){
 				var elmLeft_list = document.createElement("div");
 				elmLeft_list.id = "listhint";
@@ -356,9 +356,9 @@ function createList(){
 		elmLeft_frm.appendChild(elmLeft_msg);
 	} else {
 		var geoIdPList = new Array();
-		for (var i in json_idp_list){
+		for (var i=0; i<json_idp_list.length; i++){
 			var min_kyori = null_distance;
-			for (var j in json_idp_list[i].geolocation){
+			for (var j=0; j<json_idp_list[i].geolocation.length; j++){
 				var latlon = json_idp_list[i].geolocation[j].split(",");
 				var cur_kyori = getDistance(clientLatLng[0], clientLatLng[1], latlon[0], latlon[1], 10);
 				if (min_kyori > cur_kyori){
@@ -470,7 +470,7 @@ function createMap(clientCenterFlg){
 
 	if (clientCenterFlg){
 		var min_kyori = null_distance;
-		for (var i in json_category_list){
+		for (var i=0; i<json_category_list.length; i++){
 			var latlon = json_category_list[i].geolocation.split(",");
 			var cur_kyori = getDistance(clientLatLng[0], clientLatLng[1], latlon[0], latlon[1], 10);
 			if (min_kyori > cur_kyori){
@@ -499,12 +499,12 @@ function createMap(clientCenterFlg){
 		cj4LOGO.style.display = "inline";
 		myMap.controls[ google.maps.ControlPosition.BOTTOM_LEFT ].push(cj4LOGO);
 		
-		for (var i in json_idp_list){
+		for (var i=0; i<json_idp_list.length; i++){
 			var openFlg = false;
 			if (hintIdPName == json_idp_list[i].name){
 				openFlg = true;
 			}
-			for (var j in json_idp_list[i].geolocation){
+			for (var j=0; j<json_idp_list[i].geolocation.length; j++){
 				if (json_idp_list[i].geolocation[j] != '') {
 					latlng = json_idp_list[i].geolocation[j].split(",");
 					var marker = new google.maps.Marker({
@@ -573,6 +573,6 @@ function openInfoWindow(name) {
 // Deletes all markers in the array by removing references to them
 function deleteInfoWindow() {
 	if (infowindowsList) {
-		for (i in infowindowsList) { infowindowsList[i].close(); }
+		for (var i=0; i<infowindowsList.length; i++) { infowindowsList[i].close(); }
 	}
 }

@@ -177,8 +177,8 @@ Suggest.Local.prototype = {
     var countFavoriteList = 0;
 
     if (text != '') {
-      for (var i in this.candidateList){
-        for (var j in this.candidateList[i].search){
+      for (var i=0; i<this.candidateList.length; i++){
+        for (var j=0; j<this.candidateList[i].search.length; j++){
           if (text.toLowerCase() == this.candidateList[i].search[j].toLowerCase()) {
             flg = false;
             break;
@@ -191,12 +191,12 @@ Suggest.Local.prototype = {
     }
 
     if (this.suggestList){
-      for (var i in this.hintList){
+      for (var i=0; i<this.hintList.length; i++){
         if (this.isMatchKind(this.hintList[i])){
           countHintList++;
         }
       }
-      for (var i in this.favoriteList){
+      for (var i=0; i<this.favoriteList.length; i++){
         if (this.isMatchKind(this.favoriteList[i])){
           countFavoriteList++;
         }
@@ -352,7 +352,7 @@ Suggest.Local.prototype = {
     var temp;
     var chkFlg;
     this.suggestIndexList = [];
-    for (var i in this.candidateList){
+    for (var i=0; i<this.candidateList.length; i++){
       if (this.isMatchKind(this.candidateList[i])){
         if (this.embeddedFlg == false ||
              isAllowedCategory(this.candidateList[i].categoryKey)){
@@ -362,7 +362,7 @@ Suggest.Local.prototype = {
             resultList.push(this.candidateList[i]);
             this.suggestIndexList.push(i);
           } else {
-            for (var j in this.candidateList[i].search){
+            for (var j=0; j<this.candidateList[i].search.length; j++){
               if (this.isMatch(this.candidateList[i].search[j], text) != null) {
                 resultList.push(this.candidateList[i]);
                 this.suggestIndexList.push(i);
@@ -382,7 +382,7 @@ Suggest.Local.prototype = {
     if (selkind == '' || selkind == 'all') {
       chkFlg = true;
     } else {
-      for (var i in chkIdP.kind){
+      for (var i=0; i<chkIdP.kind.length; i++){
         if (selkind == chkIdP.kind[i]){
           chkFlg = true;
           break;
@@ -428,7 +428,7 @@ Suggest.Local.prototype = {
     }
     var oldGroup = '';
     $('#' + this.suggestArea.id).css('width', '');
-    for (var i in resultList){
+    for (var i=0; i<resultList.length; i++){
       if (this.showgrp && oldGroup != resultList[i].categoryName) {
         var element = document.createElement(this.listTagName);
         if (resultList[i].categoryName == this.hintIdpGroup) {
@@ -583,7 +583,7 @@ Suggest.Local.prototype = {
     this.oldText = this.getInputText();
 
     this.suggestIndexList = [];
-    for (var i in this.candidateList){
+    for (var i=0; i<this.candidateList.length; i++){
       this.suggestIndexList.push(i);
     }
 
@@ -731,12 +731,12 @@ Suggest.Local.prototype = {
   setStyleUnactive: function(element, index) {
     var countHintList = 0;
     var countFavoriteList = 0;
-    for (var i in this.hintList){
+    for (var i=0; i<this.hintList.length; i++){
       if (this.isMatchKind(this.hintList[i])){
         countHintList++;
       }
     }
-    for (var i in this.favoriteList){
+    for (var i=0; i<this.favoriteList.length; i++){
       if (this.isMatchKind(this.favoriteList[i])){
         countFavoriteList++;
       }

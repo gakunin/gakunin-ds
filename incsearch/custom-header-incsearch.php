@@ -102,8 +102,8 @@
 		
 		if (hiddenKeyText != '') idp_name = hiddenKeyText.toLowerCase();
 		if (initdisp != idp_name) {
-			for (var i in json_idp_list){
-				for (var j in json_idp_list[i].search){
+			for (var i=0; i<json_idp_list.length; i++){
+				for (var j=0; j<json_idp_list[i].search.length; j++){
 					var list_idp_name = json_idp_list[i].search[j].toLowerCase();
 					if (idp_name == list_idp_name) {
 						document.getElementById('user_idp').value = json_idp_list[i].entityid;

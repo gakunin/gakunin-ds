@@ -3,8 +3,8 @@ function getMatchIdPList(json, list){
 	var index = 0;
 	var matchFlg = false;
 	
-	for (var i in list) {
-		for (var j in json) {
+	for (var i=0; i<list.length; i++) {
+		for (var j=0; j<json.length; j++) {
 			if (list[i].entityid == json[j].entityID) {
 				newList[index] = list[i];
 				matchFlg = true;
