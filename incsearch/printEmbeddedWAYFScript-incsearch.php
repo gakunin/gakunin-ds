@@ -1065,6 +1065,12 @@ SCRIPT;
 						} else {
 							json_idp_list[listcnt].registrationURL = '';
 						}
+						if (wayf_additional_idps[i].kind){
+							json_idp_list[listcnt].kind = wayf_additional_idps[i].kind;
+						} else {
+							json_idp_list[listcnt].kind = new Array();
+							json_idp_list[listcnt].kind[0] = 'category:organizationType:others';
+						}
 						json_idp_list[listcnt].search = new Array();
 						json_idp_list[listcnt].search[0] = wayf_additional_idps[i].name;
 						listcnt++;
@@ -1094,6 +1100,12 @@ SCRIPT;
 						} else {
 							json_idp_list[listcnt].registrationURL = '';
 						}
+						if (wayf_additional_idps[i].kind){
+							json_idp_list[listcnt].kind = wayf_additional_idps[i].kind;
+						} else {
+							json_idp_list[listcnt].kind = new Array();
+							json_idp_list[listcnt].kind[0] = 'category:organizationType:others';
+						}
 						json_idp_list[listcnt].search = new Array();
 						json_idp_list[listcnt].search[0] = wayf_additional_idps[i].name;
 						listcnt++;
@@ -1115,6 +1127,12 @@ SCRIPT;
 							json_idp_list[listcnt].registrationURL = wayf_additional_idps[i].RegistrationURL;
 						} else {
 							json_idp_list[listcnt].registrationURL = '';
+						}
+						if (wayf_additional_idps[i].kind){
+							json_idp_list[listcnt].kind = wayf_additional_idps[i].kind;
+						} else {
+							json_idp_list[listcnt].kind = new Array();
+							json_idp_list[listcnt].kind[0] = 'category:organizationType:others';
 						}
 						json_idp_list[listcnt].search = new Array();
 						json_idp_list[listcnt].search[0] = wayf_additional_idps[i].name;
