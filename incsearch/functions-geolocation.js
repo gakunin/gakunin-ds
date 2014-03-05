@@ -573,6 +573,6 @@ function openInfoWindow(name) {
 // Deletes all markers in the array by removing references to them
 function deleteInfoWindow() {
 	if (infowindowsList) {
-		for (var i=0; i<infowindowsList.length; i++) { infowindowsList[i].close(); }
+		for (i in infowindowsList) { infowindowsList[i].close(); }
 	}
 }
