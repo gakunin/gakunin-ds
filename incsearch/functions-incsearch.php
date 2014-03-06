@@ -307,7 +307,7 @@ function printJscode_GlobalVariables(){
 	var hintGeolocationFlg = false;
 	var myMap = '';
 	var markersList = new Array();
-	var infowindowsList = new Array();
+	var infowindowsList = {};
 	var clientGeolocation = '';
 	
 SCRIPT;
