@@ -15,6 +15,9 @@
 
 $IDPCategoryFile = 'IDProvider.category.php';
 
+// Set dummy server name
+$_SERVER['SERVER_NAME'] = 'localhost';
+        
 // Load configuration files
 require('config.php');
 require($IDPCategoryFile);
