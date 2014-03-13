@@ -194,9 +194,9 @@ $IDProvidersKind['category:organizationType:techCollege'] = array (
 // 研究所
 $IDProvidersKind['category:organizationType:researchInstitution'] = array (
 		'Type' => 'kind',
-		'en' => array ('Name' => 'Research instirution'),
+		'en' => array ('Name' => 'Research institution'),
 		'ja' => array ('Name' => '研究所'),
-		'Name' => 'Research instirution',
+		'Name' => 'Research institution',
 		'Default' => '',
 		'Index' => '014',
 );
