@@ -172,9 +172,9 @@ $IDProvidersKind['category:organizationType:university'] = array (
 // 短大
 $IDProvidersKind['category:organizationType:juniorCollege'] = array (
 		'Type' => 'kind',
-		'en' => array ('Name' => 'JuniorCollege'),
+		'en' => array ('Name' => 'Junior college'),
 		'ja' => array ('Name' => '短大'),
-		'Name' => 'JuniorCollege',
+		'Name' => 'Junior college',
 		'Default' => '',
 		'Index' => '012',
 );
@@ -183,9 +183,9 @@ $IDProvidersKind['category:organizationType:juniorCollege'] = array (
 // 高専
 $IDProvidersKind['category:organizationType:techCollege'] = array (
 		'Type' => 'kind',
-		'en' => array ('Name' => 'TechCollege'),
+		'en' => array ('Name' => 'College of technology'),
 		'ja' => array ('Name' => '高専'),
-		'Name' => 'TechCollege',
+		'Name' => 'College of technology',
 		'Default' => '',
 		'Index' => '013',
 );
@@ -194,9 +194,9 @@ $IDProvidersKind['category:organizationType:techCollege'] = array (
 // 研究所
 $IDProvidersKind['category:organizationType:researchInstitution'] = array (
 		'Type' => 'kind',
-		'en' => array ('Name' => 'ResearchInstitution'),
+		'en' => array ('Name' => 'Research instirution'),
 		'ja' => array ('Name' => '研究所'),
-		'Name' => 'ResearchInstitution',
+		'Name' => 'Research instirution',
 		'Default' => '',
 		'Index' => '014',
 );
