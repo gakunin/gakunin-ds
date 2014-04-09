@@ -232,6 +232,7 @@ Suggest.Local.prototype = {
       }
     } else if (element.id == this.clearElm.id) {
       this.setInputText('');
+      hiddenKeyText = '';
       refresh_flg = false;
       this.input.focus();
       this.search();
