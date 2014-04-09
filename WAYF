@@ -199,6 +199,9 @@ if (isset($_POST['permanent'])
 		setcookie ($redirectCookieName, $_POST['user_idp'], null, '/', $commonDomain, $cookieSecurity, $cookieSecurity);
 		setcookie ($redirectStateCookieName, 'checked', time() + ($cookieValidity*24*3600), '/', $commonDomain, $cookieSecurity, $cookieSecurity);
 	} else {
+		if (isset($_COOKIE[$redirectCookieName])) {
+		        setcookie ($redirectCookieName, $_COOKIE[$redirectCookieName], time() - 3600, '/', $commonDomain, $cookieSecurity, $cookieSecurity);
+		}
 		setcookie ($redirectStateCookieName, 'checked', time() - 3600, '/', $commonDomain, $cookieSecurity, $cookieSecurity);
 	}
 }
@@ -214,7 +217,11 @@ if (
 		&& checkIDP($_COOKIE[$redirectCookieName])
 	){
 	
-	$cookieIdP = $_COOKIE[$redirectCookieName];
+	if ((isset($_POST['user_idp'])) && ($_POST['user_idp'] != $_COOKIE[$redirectCookieName])) {
+	        $cookieIdP = $_POST['user_idp'];
+	} else {
+	        $cookieIdP = $_COOKIE[$redirectCookieName];
+	}
 	
 	// Handle cascaded WAYF
 	if (isset($IDProviders[$cookieIdP]['Type']) && $IDProviders[$cookieIdP]['Type'] == 'wayf'){
