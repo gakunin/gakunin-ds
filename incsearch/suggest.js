@@ -475,9 +475,9 @@ Suggest.Local.prototype = {
       var regurl = '';
       if ((typeof wayf_sp_entityID != 'undefined') && (typeof wayf_return_url != 'undefined') && (resultList[i].registrationURL != '')) {
         if (this.userAgentFlg == 0) {
-          element2.innerHTML = '<div id="reg_a' + i + '" class="default">' + reg_button + '</div>';
+          element2.innerHTML = '<div class="default" style="font-size: x-small;vertical-align:top; margin-left: 10px;">' + reg_button + '</div>';
         } else {
-          element2.innerHTML = '<a id="reg_a' + i + '" class="default" onclick="">' + reg_button + '</a>';
+          element2.innerHTML = '<a class="default" style="font-size: x-small;vertical-align:top; margin-left: 10px;" onclick="">' + reg_button + '</a>';
         }
         this.suggestArea.appendChild(element2);
         this._addEvent(element2, 'click', this._bindEvent(this.listClick2, i));

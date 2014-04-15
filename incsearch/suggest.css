@@ -4,14 +4,6 @@
 	box-sizing: border-box;         /* IE8+, Opera */
 }
 
-/*
-#wayf_div {
-	position: relative;
-	float: top;
-	z-index: 1;
-}
-*/
-
 /* base in IdP list display area */
 #view_incsearch_base {
 	position: relative;
@@ -127,16 +119,6 @@ div.list_idp_hint {
 /* dropdown image */
 #dropdown_img, #geolocation_img {
 	cursor: pointer;
-}
-
-/* registration */
-[id^="reg_a"] {
-	font-size: x-small;
-	text-decoration: underline;
-	white-space: nowrap;
-	cursor: pointer;
-	vertical-align:top;
-	margin-left: 10px;
 }
 
 /* clear */
