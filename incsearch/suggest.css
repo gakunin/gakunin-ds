@@ -129,7 +129,7 @@ div.list_idp_hint {
 }
 
 /* registration */
-#reg_a {
+[id^="reg_a"] {
 	font-size: x-small;
 	text-decoration: underline;
 	white-space: nowrap;
