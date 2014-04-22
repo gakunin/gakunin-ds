@@ -515,15 +515,13 @@ function createMap(clientCenterFlg){
 					markersList[json_idp_list[i].name] = marker;
 					var content = '';
 					if (json_idp_list[i].logoURL != ''){
-						content += '<img src="' + json_idp_list[i].logoURL + '" style="height:35px;" /><br /><br />';
+						content += '<img src="' + json_idp_list[i].logoURL + '" style="height:35px;" /><br />';
 					}
-					content += '<div id="idplist' + i + 
-							'" class="default"' +
-							' onmouseover="changeButtonColor(' + "this.id, 'active');return false;" + '"' +
-							' onmouseout="changeButtonColor(' + "this.id, 'default');return false;" + '"' +
+					content += '<a href="javascript:void(0)" id="idplist' + i +
+							'" class="incsearch_link"' +
 							' onclick="selectMapIdP(' + "'" + json_idp_list[i].name + "'" + ');return false;">' +
 							json_idp_list[i].name +
-							'</div>';
+							'</a>';
 					attachMessage(marker, content, json_idp_list[i].name, openFlg);
 				}
 			}

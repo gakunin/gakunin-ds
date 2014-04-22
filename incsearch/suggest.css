@@ -121,29 +121,14 @@ div.list_idp_hint {
 	cursor: pointer;
 }
 
-/* clear */
-#clear_a {
-	font-size: 70%;
+/* link default */
+#wayf_div a, #userInputArea a {
+        white-space: nowrap;
+        font-size: 70%;
+        color: blue;
 }
 
-/* map */
-#map_a {
-	font-size: 70%;
+/* link active */
+#wayf_div a:hover, #wayf_div a:focus, #userInputArea a:hover, #userInputArea a:focus, a.incsearch_link:hover, a.incsearch_link:focus {
+        color: red;
 }
-
-/* clear color: default */
-div.default, a.default{
-	text-decoration: underline;
-	white-space: nowrap;
-	color: blue;
-	cursor: pointer;
-}
-
-/* clear color: focus or mouseover */
-div.active, a.active{
-	text-decoration: underline;
-	white-space: nowrap;
-	color: red;
-	cursor: pointer;
-}
-

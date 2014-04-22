@@ -1215,10 +1215,10 @@ foreach ($IDProvidersKind as $key => $IDProviderKind){
 		writeHTML('</td>');
 		
 		writeHTML('<td colspan="2" style="vertical-align:middle; text-align:right;">');
-		writeHTML('<div id="map_a" class="default" title="{$mapTooltip}" tabindex=15>{$mapString}</div>');
+		writeHTML('<a href="javascript:void(0)" id="map_a" title="{$mapTooltip}" tabindex=15>{$mapString}</a>');
 		writeHTML('</td>');
 		writeHTML('<td colspan="2" style="vertical-align:middle; text-align:center;">');
-		writeHTML('<div id="clear_a" class="default" title="{$clearTooltip}" tabindex=16>{$clearString}</div>');
+		writeHTML('<a href="javascript:void(0)" id="clear_a" title="{$clearTooltip}" tabindex=16>{$clearString}</a>');
 		writeHTML('</td>');
 		writeHTML('</tr>');
 		writeHTML('<tr>');

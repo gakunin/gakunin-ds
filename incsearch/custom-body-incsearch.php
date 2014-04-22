@@ -54,10 +54,11 @@
   }
 ?>
    document.write('		</td>');
-   document.write('		<td colspan="2" style="vertical-align:top; text-align:right;">');
-   document.write('			<div id="map_a" class="default" title="<?php echo getLocalString('map_tooltip') ?>" tabindex=15><?php echo getLocalString('map_button') ?></div>');
-   document.write('		<td colspan="2" style="vertical-align:top; text-align:center;">');
-   document.write('			<div id="clear_a" class="default" title="<?php echo getLocalString('clear_tooltip') ?>" tabindex=16><?php echo getLocalString('clear_button') ?></div>');
+   document.write('		<td colspan="2" style="vertical-align:middle; text-align:right;">');
+   document.write('			<a href="javascript:void(0)" id="map_a" title="<?php echo getLocalString('map_tooltip') ?>" tabindex=15><?php echo getLocalString('map_button') ?></a>');
+   document.write('		</td>');
+   document.write('		<td colspan="2" style="vertical-align:middle; text-align:center;">');
+   document.write('			<a href="javascript:void(0)" id="clear_a" title="<?php echo getLocalString('clear_tooltip') ?>" tabindex=16><?php echo getLocalString('clear_button') ?></a>');
    document.write('		</td>');
    document.write('		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>');
    document.write('	</tr>');
