@@ -12,6 +12,14 @@ function getMatchIdPList(json, list){
 				break;
 			}
 		}
+		for (var k=0; k<wayf_additional_idps.length; k++) {
+			if (list[i].entityid == wayf_additional_idps[k].entityID) {
+				newList[index] = list[i];
+				matchFlg = true;
+				index++;
+				break;
+			}
+		}
 	}
 	return newList;
 }
