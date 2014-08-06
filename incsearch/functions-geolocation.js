@@ -470,7 +470,7 @@ function createMap(clientCenterFlg){
 
 	if (clientCenterFlg){
 		var min_kyori = null_distance;
-		for (var i=0; i<json_category_list.length; i++){
+		for (var i in json_category_list){
 			var latlon = json_category_list[i].geolocation.split(",");
 			var cur_kyori = getDistance(clientLatLng[0], clientLatLng[1], latlon[0], latlon[1], 10);
 			if (min_kyori > cur_kyori){
