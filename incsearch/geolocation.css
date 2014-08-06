@@ -27,6 +27,7 @@ div#mapleft{
 	vertical-align: top;
 	background-color: lavender;
 	padding-top: 10px;
+	overflow-y: hidden;
 }
 
 div#mapcenter{
