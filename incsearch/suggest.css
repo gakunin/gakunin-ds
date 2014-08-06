@@ -122,13 +122,14 @@ div.list_idp_hint {
 }
 
 /* link default */
-#wayf_div a, #userInputArea a {
+#IdPList a {
         white-space: nowrap;
         font-size: 70%;
         color: blue;
 }
 
 /* link active */
-#wayf_div a:hover, #wayf_div a:focus, #userInputArea a:hover, #userInputArea a:focus, a.incsearch_link:hover, a.incsearch_link:focus {
+#IdPList a:hover, #IdPList a:focus,
+#mapframe a.incsearch_link:hover, #mapframe a.incsearch_link:focus {
         color: red;
 }

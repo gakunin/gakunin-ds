@@ -108,15 +108,7 @@ Suggest.Local.prototype = {
     this._addEvent(this.dnupImgElm, 'click', this._bindEvent(this.elementClick));
     this._addEvent(this.geolocationImgElm, 'click', this._bindEvent(this.elementClick));
     this._addEvent(this.mapElm, 'click', this._bindEvent(this.elementClick));
-    this._addEvent(this.mapElm, 'focus', this._bindEvent(this.changeClass, this.classActive));
-    this._addEvent(this.mapElm, 'blur', this._bindEvent(this.changeClass, this.classDefault));
-    this._addEvent(this.mapElm, 'mouseover', this._bindEvent(this.changeClass, this.classActive));
-    this._addEvent(this.mapElm, 'mouseout', this._bindEvent(this.changeClass, this.classDefault));
     this._addEvent(this.clearElm, 'click', this._bindEvent(this.elementClick));
-    this._addEvent(this.clearElm, 'focus', this._bindEvent(this.changeClass, this.classActive));
-    this._addEvent(this.clearElm, 'blur', this._bindEvent(this.changeClass, this.classDefault));
-    this._addEvent(this.clearElm, 'mouseover', this._bindEvent(this.changeClass, this.classActive));
-    this._addEvent(this.clearElm, 'mouseout', this._bindEvent(this.changeClass, this.classDefault));
 
     // init
     this.clearSuggestArea();
@@ -244,11 +236,6 @@ Suggest.Local.prototype = {
       elem_wayf.style.display = 'none';
       displayMapIdP(false);
     }
-  },
-
-  changeClass: function(event, classname) {
-    var element = this._getEventElement(event);
-    element.className = classname;
   },
 
   execSearch: function() {
