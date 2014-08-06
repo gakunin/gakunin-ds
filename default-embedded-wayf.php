@@ -242,9 +242,8 @@ var wayf_show_categories =  true;
 
 // The path of Cookie created by SP is set. As for default configuration, 
 // the path of an access place is set.
-// var wayf_sp_cookie_path = "/";
 // [Optional, commented out by default]
-// var wayf_sp_cookie_path = "";
+// var wayf_sp_cookie_path = "/";
 
 // Height of the embedded WAYF IdP List in pixels
 // [Optional, default: 150]
