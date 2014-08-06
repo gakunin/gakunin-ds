@@ -46,8 +46,8 @@ $IDProviders['hokkaido'] = array (
 		'ja' => array ('Name' => '北海道'),
 		'Name' => 'Hokkaido',
 		'Index' => '001',
-		'Geolocation' => '43.064615,141.346807',
-		'Mapscale' => '8',
+		'Geolocation' => '43.5,142.5',
+		'Mapscale' => '7',
 );
 
 //
@@ -58,8 +58,8 @@ $IDProviders['tohoku'] = array (
 		'ja' => array ('Name' => '東北'),
 		'Name' => 'Tohoku',
 		'Index' => '002',
-		'Geolocation' => '40.727876,141.257882',
-		'Mapscale' => '8',
+		'Geolocation' => '39,140',
+		'Mapscale' => '7',
 );
 
 //
@@ -82,8 +82,8 @@ $IDProviders['chubu'] = array (
 		'ja' => array ('Name' => '中部'),
 		'Name' => 'Chubu',
 		'Index' => '004',
-		'Geolocation' => '34.96912,136.624368',
-		'Mapscale' => '8',
+		'Geolocation' => '36,138',
+		'Mapscale' => '7',
 );
 
 //
@@ -130,8 +130,8 @@ $IDProviders['kyushu'] = array (
 		'ja' => array ('Name' => '九州'),
 		'Name' => 'Kyushu',
 		'Index' => '008',
-		'Geolocation' => '33,131',
-		'Mapscale' => '8',
+		'Geolocation' => '30,129',
+		'Mapscale' => '6',
 );
 
 //
