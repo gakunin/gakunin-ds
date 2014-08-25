@@ -802,14 +802,23 @@ function getGETArgumentSeparator(url){
 		typeof(wayf_use_disco_feed) == "undefined"
 		|| typeof(wayf_use_disco_feed) != "boolean"
 		){
-		wayf_use_disco_feed = true;
+			if (
+				wayf_background_color == '#F4F7F7'
+				&& typeof(wayf_discofeed_url) != "undefined"
+				&& typeof(wayf_discofeed_url) == "string"
+				&& wayf_discofeed_url != ""
+				){
+				wayf_use_disco_feed = true;
+			} else {
+				wayf_use_disco_feed = false;
+			}
 	}
 	
 	if(
 		typeof(wayf_discofeed_url) == "undefined"
 		|| typeof(wayf_discofeed_url) != "string"
 		){
-		wayf_discofeed_url = "";
+		wayf_discofeed_url = "/Shibboleth.sso/DiscoFeed";
 	}
 	
 	// Exit without outputting html if config is not ok
