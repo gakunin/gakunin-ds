@@ -5,15 +5,6 @@ var null_distance = 9999999999;
 // Denshi Kokudo V4
 function CJ4BaseMapType() {
 
-        var dataset = [
-                null,null,null,null,null,
-                "JAIS","JAIS","JAIS","JAIS",
-                "BAFD1000K","BAFD1000K","BAFD1000K",
-                "BAFD200K","BAFD200K","BAFD200K",
-                "DJBMM","DJBMM","DJBMM",
-                "FGD"
-        ] ;
-
         CJ4BaseMapType.prototype.tileSize = new google.maps.Size(256,256);
         CJ4BaseMapType.prototype.minZoom = 5;
         CJ4BaseMapType.prototype.maxZoom = 18;
@@ -23,20 +14,9 @@ function CJ4BaseMapType() {
         CJ4BaseMapType.prototype.getTile = function( tileXY, zoom, ownerDocument ) {
                 var tileImage = ownerDocument.createElement('img');
 
-                var xID =  tileXY.x + "";
-                var yID =  tileXY.y + "";
-                xID = "0000000".substr(0, (7- xID.length)) + xID;
-                yID = "0000000".substr(0, (7- yID.length)) + yID;
-
-                var fileName = xID + yID + ".png";
-                var dir = "";
-                for( var i = 0; i < 6; i++ ) {
-                        dir += xID.charAt(i) + yID.charAt(i) + "/";
-                }
-
-                var url= "http://cyberjapandata.gsi.go.jp/sqras/all/"
-                        + dataset[zoom] + "/latest/" + zoom + "/" + dir
-                        + fileName;
+                var url= "http://cyberjapandata.gsi.go.jp/xyz/pale/"
+                        + zoom.toString() + "/" + tileXY.x.toString()
+                        + "/" + tileXY.y.toString() + ".png";
 
                 tileImage.src = url;
                 tileImage.style.width  = this.tileSize.width  + 'px';
