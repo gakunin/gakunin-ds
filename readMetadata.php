@@ -71,7 +71,7 @@ if(isRunViaCLI()){
 	// If $metadataIDProviders is not FALSE, update $IDProviders and print the Identity Providers lists.
 	if(is_array($metadataIDProviders)){ 
 
-		echo 'Merging parsed Identity Providers with data from file '.$IDProviders."\n";
+		echo 'Merging parsed Identity Providers with data from file '.$IDPConfigFile."\n";
 		$IDProviders = mergeInfo($IDProviders, $metadataIDProviders, $SAML2MetaOverLocalConf, $includeLocalConfEntries);
 		
 		echo "Printing parsed Identity Providers:\n";
