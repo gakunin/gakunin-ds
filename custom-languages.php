@@ -243,7 +243,7 @@ $langStrings['ja'] = array (
 'access_host' => 'サービス<tt>\'%s\'</tt>を利用するために認証が必要です',
 'select_idp' => '所属している機関を選択',
 'remember_selection' => 'ブラウザ起動中は自動ログイン',
-'switch_description' => '<a href="http://www.gakunin.jp/" target="_blank">GakuNin</a>は，学術認証フェデレーションの略です．',
+'switch_description' => '',
 'invalid_user_idp' => '入力したIdPの情報（<tt>\'%s\'</tt>）に誤りがあります<br>以下の値のみが入力可能です:',
 'contact_assistance' => '問い合わせ先：<a href="mailto:gakunin-office@nii.ac.jp">gakunin-office@nii.ac.jp</a>',
 'no_arguments' => '引数が送られてきませんでした',
