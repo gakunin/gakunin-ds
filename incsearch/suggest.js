@@ -184,12 +184,12 @@ Suggest.Local.prototype = {
 
     if (this.suggestList){
       for (var i=0; i<this.hintList.length; i++){
-        if (this.isMatchKind(this.hintList[i])){
+        if (this.isMatchKind(this.hintList[i]) && this.isMatchLocation(this.hintList[i])){
           countHintList++;
         }
       }
       for (var i=0; i<this.favoriteList.length; i++){
-        if (this.isMatchKind(this.favoriteList[i])){
+        if (this.isMatchKind(this.favoriteList[i]) && this.isMatchLocation(this.favoriteList[i])){
           countFavoriteList++;
         }
       }
@@ -337,7 +337,7 @@ Suggest.Local.prototype = {
     var chkFlg;
     this.suggestIndexList = [];
     for (var i=0; i<this.candidateList.length; i++){
-      if (this.isMatchKind(this.candidateList[i])){
+      if (this.isMatchKind(this.candidateList[i]) && this.isMatchLocation(this.candidateList[i])){
         if (this.embeddedFlg == false ||
              isAllowedCategory(this.candidateList[i].categoryKey)){
           if (text == '' ||
@@ -372,6 +372,14 @@ Suggest.Local.prototype = {
           break;
         }
       }
+    }
+    return chkFlg;
+  },
+
+  isMatchLocation: function(chkIdP) {
+    var chkFlg = false;
+    if (sellocation == '' || sellocation == 'all' || sellocation == chkIdP.type) {
+      chkFlg = true;
     }
     return chkFlg;
   },
@@ -710,12 +718,12 @@ Suggest.Local.prototype = {
     var countHintList = 0;
     var countFavoriteList = 0;
     for (var i=0; i<this.hintList.length; i++){
-      if (this.isMatchKind(this.hintList[i])){
+      if (this.isMatchKind(this.hintList[i]) && this.isMatchLocation(this.hintList[i])){
         countHintList++;
       }
     }
     for (var i=0; i<this.favoriteList.length; i++){
-      if (this.isMatchKind(this.favoriteList[i])){
+      if (this.isMatchKind(this.favoriteList[i]) && this.isMatchLocation(this.favoriteList[i])){
         countFavoriteList++;
       }
     }
