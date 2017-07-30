@@ -643,6 +643,18 @@ if (
 	
 	exit;
 	
+} elseif (isRequestType('GakuNinDS-IDProviders.json')){
+	
+	// Return GakuNinDS $IdProviders as JSON data structure
+	if (!$developmentMode){
+		header('Content-Type: application/json');
+	}
+	
+	getSearchIdPList();
+	echo "[".$JSONIncIdPList."]";
+	
+	exit;
+	
 } elseif (isRequestType('IDProviders.json')){
 	
 	// Return $IdProviders as JSON data structure
