@@ -643,9 +643,9 @@ if (
 	
 	exit;
 	
-} elseif (isRequestType('GakuNinDS-IDProviders.json')){
+} elseif (isRequestType('custom-ShibbolethDS-IDProviders.json')){
 	
-	// Return GakuNinDS $IdProviders as JSON data structure
+	// Return custom $IdProviders as JSON data structure
 	if (!$developmentMode){
 		header('Content-Type: application/json');
 	}
