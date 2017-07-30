@@ -79,3 +79,12 @@ function changeKind(){
 		}
 	}
 }
+
+function changeLocation(){
+	for(i = 0; i < IdPList.locationgroup.length; i++){
+		if(IdPList.locationgroup[i].checked) {
+			sellocation = IdPList.locationgroup[i].value;
+			break;
+		}
+	}
+}
