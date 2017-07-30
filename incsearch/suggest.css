@@ -4,6 +4,71 @@
 	box-sizing: border-box;         /* IE8+, Opera */
 }
 
+.row, .col, .inputArea, .optionArea, .optionTitle, .optionRadio, .linkArea, .optionCheck {
+        display:-ms-flexbox;
+        display:-webkit-flex;
+        display: flex;
+}
+
+.col {
+        -ms-flexbox-direction: column;
+        -webkit-flex-direction: column;
+        flex-direction: column;
+        width: 100%;
+        padding-left: 5px;
+        padding-right: 5px;
+}
+
+.inputArea, .optionArea {
+        justify-content: space-between;
+}
+
+.inputtext {
+        width: 100%;
+}
+
+.eventItem {
+        align-items: center;
+        margin-left: 1px;
+}
+
+.radioArea, .checkArea {
+        align-items: center;
+        margin-top: 5px;
+        font-size: 80%;
+        margin-bottom: 5px;
+        width: 100%;
+}
+
+.optionTitle {
+        align-items: center;
+        justify-content: flex-start;
+        width: 75px;
+        margin-top: 5px;
+}
+
+.optionRadio, .optionCheck {
+        justify-content: flex-start;
+        width: 100%;
+        margin-top: 5px;
+}
+
+.optionRadio {
+        -ms-flexbox-wrap: wrap;
+        -webkit-flex-wrap: wrap;
+        flex-wrap: wrap;
+}
+
+.linkArea {
+        justify-content: space-between;
+        margin-top: 5px;
+        margin-left: 5px;
+}
+
+#map_a {
+        margin-right: 5px;
+}
+
 /* base in IdP list display area */
 #view_incsearch_base {
 	position: relative;
@@ -47,6 +112,7 @@
 #view_incsearch div.select {
 	color: white;
 	background-color: #3366FF;
+	text-align: left;
 }
 
 /* IdP list: mouseover */
@@ -54,6 +120,7 @@
 	color: black;
 	background-color: #99CCFF;
 	cursor: pointer;
+	text-align: left;
 }
 
 /* IdP list: group title */
@@ -126,6 +193,7 @@ div.list_idp_hint {
         white-space: nowrap;
         font-size: 70%;
         color: blue;
+	text-align: left;
 }
 
 /* link active */
