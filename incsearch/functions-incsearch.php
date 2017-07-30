@@ -215,6 +215,9 @@ ENTRY;
 		
 		// Get Search IdP Name
 		$SearchIdPName = '';
+		if (!empty($IDProvider['DisplaynameYomi'])){
+			$SearchIdPName = '"'.addslashes($IDProvider['DisplaynameYomi']).'"';
+		}
 		foreach ($IDProvider as $attr => $value){
 			foreach($langStrings as $lang => $value2){
 				if ($attr == $lang){
@@ -298,6 +301,7 @@ function printJscode_GlobalVariables(){
 	
 	var suggest = '';
 	var selkind = '';
+	var sellocation = '';
 	var old_hint_list = new Array();
 	var refresh_flg = true;
 	var discofeed_flg = true;

@@ -330,19 +330,19 @@ function processIDPRoleDescriptor($IDPRoleDescriptorNode){
 	$MDUIKeywords = getMDUIKeywords($IDPRoleDescriptorNode);
 	foreach ($MDUIKeywords as $lang => $keywords){
 		$IDP[$lang]['Keywords'] = $keywords;
-		if ($lang == 'en') {
-			$Entity = Array();
-			$keywordsArray = explode(' ', $keywords);
-			foreach ($keywordsArray as $value){
-				if (preg_match("/^category:organizationType:/", $value)) {
-					$Entity[] = $value;
-				}
+		$Entity = Array();
+		$keywordsArray = explode(' ', $keywords);
+		foreach ($keywordsArray as $value){
+			if (preg_match("/^displayname:yomi:/", $value)) {
+				$IDP['DisplaynameYomi'] = explode(':', $value)[2];
+			} elseif (preg_match("/^category:organizationType:/", $value)) {
+				$Entity[] = $value;
 			}
-			if (empty($Entity)) {
-				$Entity[] = 'category:organizationType:others';
-			}
-			$IDP['OrganizationType'] = $Entity;
 		}
+		if (empty($Entity)) {
+			$Entity[] = 'category:organizationType:others';
+		}
+		$IDP['OrganizationType'] = $Entity;
 	}
 	if (!isset($IDP['OrganizationType'])) {
 		$IDP['OrganizationType'] = array('category:organizationType:others');
