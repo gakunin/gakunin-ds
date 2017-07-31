@@ -38,6 +38,7 @@
 	var favorite_idp_group = '';
 	var hint_idp_group = '<?php echo $hintIDPString ?>';
 	var wayf_show_categories = true;
+	var discofeedurl = '<?php echo $DiscofeedURL ?>';
 	
 	var wayfdiv_id = 'container';
 	var reg_button = '<?php echo addslashes(getLocalString('reg_button')); ?>';
@@ -55,6 +56,7 @@
 
 	// It adds it to window event.
 	function start() {
+		checkDiscofeed(discofeedurl);
 		suggest = new Suggest.Local(
 			"keytext",							// element id of input area
 			"view_incsearch",					// element id of IdP list display area

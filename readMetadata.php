@@ -448,6 +448,12 @@ function processSPRoleDescriptor($SPRoleDescriptorNode){
 		$SP[$lang]['Keywords'] = $keywords;
 	}
 	
+	// Get IdPWhitelistURL
+	$GNMDIdPWhitelistURL = getGNMDIdPWhitelistURL($SPRoleDescriptorNode);
+	if ($GNMDIdPWhitelistURL){
+		$SP['IdPWhitelistURL'] = $GNMDIdPWhitelistURL;
+	}
+	
 	return $SP;
 }
 
@@ -637,6 +643,21 @@ function getGNMDRegistrationURL($RoleDescriptorNode){
 	$GNMDRegistrationURL = $RoleDescriptorNode->getElementsByTagNameNS('urn:oasis:names:tc:SAML:metadata:gn', 'RegistrationURL');
 	foreach( $GNMDRegistrationURL as $GNMDRegistrationURLEntry ){
 		$Entity = trim($GNMDRegistrationURLEntry->nodeValue);
+		break;
+	}
+	
+	return $Entity;
+}
+
+/******************************************************************************/
+// Get GakuNin MD IdP Whitelist URL from RoleDescriptor
+function getGNMDIdPWhitelistURL($RoleDescriptorNode){
+	
+	$Entity = Array();
+	
+	$GNMDIdPWhitelistURL = $RoleDescriptorNode->getElementsByTagNameNS('urn:oasis:names:tc:SAML:metadata:gn', 'IdPWhitelistURL');
+	foreach( $GNMDIdPWhitelistURL as $GNMDIdPWhitelistURLEntry ){
+		$Entity = trim($GNMDIdPWhitelistURLEntry->nodeValue);
 		break;
 	}
 	

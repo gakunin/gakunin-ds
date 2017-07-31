@@ -35,10 +35,13 @@ function setDiscofeedList(json){
 }
 
 // DiscoFeed
-function checkDiscofeed(){
-	if (wayf_use_disco_feed){
+function checkDiscofeed(discofeedurl){
+	if (wayf_use_disco_feed || discofeedurl != ''){
 		discofeed_flg = false;
 		var urldomain = location.hostname;
+		if(discofeedurl != ''){
+			wayf_discofeed_url = discofeedurl;
+		}
 		if (wayf_discofeed_url != '/Shibboleth.sso/DiscoFeed'){
 			urldomain = wayf_discofeed_url.split('/')[2];
 		}

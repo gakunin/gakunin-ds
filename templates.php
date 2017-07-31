@@ -59,6 +59,7 @@ function printWAYF(){
 	}
 	
 	$SPName = '';
+	$DiscofeedURL = '';
 	foreach ($SProviders as $key => $SProvider){
 		
 		if (isset($_GET['entityID']) && $key == $_GET['entityID']){
@@ -67,6 +68,9 @@ function printWAYF(){
 				$SPName = addslashes($SProvider[$language]['Name']);
 			} else {
 				$SPName = addslashes($SProvider['Name']);
+			}
+			if (isset($SProvider['IdPWhitelistURL'])){
+				$DiscofeedURL = $SProvider['IdPWhitelistURL'];
 			}
 			break;
 		}
