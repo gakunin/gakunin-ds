@@ -77,6 +77,7 @@
 			favorite_idp_group,					// favorite idp list group
 			hint_idp_group,						// hint idp list group
 			false,								// Embedded or Central Flg
+			"optionElm",						// element id of option
 			{
 				dispMax: 500,					// option display IdP Max
 				showgrp: wayf_show_categories	// option show category

@@ -5,7 +5,7 @@
 		<p class="promptMessage"><?php echo $promptMessage ?></p>
 <script language="JavaScript" type="text/javascript">
 <!--
-   document.write('<div class="optionArea">');
+   document.write('<div class="optionArea" id="optionElm">');
    document.write('<div class="col">');
    document.write('<div class="radioArea">');
    document.write('<div class="row">');
@@ -26,7 +26,7 @@
   $tabindex = 8;
   $idindex = 0;
   if ($deviceType == 'mobile'){
-    print("   document.write('                  <select name=\"locationgroup\">');\n");
+    print("   document.write('                  <select name=\"locationgroup\" onchange=\"changeLocation_sel();\">');\n");
   }
   foreach ($IDProviders as $key => $IDProviderLocation){
     $IdPType = isset($IDProviders[$key]['Type']) ? $IDProviders[$key]['Type'] : '';
@@ -63,7 +63,7 @@
 <?php
   $idindex = 0;
   if ($deviceType == 'mobile'){
-    print("   document.write('                  <select name=\"kindgroup\">');\n");
+    print("   document.write('                  <select name=\"kindgroup\" onchange=\"changeKind_sel();\">');\n");
   }
   foreach ($IDProvidersKind as $key => $IDProviderKind){
     $IdPType = isset($IDProvidersKind[$key]['Type']) ? $IDProvidersKind[$key]['Type'] : '';

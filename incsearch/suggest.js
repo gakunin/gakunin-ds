@@ -43,7 +43,7 @@ Suggest.Local = function() {
 Suggest.Local.prototype = {
   initialize: function(input, suggestArea, animateArea, scrollArea, candidateList, favoriteList, hintList,
                        dnupImgElm, geolocationImgElm, selectElm, mapElm, clearElm, initDisp, dispDefault, 
-                       dnImgURL, upImgURL, geoOffImgURL, geoOnImgURL, favoriteIdpGroup, hintIdpGroup, embeddedFlg) {
+                       dnImgURL, upImgURL, geoOffImgURL, geoOnImgURL, favoriteIdpGroup, hintIdpGroup, embeddedFlg, optionElm) {
 
     this.input = this._getElement(input);
     this.suggestArea = this._getElement(suggestArea);
@@ -72,6 +72,7 @@ Suggest.Local.prototype = {
     this.searchFlg = false;
     this.noMatch = true;
     this.userAgentFlg = 0;
+    this.optionElm = this._getElement(optionElm);
 
     if (this.candidateList.length > 0) {
       // favorite IdP List
@@ -109,6 +110,7 @@ Suggest.Local.prototype = {
     this._addEvent(this.geolocationImgElm, 'click', this._bindEvent(this.elementClick));
     this._addEvent(this.mapElm, 'click', this._bindEvent(this.elementClick));
     this._addEvent(this.clearElm, 'click', this._bindEvent(this.elementClick));
+    this._addEvent(this.optionElm, 'click', this._bindEvent(this.elementClick, 'optionElm'));
 
     // init
     this.clearSuggestArea();
@@ -205,7 +207,10 @@ Suggest.Local.prototype = {
     this.noMatch = flg;
   },
 
-  elementClick: function(event) {
+  elementClick: function(event, optionflg) {
+    if (optionflg == 'optionElm') {
+      this.search();
+    } else {
     var element = this._getEventElement(event);
     if (element.id == this.input.id) {
       this.execSearch();
@@ -235,6 +240,7 @@ Suggest.Local.prototype = {
       var elem_wayf = this._getElement(wayfdiv_id);
       elem_wayf.style.display = 'none';
       displayMapIdP(false);
+    }
     }
   },
 

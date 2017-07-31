@@ -78,6 +78,13 @@ function changeKind(){
 			break;
 		}
 	}
+	IdPList.optionElm.click();
+}
+
+function changeKind_sel(){
+	var selid = IdPList.kindgroup.selectedIndex;
+	selkind = IdPList.kindgroup[selid].value;
+	IdPList.optionElm.click();
 }
 
 function changeLocation(){
@@ -87,4 +94,11 @@ function changeLocation(){
 			break;
 		}
 	}
+	IdPList.optionElm.click();
+}
+
+function changeLocation_sel(){
+	var selid = IdPList.locationgroup.selectedIndex;
+	sellocation = IdPList.locationgroup[selid].value;
+	IdPList.optionElm.click();
 }
