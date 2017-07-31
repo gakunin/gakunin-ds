@@ -157,6 +157,7 @@ function start() {
 		favorite_idp_group,					// favorite idp list group
 		hint_idp_group,						// hint idp list group
 		true,								// Embedded or Central Flg
+		"optionElm",						// element id of option
 		{
 			dispMax: 500,					// option display IdP Max
 			showgrp: wayf_show_categories	// option show category
@@ -983,8 +984,46 @@ SCRIPT;
 
 		writeHTML(form_start);
 		writeHTML('<input name="request_type" type="hidden" value="embedded">');
-		writeHTML('<input id="user_idp" name="user_idp" type="hidden" value="">');
+SCRIPT;
 
+	// Generate drop-down list
+	foreach ($IDProviders as $key => $IDProvider){
+		
+		// Get IdP Name
+		if (isset($IDProvider[$language]['Name'])){
+			$IdPName = addslashes($IDProvider[$language]['Name']);
+		} else {
+			$IdPName = addslashes($IDProvider['Name']);
+		}
+
+		// Figure out if entry is valid or a category
+		if (!isset($IDProvider['SSO'])){
+			continue;
+		}
+		
+		// Set selected attribute
+		echo <<<SCRIPT
+		if (last_idp == '{$key}'){
+			dispDefault = '{$IdPName}';
+		}
+SCRIPT;
+		$IdPType = isset($IDProviders[$key]['Type']) ? $IDProviders[$key]['Type'] : '';
+
+		echo <<<SCRIPT
+		if (isAllowedType('{$key}','{$IdPType}') && isAllowedIdP('{$key}')){
+			if (
+				"{$selectedIDP}" == "-" 
+				&& typeof(wayf_default_idp) != "undefined"
+				&& wayf_default_idp == "{$key}"
+				){
+				dispDefault = '{$IdPName}';
+			}
+			pushIncSearchList('{$key}');
+		}
+SCRIPT;
+	}
+
+	echo <<<SCRIPT
 		// Favourites
 		if (wayf_most_used_idps.length > 0){
 			if(typeof(wayf_overwrite_most_used_idps_text) != "undefined"){
@@ -1151,18 +1190,122 @@ SCRIPT;
 			}
 			
 		}
-		writeHTML('<div style="clear:both;"></div>');
-		writeHTML('<table border="0" cellpadding="0" cellspacing="0" style="width: 100%;">');
-		writeHTML('<tr>');
-		writeHTML('<td id="keytext_td" colspan="1" style="width: 100%;">');
 		if (dispDefault == ''){
 			dispidp = initdisp;
 		} else {
 			dispidp = dispDefault;
 		}
-		writeHTML('<input id="keytext" type="text" name="pattern" value="" autocomplete="off" size="60" tabindex=5 style="float: left; width: 100%; display: block"/>');
-		
-		writeHTML('<div style="clear:both;"></div>');
+		writeHTML('<div class="userInputArea">');
+		writeHTML('<div class="IdPList.optionElm" id="optionElm">');
+		writeHTML('<div class="col">');
+		writeHTML('<div class="radioArea">');
+		writeHTML('<div class="row">');
+		writeHTML('<div class="optionTitle" style="width:6em;">');
+		writeHTML('地域：');
+		writeHTML('</div>');
+		writeHTML('<div class="optionRadio">');
+SCRIPT;
+	
+	$ua=$_SERVER['HTTP_USER_AGENT'];
+	$browser=((strpos($ua,'iPhone')!==false)||(strpos($ua,'iPod')!==false)||(strpos($ua,'Android')!==false));
+	if($browser=='sp') {
+		$deviceType = 'mobile';
+	} else {
+		$deviceType = 'other';
+  	}
+	$tabindex = 8;
+	$idindex = 0;
+	if ($deviceType == 'mobile'){
+	echo <<<SCRIPT
+		writeHTML('                  <select name=\"locationgroup\" onchange=\"changeLocation_sel();\">');
+SCRIPT;
+	}
+	
+	foreach ($IDProviders as $key => $IDProviderLocation){
+		$IdPType = isset($IDProviders[$key]['Type']) ? $IDProviders[$key]['Type'] : '';
+		if ($IdPType != 'category'){ continue; }
+		if (isset($IDProviderLocation[$language]['Name'])){
+			$IdPLocationName = addslashes($IDProviderLocation[$language]['Name']);
+		} else {
+			$IdPLocationName = addslashes($IDProviderLocation['Name']);
+		}
+		$IdPLocationChecked = $IDProviderLocation['Default'];
+		$idindex++;
+		if ($deviceType != 'mobile'){
+	echo <<<SCRIPT
+		writeHTML('                  <div class=\"row\">');
+		writeHTML('                  <input type=\"radio\" id=\"location$idindex\" tabindex=$tabindex name=\"locationgroup\" value=\"$key\" onclick=\"changeLocation();\" $IdPLocationChecked/>');
+		writeHTML('                  <label for=\"location$idindex\" class=\"label_option\">$IdPLocationName</label>');
+		writeHTML('                  </div>');
+SCRIPT;
+			$tabindex++;
+		} else {
+	echo <<<SCRIPT
+		writeHTML('                  <option id=\"location$idindex\" name=\"locationgroup\" value=\"$key\" $IdPLocationChecked>$IdPLocationName</option>');
+SCRIPT;
+		}
+	}
+	if ($deviceType == 'mobile'){
+	echo <<<SCRIPT
+		writeHTML('                  </select>');
+SCRIPT;
+		$tabindex++;
+	}
+	echo <<<SCRIPT
+		writeHTML('</div>');
+		writeHTML('</div>');
+		writeHTML('<div class="row">');
+		writeHTML('<div class="optionTitle" style="width:6em;">');
+		writeHTML('カテゴリ：');
+		writeHTML('</div>');
+		writeHTML('<div class="optionRadio">');
+SCRIPT;
+
+	$idindex = 0;
+	if ($deviceType == 'mobile'){
+	echo <<<SCRIPT
+		writeHTML('                  <select name=\"kindgroup\" onchange=\"changeKind_sel();\">');
+SCRIPT;
+	}
+	foreach ($IDProvidersKind as $key => $IDProviderKind){
+		$IdPType = isset($IDProvidersKind[$key]['Type']) ? $IDProvidersKind[$key]['Type'] : '';
+		if ($IdPType != 'kind'){ continue; }
+		if (isset($IDProviderKind[$language]['Name'])){
+			$IdPKindName = addslashes($IDProviderKind[$language]['Name']);
+		} else {
+			$IdPKindName = addslashes($IDProviderKind['Name']);
+		}
+		$IdPKindChecked = $IDProviderKind['Default'];
+		$idindex++;
+		if ($deviceType != 'mobile'){
+	echo <<<SCRIPT
+			writeHTML('                  <div class=\"row\">');
+			writeHTML('                  <input type=\"radio\" id=\"kind$idindex\" tabindex=$tabindex name=\"kindgroup\" value=\"$key\" onclick=\"changeKind();\" $IdPKindChecked/>');
+			writeHTML('                  <label for=\"kind$idindex\" class=\"label_option\">$IdPKindName</label>');
+			writeHTML('                  </div>');
+SCRIPT;
+			$tabindex++;
+		} else {
+	echo <<<SCRIPT
+			writeHTML('                  <option id=\"kind$idindex\" name=\"kindgroup\" value=\"$key\" $IdPKindChecked/>$IdPKindName</option>');
+SCRIPT;
+		}
+	}
+	if ($deviceType == 'mobile'){
+	echo <<<SCRIPT
+		writeHTML('                  </select>');
+SCRIPT;
+		$tabindex++;
+	}
+
+	echo <<<SCRIPT
+		writeHTML('</div>');
+		writeHTML('</div>');
+		writeHTML('</div>');
+		writeHTML('<div class="inputArea">');
+		writeHTML('<div class="inputtext">');
+		writeHTML('<input id="user_idp" name="user_idp" type="hidden" value="">');
+		writeHTML('<input id="keytext" type="text" name="pattern" value="" autocomplete="off" size="60" tabindex=5 style="width: 100%; display: block"/>');
 		writeHTML('<div id="view_incsearch_base">');
 		writeHTML('<div id="view_incsearch_animate" style="height:' + wayf_list_height + ';">');
 		writeHTML('<div id="view_incsearch_scroll" style="height:' + wayf_list_height + ';">');
@@ -1170,72 +1313,37 @@ SCRIPT;
 		writeHTML('</div>');
 		writeHTML('</div>');
 		writeHTML('</div>');
-		writeHTML('</td>');
-		
-		writeHTML('<td>');
+		writeHTML('</div>');
+
+		writeHTML('<div classi="eventItem">');
 		writeHTML('<img id="dropdown_img" src="{$dropdownDnURL}" title="{$dropdownTooltip}" tabindex=6 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
-		writeHTML('</td>');
+		writeHTML('</div>');
 		
-		writeHTML('<td>');
+		writeHTML('<div classi="eventItem">');
 		writeHTML('<img id="geolocation_img" src="{$geolocationOffURL}" title="{$geolocationTooltip}" tabindex=7 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
-		writeHTML('</td>');
+		writeHTML('</div>');
 		
-		writeHTML('<td>');
-		writeHTML('&nbsp;');
-		writeHTML('</td>');
-		
-		writeHTML('<td>');
+		writeHTML('<div classi="eventItem">');
 		// Do we have to display custom text?
 		if(typeof(wayf_overwrite_submit_button_text) == "undefined"){
 			writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="{$loginString}" tabindex="19" onClick="javascript:return submitForm();" ');
 		} else {
 			writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="' + wayf_overwrite_submit_button_text + '" tabindex="19" onClick="javascript:return submitForm();" ');
 		}
-
 		if (dispidp == initdisp) {
 			writeHTML('disabled >');
 		} else {
 			writeHTML('>');
 		}
-
-		writeHTML('</td>');
-		writeHTML('</tr>');
+		writeHTML('</div>');
+		writeHTML('</div>');
+		writeHTML('<div class="row">');
+		writeHTML('<div class="checkArea">');
 		
-		writeHTML('<tr>');
-		writeHTML('<td colspan="1" style="font-size: 80%;">');
-		writeHTML('{$categoryRadio}');
-SCRIPT;
-
-$tabindex = 8;
-foreach ($IDProvidersKind as $key => $IDProviderKind){
-	$IdPType = isset($IDProvidersKind[$key]['Type']) ? $IDProvidersKind[$key]['Type'] : '';
-	if ($IdPType != 'kind'){ continue; }
-	if (isset($IDProviderKind[$language]['Name'])){
-		$IdPKindName = addslashes($IDProviderKind[$language]['Name']);
-	} else {
-		$IdPKindName = addslashes($IDProviderKind['Name']);
-	}
-	$IdPKindChecked = $IDProviderKind['Default'];
-	print("writeHTML('<input type=\"radio\" tabindex=$tabindex name=\"kindgroup\" value=\"$key\" onclick=\"changeKind();\" $IdPKindChecked>$IdPKindName</input>');\n");
-	$tabindex++;
-}
-
-                echo <<<SCRIPT
-		writeHTML('</td>');
-		
-		writeHTML('<td colspan="2" style="vertical-align:middle; text-align:right;">');
-		writeHTML('<a href="javascript:void(0)" id="map_a" title="{$mapTooltip}" tabindex=15>{$mapString}</a>');
-		writeHTML('</td>');
-		writeHTML('<td colspan="2" style="vertical-align:middle; text-align:center;">');
-		writeHTML('<a href="javascript:void(0)" id="clear_a" title="{$clearTooltip}" tabindex=16>{$clearString}</a>');
-		writeHTML('</td>');
-		writeHTML('</tr>');
-		writeHTML('<tr>');
-		writeHTML('<td colspan="5">');
-		// Draw checkbox
-		writeHTML('<div id="wayf_remember_checkbox_div" style="float: left;margin-top: 0px;margin-bottom:0px; width: 100%;">');
+		writeHTML('<div class="optionCheck">');
 		// Do we have to show the remember settings checkbox?
 		if (wayf_show_remember_checkbox){
+			writeHTML('<div class="row">');
 			// Is the checkbox forced to be checked
 			if (wayf_force_remember_for_session){
 				// First draw the dummy checkbox ...
@@ -1245,7 +1353,8 @@ foreach ($IDProvidersKind as $key => $IDProviderKind){
 			} else {
 				writeHTML('<input id="wayf_remember_checkbox" type="checkbox" name="session" value="true" tabindex=17 {$checkedBool}>&nbsp;');
 			}
-			
+			writeHTML('</div>');
+			writeHTML('<div class="row">');
 			// Do we have to display custom text?
 			if(typeof(wayf_overwrite_checkbox_label_text) == "undefined"){
 				writeHTML('<label for="wayf_remember_checkbox" id="wayf_remember_checkbox_label" style="min-width:80px; font-size:' + wayf_font_size + 'px;color:' + wayf_font_color + ';">{$rememberSelectionText}</label>');
@@ -1253,23 +1362,37 @@ foreach ($IDProvidersKind as $key => $IDProviderKind){
 			} else if (wayf_overwrite_checkbox_label_text != "")  {
 				writeHTML('<label for="wayf_remember_checkbox" id="wayf_remember_checkbox_label" style="min-width:80px; font-size:' + wayf_font_size + 'px;color:' + wayf_font_color + ';">' + wayf_overwrite_checkbox_label_text + '</label>');
 			}
+			writeHTML('</div>');
 		} else if (wayf_force_remember_for_session){
+			writeHTML('<div class="row">');
 			// Is the checkbox forced to be checked but hidden
 			writeHTML('<input id="wayf_remember_checkbox" type="hidden" name="session" value="true">&nbsp;');
+			writeHTML('</div>');
+			writeHTML('<div class="row">');
+			writeHTML('</div>');
 		}
 		writeHTML('</div>');
-		writeHTML('</td>');
-		writeHTML('</tr>');
-		writeHTML('</table>');
-	
+		writeHTML('</div>');
+		writeHTML('<div class="linkArea">');
+		writeHTML('<div class="col">');
+		writeHTML('<a href="javascript:void(0)" id="map_a" title="{$mapTooltip}" tabindex=15>{$mapString}</a>');
+		writeHTML('</div>');
+		writeHTML('<div class="col">');
+		writeHTML('<a href="javascript:void(0)" id="clear_a" title="{$clearTooltip}" tabindex=16>{$clearString}</a>');
+		writeHTML('</div>');
+		writeHTML('</div>');
+		writeHTML('</div>');
+		writeHTML('</div>');
+		writeHTML('</div>');
+		writeHTML('</div>');
 		// Close form
 		writeHTML('</form>');
 		
 	}  // End login check
 	
 	// Close box
-	writeHTML('</div>');
-	writeHTML('<div style="clear:both;"></div>');
+//	writeHTML('</div>');
+//	writeHTML('<div style="clear:both;"></div>');
 
 	// Now output HTML all at once
 	document.write(wayf_html);

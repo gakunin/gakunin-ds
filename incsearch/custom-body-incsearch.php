@@ -9,7 +9,7 @@
    document.write('<div class="col">');
    document.write('<div class="radioArea">');
    document.write('<div class="row">');
-   document.write('<div class="optionTitle" style="width:8em;">');
+   document.write('<div class="optionTitle" style="width:7em;">');
    document.write('地域：');
    document.write('</div>');
    document.write('<div class="optionRadio">');
@@ -56,7 +56,7 @@
    document.write('</div>');
    document.write('</div>');
    document.write('<div class="row">');
-   document.write('<div class="optionTitle" style="width:8em;">');
+   document.write('<div class="optionTitle" style="width:7em;">');
    document.write('カテゴリ：');
    document.write('</div>');
    document.write('<div class="optionRadio">');

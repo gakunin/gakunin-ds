@@ -36,7 +36,7 @@ function setDiscofeedList(json){
 
 // DiscoFeed
 function checkDiscofeed(discofeedurl){
-	if ((typeof(wayf_use_disco_feed) != "undefined" && wayf_use_disco_feed) || discofeedurl != ''){
+	if ((typeof(wayf_use_disco_feed) != "undefined" && wayf_use_disco_feed) || (typeof(discofeedurl) != "undefined" && discofeedurl != '')){
 		discofeed_flg = false;
 		var urldomain = location.hostname;
 		if(discofeedurl != ''){
