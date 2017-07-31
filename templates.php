@@ -21,7 +21,19 @@ function printHeader(){
 	global $useAutocompleteIdP, $selIdP, $incsearchCssURL, $incsearchLibURL, $dropdownUpURL, $dropdownDnURL, $ajaxLibURL, $ajaxFlickLibURL;
 	global $mduiHintIDPs, $geolocationOffURL, $geolocationOnURL, $useMduiHintMax;
 	global $IncSearchList, $IncSearchHintList, $JSONIdPList, $JSONIncCategoryList, $JSONIncIdPList, $JSONIncIdPHintList, $IdPHintList, $selIdP, $InitDisp, $hintIDPString;
-	global $googleMapLibURL, $geolocationJsURL, $geolocationCssURL, $commonJsURL;
+	global $googleMapLibURL, $geolocationJsURL, $geolocationCssURL, $commonJsURL, $SProviders, $DiscofeedURL;
+
+	$DiscofeedURL = '';
+	foreach ($SProviders as $key => $SProvider){
+
+		if (isset($_GET['entityID']) && $key == $_GET['entityID']){
+			// Get IdPWhitelist URL
+			if (isset($SProvider['IdPWhitelistURL'])){
+				$DiscofeedURL = $SProvider['IdPWhitelistURL'];
+			}
+			break;
+		}
+	}
 	
 	// Check if custom header template exists
 	if(file_exists('custom-header.php')){
@@ -59,7 +71,6 @@ function printWAYF(){
 	}
 	
 	$SPName = '';
-	$DiscofeedURL = '';
 	foreach ($SProviders as $key => $SProvider){
 		
 		if (isset($_GET['entityID']) && $key == $_GET['entityID']){
@@ -68,9 +79,6 @@ function printWAYF(){
 				$SPName = addslashes($SProvider[$language]['Name']);
 			} else {
 				$SPName = addslashes($SProvider['Name']);
-			}
-			if (isset($SProvider['IdPWhitelistURL'])){
-				$DiscofeedURL = $SProvider['IdPWhitelistURL'];
 			}
 			break;
 		}
