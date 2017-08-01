@@ -36,7 +36,20 @@
 // flexible when it comes to ordering the category and IdP entries.
 // 
 
-// Category
+// 地域
+
+//
+// 全て
+$IDProviders['all'] = array (
+		'Type' => 'category',
+		'en' => array ('Name' => 'all'),
+		'ja' => array ('Name' => '全て'),
+		'Name' => 'All',
+		'Index' => '000',
+		'Geolocation' => '36.107924,139.065113',
+		'Mapscale' => '5',
+		'Default' => 'checked',
+);
 
 //
 // 北海道
@@ -48,6 +61,7 @@ $IDProviders['hokkaido'] = array (
 		'Index' => '001',
 		'Geolocation' => '43.5,142.5',
 		'Mapscale' => '7',
+		'Default' => '',
 );
 
 //
@@ -60,6 +74,7 @@ $IDProviders['tohoku'] = array (
 		'Index' => '002',
 		'Geolocation' => '39,140',
 		'Mapscale' => '7',
+		'Default' => '',
 );
 
 //
@@ -72,6 +87,7 @@ $IDProviders['kanto'] = array (
 		'Index' => '003',
 		'Geolocation' => '36.107924,139.065113',
 		'Mapscale' => '8',
+		'Default' => '',
 );
 
 //
@@ -84,6 +100,7 @@ $IDProviders['chubu'] = array (
 		'Index' => '004',
 		'Geolocation' => '36,138',
 		'Mapscale' => '7',
+		'Default' => '',
 );
 
 //
@@ -96,6 +113,7 @@ $IDProviders['kinki'] = array (
 		'Index' => '005',
 		'Geolocation' => '34.65123,135.587042',
 		'Mapscale' => '8',
+		'Default' => '',
 );
 
 //
@@ -108,6 +126,7 @@ $IDProviders['chugoku'] = array (
 		'Index' => '006',
 		'Geolocation' => '34.826415,133.070444',
 		'Mapscale' => '8',
+		'Default' => '',
 );
 
 //
@@ -120,6 +139,7 @@ $IDProviders['shikoku'] = array (
 		'Index' => '007',
 		'Geolocation' => '33.75,133.5',
 		'Mapscale' => '8',
+		'Default' => '',
 );
 
 //
@@ -132,6 +152,7 @@ $IDProviders['kyushu'] = array (
 		'Index' => '008',
 		'Geolocation' => '30,129',
 		'Mapscale' => '6',
+		'Default' => '',
 );
 
 //
@@ -144,7 +165,10 @@ $IDProviders['others'] = array (
 		'Index' => '009',
 		'Geolocation' => '36.107924,139.065113',
 		'Mapscale' => '5',
+		'Default' => '',
 );
+
+// Category
 
 //
 // 全て
