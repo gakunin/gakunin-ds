@@ -36,7 +36,20 @@
 // flexible when it comes to ordering the category and IdP entries.
 // 
 
-// Category
+// 地域
+
+//
+// 全て
+$IDProviders['all'] = array (
+		'Type' => 'category',
+		'en' => array ('Name' => 'all'),
+		'ja' => array ('Name' => '全て'),
+		'Name' => 'All',
+		'Index' => '000',
+		'Geolocation' => '36.107924,139.065113',
+		'Mapscale' => '5',
+		'Default' => 'checked',
+);
 
 //
 // 北海道
@@ -46,6 +59,9 @@ $IDProviders['hokkaido'] = array (
 		'ja' => array ('Name' => '北海道'),
 		'Name' => 'Hokkaido',
 		'Index' => '001',
+		'Geolocation' => '43.5,142.5',
+		'Mapscale' => '7',
+		'Default' => '',
 );
 
 //
@@ -56,6 +72,9 @@ $IDProviders['tohoku'] = array (
 		'ja' => array ('Name' => '東北'),
 		'Name' => 'Tohoku',
 		'Index' => '002',
+		'Geolocation' => '39,140',
+		'Mapscale' => '7',
+		'Default' => '',
 );
 
 //
@@ -66,6 +85,9 @@ $IDProviders['kanto'] = array (
 		'ja' => array ('Name' => '関東'),
 		'Name' => 'Kanto',
 		'Index' => '003',
+		'Geolocation' => '36.107924,139.065113',
+		'Mapscale' => '8',
+		'Default' => '',
 );
 
 //
@@ -76,6 +98,9 @@ $IDProviders['chubu'] = array (
 		'ja' => array ('Name' => '中部'),
 		'Name' => 'Chubu',
 		'Index' => '004',
+		'Geolocation' => '36,138',
+		'Mapscale' => '7',
+		'Default' => '',
 );
 
 //
@@ -86,6 +111,9 @@ $IDProviders['kinki'] = array (
 		'ja' => array ('Name' => '近畿'),
 		'Name' => 'Kinki',
 		'Index' => '005',
+		'Geolocation' => '34.65123,135.587042',
+		'Mapscale' => '8',
+		'Default' => '',
 );
 
 //
@@ -96,6 +124,9 @@ $IDProviders['chugoku'] = array (
 		'ja' => array ('Name' => '中国'),
 		'Name' => 'Chugoku',
 		'Index' => '006',
+		'Geolocation' => '34.826415,133.070444',
+		'Mapscale' => '8',
+		'Default' => '',
 );
 
 //
@@ -106,6 +137,9 @@ $IDProviders['shikoku'] = array (
 		'ja' => array ('Name' => '四国'),
 		'Name' => 'Shikoku',
 		'Index' => '007',
+		'Geolocation' => '33.75,133.5',
+		'Mapscale' => '8',
+		'Default' => '',
 );
 
 //
@@ -116,6 +150,9 @@ $IDProviders['kyushu'] = array (
 		'ja' => array ('Name' => '九州'),
 		'Name' => 'Kyushu',
 		'Index' => '008',
+		'Geolocation' => '30,129',
+		'Mapscale' => '6',
+		'Default' => '',
 );
 
 //
@@ -126,8 +163,78 @@ $IDProviders['others'] = array (
 		'ja' => array ('Name' => 'その他'),
 		'Name' => 'Others',
 		'Index' => '009',
+		'Geolocation' => '36.107924,139.065113',
+		'Mapscale' => '5',
+		'Default' => '',
 );
 
+// Category
+
+//
+// 全て
+$IDProvidersKind['all'] = array (
+		'Type' => 'kind',
+		'en' => array ('Name' => 'All'),
+		'ja' => array ('Name' => '全て'),
+		'Name' => 'All',
+		'Default' => 'checked',
+		'Index' => '010',
+);
+
+//
+// 大学
+$IDProvidersKind['category:organizationType:university'] = array (
+		'Type' => 'kind',
+		'en' => array ('Name' => 'University'),
+		'ja' => array ('Name' => '大学'),
+		'Name' => 'University',
+		'Default' => '',
+		'Index' => '011',
+);
+
+//
+// 短大
+$IDProvidersKind['category:organizationType:juniorCollege'] = array (
+		'Type' => 'kind',
+		'en' => array ('Name' => 'Junior college'),
+		'ja' => array ('Name' => '短大'),
+		'Name' => 'Junior college',
+		'Default' => '',
+		'Index' => '012',
+);
+
+//
+// 高専
+$IDProvidersKind['category:organizationType:techCollege'] = array (
+		'Type' => 'kind',
+		'en' => array ('Name' => 'College of technology'),
+		'ja' => array ('Name' => '高専'),
+		'Name' => 'College of technology',
+		'Default' => '',
+		'Index' => '013',
+);
+
+//
+// 研究所
+$IDProvidersKind['category:organizationType:researchInstitution'] = array (
+		'Type' => 'kind',
+		'en' => array ('Name' => 'Research institution'),
+		'ja' => array ('Name' => '研究所'),
+		'Name' => 'Research institution',
+		'Default' => '',
+		'Index' => '014',
+);
+
+//
+// その他
+$IDProvidersKind['category:organizationType:others'] = array (
+		'Type' => 'kind',
+		'en' => array ('Name' => 'Others'),
+		'ja' => array ('Name' => 'その他'),
+		'Name' => 'Others',
+		'Default' => '',
+		'Index' => '015',
+);
 
 // IDP entries
 
