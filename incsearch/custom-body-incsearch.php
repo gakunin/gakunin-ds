@@ -36,7 +36,9 @@
     } else {
       $IdPLocationName = addslashes($IDProviderLocation['Name']);
     }
-    $IdPLocationChecked = $IDProviderLocation['Default'];
+    if (isset($IDProviderLocation['Default'])){
+      $IdPLocationChecked = $IDProviderLocation['Default'];
+    }
     $idindex++;
     if ($deviceType != 'mobile'){
       print("   document.write('                  <div class=\"row\">');\n");
@@ -73,7 +75,9 @@
     } else {
       $IdPKindName = addslashes($IDProviderKind['Name']);
     }
-    $IdPKindChecked = $IDProviderKind['Default'];
+    if (isset($IDProviderKind['Default'])){
+      $IdPKindChecked = $IDProviderKind['Default'];
+    }
     $idindex++;
     if ($deviceType != 'mobile'){
       print("   document.write('                  <div class=\"row\">');\n");
