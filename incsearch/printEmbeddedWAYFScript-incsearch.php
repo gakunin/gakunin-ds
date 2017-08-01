@@ -984,46 +984,7 @@ SCRIPT;
 
 		writeHTML(form_start);
 		writeHTML('<input name="request_type" type="hidden" value="embedded">');
-SCRIPT;
 
-	// Generate drop-down list
-	foreach ($IDProviders as $key => $IDProvider){
-		
-		// Get IdP Name
-		if (isset($IDProvider[$language]['Name'])){
-			$IdPName = addslashes($IDProvider[$language]['Name']);
-		} else {
-			$IdPName = addslashes($IDProvider['Name']);
-		}
-
-		// Figure out if entry is valid or a category
-		if (!isset($IDProvider['SSO'])){
-			continue;
-		}
-		
-		// Set selected attribute
-		echo <<<SCRIPT
-		if (last_idp == '{$key}'){
-			dispDefault = '{$IdPName}';
-		}
-SCRIPT;
-		$IdPType = isset($IDProviders[$key]['Type']) ? $IDProviders[$key]['Type'] : '';
-
-		echo <<<SCRIPT
-		if (isAllowedType('{$key}','{$IdPType}') && isAllowedIdP('{$key}')){
-			if (
-				"{$selectedIDP}" == "-" 
-				&& typeof(wayf_default_idp) != "undefined"
-				&& wayf_default_idp == "{$key}"
-				){
-				dispDefault = '{$IdPName}';
-			}
-			pushIncSearchList('{$key}');
-		}
-SCRIPT;
-	}
-
-	echo <<<SCRIPT
 		// Favourites
 		if (wayf_most_used_idps.length > 0){
 			if(typeof(wayf_overwrite_most_used_idps_text) != "undefined"){
