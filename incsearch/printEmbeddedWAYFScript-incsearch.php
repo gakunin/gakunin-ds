@@ -1157,7 +1157,7 @@ SCRIPT;
 			dispidp = dispDefault;
 		}
 		writeHTML('<div class="userInputArea">');
-		writeHTML('<div class="IdPList.optionElm" id="optionElm">');
+		writeHTML('<div class="col" id="optionElm">');
 		writeHTML('<div class="col">');
 		writeHTML('<div class="radioArea">');
 		writeHTML('<div class="row">');
@@ -1190,7 +1190,9 @@ SCRIPT;
 		} else {
 			$IdPLocationName = addslashes($IDProviderLocation['Name']);
 		}
-		$IdPLocationChecked = $IDProviderLocation['Default'];
+		if (isset($IDProviderLocation['Default'])){
+			$IdPLocationChecked = $IDProviderLocation['Default'];
+		}
 		$idindex++;
 		if ($deviceType != 'mobile'){
 	echo <<<SCRIPT
@@ -1236,7 +1238,9 @@ SCRIPT;
 		} else {
 			$IdPKindName = addslashes($IDProviderKind['Name']);
 		}
-		$IdPKindChecked = $IDProviderKind['Default'];
+		if (isset($IDProviderKind['Default'])){
+			$IdPKindChecked = $IDProviderKind['Default'];
+		}
 		$idindex++;
 		if ($deviceType != 'mobile'){
 	echo <<<SCRIPT
@@ -1340,6 +1344,7 @@ SCRIPT;
 		writeHTML('</div>');
 		writeHTML('<div class="col">');
 		writeHTML('<a href="javascript:void(0)" id="clear_a" title="{$clearTooltip}" tabindex=16>{$clearString}</a>');
+		writeHTML('</div>');
 		writeHTML('</div>');
 		writeHTML('</div>');
 		writeHTML('</div>');

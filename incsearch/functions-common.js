@@ -39,10 +39,10 @@ function checkDiscofeed(discofeedurl){
 	if ((typeof(wayf_use_disco_feed) != "undefined" && wayf_use_disco_feed) || (typeof(discofeedurl) != "undefined" && discofeedurl != '')){
 		discofeed_flg = false;
 		var urldomain = location.hostname;
-		if(discofeedurl != ''){
+		if(typeof(discofeedurl) != "undefined" && discofeedurl != ''){
 			wayf_discofeed_url = discofeedurl;
 		}
-		if (wayf_discofeed_url != '/Shibboleth.sso/DiscoFeed'){
+		if (typeof(wayf_discofeed_url) != "undefined" && wayf_discofeed_url != '/Shibboleth.sso/DiscoFeed'){
 			urldomain = wayf_discofeed_url.split('/')[2];
 		}
 		if(location.hostname != urldomain && window.XDomainRequest){
