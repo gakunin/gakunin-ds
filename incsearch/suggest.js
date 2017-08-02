@@ -133,16 +133,16 @@ Suggest.Local.prototype = {
   ignoreCase: true,
   highlight: false,
   dispAllKey: false,
-  classMouseOver: 'over',
-  classSelect: 'select',
-  classDefault: 'default',
-  classActive: 'active',
-  classGroup: 'list_group',
-  classIdPNm: 'list_idp',
-  classGroupFavorite: 'list_group_favorite',
-  classIdPNmFavorite: 'list_idp_favorite',
-  classGroupHint: 'list_group_hint',
-  classIdPNmHint: 'list_idp_hint',
+  classMouseOver: 'wayf_over',
+  classSelect: 'wayf_select',
+  classDefault: 'wayf_default',
+  classActive: 'wayf_active',
+  classGroup: 'wayf_list_group',
+  classIdPNm: 'wayf_list_idp',
+  classGroupFavorite: 'wayf_list_group_favorite',
+  classIdPNmFavorite: 'wayf_list_idp_favorite',
+  classGroupHint: 'wayf_list_group_hint',
+  classIdPNmHint: 'wayf_list_idp_hint',
   dispListTime: 300,
   showgrp: true,
   hookBeforeSearch: function(){},
@@ -209,7 +209,9 @@ Suggest.Local.prototype = {
 
   elementClick: function(event, optionflg) {
     if (optionflg == 'optionElm') {
-      this.search();
+      if (this.dnupImgElm.src == this.upImgURL) {
+        this.search();
+      }
     } else {
     var element = this._getEventElement(event);
     if (element.id == this.input.id) {

@@ -842,9 +842,10 @@ function getGETArgumentSeparator(url){
 		return;
 	}
 	
+	writeHTML('<div id="wayfarea">');
 	writeHTML('<div id="mapframe" style="display:none;">');
-	writeHTML('	<div id="mapleft" class="mframe"></div>');
-	writeHTML('	<div id="mapcenter" class="mframe"></div>');
+	writeHTML('	<div id="mapleft" class="wayf_mframe"></div>');
+	writeHTML('	<div id="mapcenter" class="wayf_mframe"></div>');
 	writeHTML('	<div id="mapright"></div>');
 	writeHTML('</div>');
 	
@@ -983,6 +984,7 @@ SCRIPT;
 		writeHTML('</script>');
 
 		writeHTML(form_start);
+		writeHTML('<div id="optionElm" style="display:none;"></div>');
 		writeHTML('<input name="request_type" type="hidden" value="embedded">');
 
 		// Favourites
@@ -1156,15 +1158,15 @@ SCRIPT;
 		} else {
 			dispidp = dispDefault;
 		}
-		writeHTML('<div class="userInputArea">');
-		writeHTML('<div class="col" id="optionElm">');
-		writeHTML('<div class="col">');
-		writeHTML('<div class="radioArea">');
-		writeHTML('<div class="row">');
-		writeHTML('<div class="optionTitle" style="width:6em;">');
+		writeHTML('<div class="wayf_userInputArea">');
+		writeHTML('<div class="wayf_col">');
+		writeHTML('<div class="wayf_col">');
+		writeHTML('<div class="wayf_radioArea">');
+		writeHTML('<div class="wayf_row">');
+		writeHTML('<div class="wayf_optionTitle" style="width:6em;">');
 		writeHTML('地域：');
 		writeHTML('</div>');
-		writeHTML('<div class="optionRadio">');
+		writeHTML('<div class="wayf_optionRadio">');
 SCRIPT;
 	
 	$ua=$_SERVER['HTTP_USER_AGENT'];
@@ -1196,9 +1198,9 @@ SCRIPT;
 		$idindex++;
 		if ($deviceType != 'mobile'){
 	echo <<<SCRIPT
-		writeHTML('                  <div class=\"row\">');
+		writeHTML('                  <div class=\"wayf_row\">');
 		writeHTML('                  <input type=\"radio\" id=\"location$idindex\" tabindex=$tabindex name=\"locationgroup\" value=\"$key\" onclick=\"changeLocation();\" $IdPLocationChecked/>');
-		writeHTML('                  <label for=\"location$idindex\" class=\"label_option\">$IdPLocationName</label>');
+		writeHTML('                  <label for=\"location$idindex\" class=\"wayf_label_option\">$IdPLocationName</label>');
 		writeHTML('                  </div>');
 SCRIPT;
 			$tabindex++;
@@ -1217,11 +1219,11 @@ SCRIPT;
 	echo <<<SCRIPT
 		writeHTML('</div>');
 		writeHTML('</div>');
-		writeHTML('<div class="row">');
-		writeHTML('<div class="optionTitle" style="width:6em;">');
+		writeHTML('<div class="wayf_row">');
+		writeHTML('<div class="wayf_optionTitle" style="width:6em;">');
 		writeHTML('カテゴリ：');
 		writeHTML('</div>');
-		writeHTML('<div class="optionRadio">');
+		writeHTML('<div class="wayf_optionRadio">');
 SCRIPT;
 
 	$idindex = 0;
@@ -1244,9 +1246,9 @@ SCRIPT;
 		$idindex++;
 		if ($deviceType != 'mobile'){
 	echo <<<SCRIPT
-			writeHTML('                  <div class=\"row\">');
+			writeHTML('                  <div class=\"wayf_row\">');
 			writeHTML('                  <input type=\"radio\" id=\"kind$idindex\" tabindex=$tabindex name=\"kindgroup\" value=\"$key\" onclick=\"changeKind();\" $IdPKindChecked/>');
-			writeHTML('                  <label for=\"kind$idindex\" class=\"label_option\">$IdPKindName</label>');
+			writeHTML('                  <label for=\"kind$idindex\" class=\"wayf_label_option\">$IdPKindName</label>');
 			writeHTML('                  </div>');
 SCRIPT;
 			$tabindex++;
@@ -1267,8 +1269,8 @@ SCRIPT;
 		writeHTML('</div>');
 		writeHTML('</div>');
 		writeHTML('</div>');
-		writeHTML('<div class="inputArea">');
-		writeHTML('<div class="inputtext">');
+		writeHTML('<div class="wayf_inputArea">');
+		writeHTML('<div class="wayf_inputtext">');
 		writeHTML('<input id="user_idp" name="user_idp" type="hidden" value="">');
 		writeHTML('<input id="keytext" type="text" name="pattern" value="" autocomplete="off" size="60" tabindex=5 style="width: 100%; display: block"/>');
 		writeHTML('<div id="view_incsearch_base">');
@@ -1280,15 +1282,15 @@ SCRIPT;
 		writeHTML('</div>');
 		writeHTML('</div>');
 
-		writeHTML('<div classi="eventItem">');
+		writeHTML('<div class="wayf_eventItem">');
 		writeHTML('<img id="dropdown_img" src="{$dropdownDnURL}" title="{$dropdownTooltip}" tabindex=6 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
 		writeHTML('</div>');
 		
-		writeHTML('<div classi="eventItem">');
+		writeHTML('<div class="wayf_eventItem">');
 		writeHTML('<img id="geolocation_img" src="{$geolocationOffURL}" title="{$geolocationTooltip}" tabindex=7 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
 		writeHTML('</div>');
 		
-		writeHTML('<div classi="eventItem">');
+		writeHTML('<div class="wayf_eventItem">');
 		// Do we have to display custom text?
 		if(typeof(wayf_overwrite_submit_button_text) == "undefined"){
 			writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="{$loginString}" tabindex="19" onClick="javascript:return submitForm();" ');
@@ -1302,13 +1304,13 @@ SCRIPT;
 		}
 		writeHTML('</div>');
 		writeHTML('</div>');
-		writeHTML('<div class="row">');
-		writeHTML('<div class="checkArea">');
+		writeHTML('<div class="wayf_row">');
+		writeHTML('<div class="wayf_checkArea">');
 		
-		writeHTML('<div class="optionCheck">');
+		writeHTML('<div class="wayf_optionCheck">');
 		// Do we have to show the remember settings checkbox?
 		if (wayf_show_remember_checkbox){
-			writeHTML('<div class="row">');
+			writeHTML('<div class="wayf_row">');
 			// Is the checkbox forced to be checked
 			if (wayf_force_remember_for_session){
 				// First draw the dummy checkbox ...
@@ -1319,7 +1321,7 @@ SCRIPT;
 				writeHTML('<input id="wayf_remember_checkbox" type="checkbox" name="session" value="true" tabindex=17 {$checkedBool}>&nbsp;');
 			}
 			writeHTML('</div>');
-			writeHTML('<div class="row">');
+			writeHTML('<div class="wayf_row">');
 			// Do we have to display custom text?
 			if(typeof(wayf_overwrite_checkbox_label_text) == "undefined"){
 				writeHTML('<label for="wayf_remember_checkbox" id="wayf_remember_checkbox_label" style="min-width:80px; font-size:' + wayf_font_size + 'px;color:' + wayf_font_color + ';">{$rememberSelectionText}</label>');
@@ -1329,22 +1331,21 @@ SCRIPT;
 			}
 			writeHTML('</div>');
 		} else if (wayf_force_remember_for_session){
-			writeHTML('<div class="row">');
+			writeHTML('<div class="wayf_row">');
 			// Is the checkbox forced to be checked but hidden
 			writeHTML('<input id="wayf_remember_checkbox" type="hidden" name="session" value="true">&nbsp;');
 			writeHTML('</div>');
-			writeHTML('<div class="row">');
+			writeHTML('<div class="wayf_row">');
 			writeHTML('</div>');
 		}
 		writeHTML('</div>');
 		writeHTML('</div>');
-		writeHTML('<div class="linkArea">');
-		writeHTML('<div class="col">');
+		writeHTML('<div class="wayf_linkArea">');
+		writeHTML('<div class="wayf_col">');
 		writeHTML('<a href="javascript:void(0)" id="map_a" title="{$mapTooltip}" tabindex=15>{$mapString}</a>');
 		writeHTML('</div>');
-		writeHTML('<div class="col">');
+		writeHTML('<div class="wayf_col">');
 		writeHTML('<a href="javascript:void(0)" id="clear_a" title="{$clearTooltip}" tabindex=16>{$clearString}</a>');
-		writeHTML('</div>');
 		writeHTML('</div>');
 		writeHTML('</div>');
 		writeHTML('</div>');
@@ -1357,8 +1358,9 @@ SCRIPT;
 	}  // End login check
 	
 	// Close box
-//	writeHTML('</div>');
-//	writeHTML('<div style="clear:both;"></div>');
+	writeHTML('</div>');
+	writeHTML('<div style="clear:both;"></div>');
+	writeHTML('</div>');
 
 	// Now output HTML all at once
 	document.write(wayf_html);

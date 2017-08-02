@@ -1,16 +1,24 @@
-#wayf_div div, input {
+#wayfarea div,
+#wayfarea input {
 	-webkit-box-sizing: border-box; /* Chrome, Safari */
 	-moz-box-sizing: border-box;    /* Firefox */
 	box-sizing: border-box;         /* IE8+, Opera */
 }
 
-.row, .col, .inputArea, .optionArea, .optionTitle, .optionRadio, .linkArea, .optionCheck {
+#wayfarea .wayf_row,
+#wayfarea .wayf_col,
+#wayfarea .wayf_inputArea,
+#wayfarea .wayf_optionArea,
+#wayfarea .wayf_optionTitle,
+#wayfarea .wayf_optionRadio,
+#wayfarea .wayf_linkArea,
+#wayfarea .wayf_optionCheck {
         display:-ms-flexbox;
         display:-webkit-flex;
         display: flex;
 }
 
-.col {
+#wayfarea .wayf_col {
         -ms-flexbox-direction: column;
         -webkit-flex-direction: column;
         flex-direction: column;
@@ -19,20 +27,22 @@
         padding-right: 5px;
 }
 
-.inputArea, .optionArea {
+#wayfarea .wayf_inputArea,
+#wayfarea .wayf_optionArea {
         justify-content: space-between;
 }
 
-.inputtext {
+#wayfarea .wayf_inputtext {
         width: 100%;
 }
 
-.eventItem {
+#wayfarea .wayf_eventItem {
         align-items: center;
         margin-left: 1px;
 }
 
-.radioArea, .checkArea {
+#wayfarea .wayf_radioArea,
+#wayfarea .wayf_checkArea {
         align-items: center;
         margin-top: 5px;
         font-size: 80%;
@@ -40,43 +50,44 @@
         width: 100%;
 }
 
-.optionTitle {
+#wayfarea .wayf_optionTitle {
         align-items: center;
         justify-content: flex-start;
         width: 75px;
         margin-top: 5px;
 }
 
-.optionRadio, .optionCheck {
+#wayfarea .wayf_optionRadio,
+#wayfarea .wayf_optionCheck {
         justify-content: flex-start;
         width: 100%;
         margin-top: 5px;
 }
 
-.optionRadio {
+#wayfarea .wayf_optionRadio {
         -ms-flexbox-wrap: wrap;
         -webkit-flex-wrap: wrap;
         flex-wrap: wrap;
 }
 
-.linkArea {
+#wayfarea .wayf_linkArea {
         justify-content: space-between;
         margin-top: 5px;
         margin-left: 5px;
 }
 
-#map_a {
+#wayfarea #map_a {
         margin-right: 5px;
 }
 
 /* base in IdP list display area */
-#view_incsearch_base {
+#wayfarea #view_incsearch_base {
 	position: relative;
 	z-index: 9999;
 }
 
 /* IdP list display animation area */
-#view_incsearch_animate {
+#wayfarea #view_incsearch_animate {
 	position: absolute;
 	display: none;
 	height: 150px;
@@ -84,7 +95,7 @@
 }
 
 /* IdP list display scroll area */
-#view_incsearch_scroll {
+#wayfarea #view_incsearch_scroll {
         position: absolute;
         display: block;
         background-color: #FFFFFF;
@@ -96,27 +107,27 @@
 }
 
 /* IdP list display area */
-#view_incsearch {
+#wayfarea #view_incsearch {
 	position: absolute;
 	display: block;
 }
 
 /* div in IdP list display area */
-#view_incsearch div {
+#wayfarea #view_incsearch div {
 	display: block;
 	width: 100%;
 	white-space: nowrap;
 }
 
 /* IdP list: select */
-#view_incsearch div.select {
+#wayfarea #view_incsearch div.wayf_select {
 	color: white;
 	background-color: #3366FF;
 	text-align: left;
 }
 
 /* IdP list: mouseover */
-#view_incsearch div.over {
+#wayfarea #view_incsearch div.wayf_over {
 	color: black;
 	background-color: #99CCFF;
 	cursor: pointer;
@@ -124,7 +135,7 @@
 }
 
 /* IdP list: group title */
-div.list_group {
+#wayfarea div.wayf_list_group {
 	color: white;
 	background-color: indianred;
 	font-weight: bold;
@@ -134,7 +145,7 @@ div.list_group {
 }
 
 /* IdP list: IdP name */
-div.list_idp {
+#wayfarea div.wayf_list_idp {
 	color: black;
 	background-color: white;
 	font-weight: normal;
@@ -144,7 +155,7 @@ div.list_idp {
 }
 
 /* IdP list favorite: group title */
-div.list_group_favorite {
+#wayfarea div.wayf_list_group_favorite {
 	color: white;
 	background-color: forestgreen;
 	font-weight: bold;
@@ -154,7 +165,7 @@ div.list_group_favorite {
 }
 
 /* IdP list favorite: IdP name */
-div.list_idp_favorite {
+#wayfarea div.wayf_list_idp_favorite {
 	color: black;
 	background-color: #EEFFDD;
 	font-weight: normal;
@@ -164,7 +175,7 @@ div.list_idp_favorite {
 }
 
 /* IdP list hint: group title */
-div.list_group_hint {
+#wayfarea div.wayf_list_group_hint {
         color: white;
         background-color: chocolate;
         font-weight: bold;
@@ -174,7 +185,7 @@ div.list_group_hint {
 }
 
 /* IdP list hint: IdP name */
-div.list_idp_hint {
+#wayfarea div.wayf_list_idp_hint {
         color: black;
         background-color: #FFFF99;
         font-weight: normal;
@@ -184,12 +195,13 @@ div.list_idp_hint {
 }
 
 /* dropdown image */
-#dropdown_img, #geolocation_img {
+#wayfarea #dropdown_img,
+#wayfarea #geolocation_img {
 	cursor: pointer;
 }
 
 /* link default */
-#IdPList a {
+#wayfarea #IdPList a {
         white-space: nowrap;
         font-size: 70%;
         color: blue;
@@ -197,7 +209,9 @@ div.list_idp_hint {
 }
 
 /* link active */
-#IdPList a:hover, #IdPList a:focus,
-#mapframe a.incsearch_link:hover, #mapframe a.incsearch_link:focus {
+#wayfarea a:hover,
+#wayfarea a:focus,
+#wayfarea a.wayf_incsearch_link:hover,
+#wayfarea a.wayf_incsearch_link:focus {
         color: red;
 }

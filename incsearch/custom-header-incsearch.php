@@ -156,9 +156,10 @@
 </head>
 
 <body>
+<div id="wayfarea">
 <div id="mapframe" style="display:none;">
-	<div id="mapleft" class="mframe"></div>
-	<div id="mapcenter" class="mframe"></div>
+	<div id="mapleft" class="wayf_mframe"></div>
+	<div id="mapcenter" class="wayf_mframe"></div>
 	<div id="mapright"></div>
 </div>
 <div id="container">

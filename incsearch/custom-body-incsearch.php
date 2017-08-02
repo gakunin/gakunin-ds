@@ -1,18 +1,19 @@
 <!-- Identity Provider Selection: Start-->
 <h1><?php echo getLocalString('header'); ?></h1> 
 <form id="IdPList" name="IdPList" method="post" onSubmit="return checkForm()" action="<?php echo $actionURL ?>">
+	<div id="optionElm" style="display:none;"></div>
 	<div id="userInputArea">
 		<p class="promptMessage"><?php echo $promptMessage ?></p>
 <script language="JavaScript" type="text/javascript">
 <!--
-   document.write('<div class="optionArea" id="optionElm">');
-   document.write('<div class="col">');
-   document.write('<div class="radioArea">');
-   document.write('<div class="row">');
-   document.write('<div class="optionTitle" style="width:7em;">');
+   document.write('<div class="wayf_optionArea">');
+   document.write('<div class="wayf_col">');
+   document.write('<div class="wayf_radioArea">');
+   document.write('<div class="wayf_row">');
+   document.write('<div class="wayf_optionTitle" style="width:7em;">');
    document.write('地域：');
    document.write('</div>');
-   document.write('<div class="optionRadio">');
+   document.write('<div class="wayf_optionRadio">');
 <?php
   $ua=$_SERVER['HTTP_USER_AGENT'];
   $browser=((strpos($ua,'iPhone')!==false)||(strpos($ua,'iPod')!==false)||(strpos($ua,'Android')!==false));
@@ -41,9 +42,9 @@
     }
     $idindex++;
     if ($deviceType != 'mobile'){
-      print("   document.write('                  <div class=\"row\">');\n");
+      print("   document.write('                  <div class=\"wayf_row\">');\n");
       print("   document.write('                  <input type=\"radio\" id=\"location$idindex\" tabindex=$tabindex name=\"locationgroup\" value=\"$key\" onclick=\"changeLocation();\" $IdPLocationChecked/>');\n");
-      print("   document.write('                  <label for=\"location$idindex\" class=\"label_option\">$IdPLocationName</label>');\n");
+      print("   document.write('                  <label for=\"location$idindex\" class=\"wayf_label_option\">$IdPLocationName</label>');\n");
       print("   document.write('                  </div>');\n");
       $tabindex++;
     } else {
@@ -57,11 +58,11 @@
 ?>
    document.write('</div>');
    document.write('</div>');
-   document.write('<div class="row">');
-   document.write('<div class="optionTitle" style="width:7em;">');
+   document.write('<div class="wayf_row">');
+   document.write('<div class="wayf_optionTitle" style="width:7em;">');
    document.write('カテゴリ：');
    document.write('</div>');
-   document.write('<div class="optionRadio">');
+   document.write('<div class="wayf_optionRadio">');
 <?php
   $idindex = 0;
   if ($deviceType == 'mobile'){
@@ -80,9 +81,9 @@
     }
     $idindex++;
     if ($deviceType != 'mobile'){
-      print("   document.write('                  <div class=\"row\">');\n");
+      print("   document.write('                  <div class=\"wayf_row\">');\n");
       print("   document.write('                  <input type=\"radio\" id=\"kind$idindex\" tabindex=$tabindex name=\"kindgroup\" value=\"$key\" onclick=\"changeKind();\" $IdPKindChecked/>');\n");
-      print("   document.write('                  <label for=\"kind$idindex\" class=\"label_option\">$IdPKindName</label>');\n");
+      print("   document.write('                  <label for=\"kind$idindex\" class=\"wayf_label_option\">$IdPKindName</label>');\n");
       print("   document.write('                  </div>');\n");
       $tabindex++;
     } else {
@@ -97,8 +98,8 @@
    document.write('</div>');
    document.write('</div>');
    document.write('</div>');
-   document.write('<div class="inputArea">');
-   document.write('<div class="inputtext">');
+   document.write('<div class="wayf_inputArea">');
+   document.write('<div class="wayf_inputtext">');
    document.write('	<input id="user_idp" type="hidden" name="user_idp" value=""/>');
    document.write('	<input id="keytext" type="text" name="pattern" value="" autocomplete="off" size="60" tabindex="5" style="width:100%; display:block;" />');
    document.write('	<div id="view_incsearch_base">');
@@ -109,13 +110,13 @@
    document.write('		</div>');
    document.write('	</div>');
    document.write('</div>');
-   document.write('<div classi="eventItem">');
+   document.write('<div classi="wayf_eventItem">');
    document.write('			<img id="dropdown_img" src="" title="<?php echo getLocalString('dropdown_tooltip') ?>" tabindex=6 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
    document.write('</div>');
-   document.write('<div class="eventItem">');
+   document.write('<div class="wayf_eventItem">');
    document.write('			<img id="geolocation_img" src="" title="<?php echo getLocalString('geolocation_tooltip') ?>" tabindex=7 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
    document.write('</div>');
-   document.write('<div class="eventItem">');
+   document.write('<div class="wayf_eventItem">');
    document.write('	<input id="wayf_submit_button" type="submit" name="Select" accesskey="s" tabindex="19" value="<?php echo getLocalString('select_button') ?>" ');
    if (dispidp == initdisp) {
      document.write('disabled >');
@@ -124,34 +125,34 @@
    }
    document.write('</div>');
    document.write('</div>');
-   document.write('<div class="row">');
-   document.write('<div class="checkArea">');
-   document.write('<div class="optionCheck">');
-   document.write('<div class="row">');
+   document.write('<div class="wayf_row">');
+   document.write('<div class="wayf_checkArea">');
+   document.write('<div class="wayf_optionCheck">');
+   document.write('<div class="wayf_row">');
    document.write('			<input type="checkbox" tabindex="17" <?php echo $rememberSelectionChecked ?> name="session" id="rememberForSession" value="true">');
    document.write('</div>');
-   document.write('<div class="row">');
+   document.write('<div class="wayf_row">');
    document.write('			<span class="warning"><label for="rememberForSession"><?php echo getLocalString('remember_selection') ?></label></span><br>');
    document.write('</div>');
    document.write('</div>');
    document.write('			<?php if ($showPermanentSetting) : ?>');
-   document.write('<div class="optionCheck">');
-   document.write('<div class="row">');
+   document.write('<div class="wayf_optionCheck">');
+   document.write('<div class="wayf_row">');
    document.write('			<!-- Value permanent must be a number which is equivalent to the days the cookie shall be valid -->');
    document.write('			<input type="checkbox" tabindex="18" name="permanent" id="rememberPermanent" value="100">');
    document.write('</div>');
-   document.write('<div class="row">');
+   document.write('<div class="wayf_row">');
    document.write('			<span class="warning"><label for="rememberPermanent" /><?php echo getLocalString('permanently_remember_selection') ?></label></span>');
    document.write('</div>');
    document.write('</div>');
    document.write('			<?php endif ?>');
    document.write('</div>');
-   document.write('<div class="linkArea">');
-   document.write('<div class="col">');
+   document.write('<div class="wayf_linkArea">');
+   document.write('<div class="wayf_col">');
    document.write('                     <a href="javascript:void(0)" id="map_a" title="<?php echo getLocalString('map_tooltip') ?>" tabindex=15><?php echo getLocalString('map_button') ?></a>');
    document.write('                     <p></p>');
    document.write('</div>');
-   document.write('<div class="col">');
+   document.write('<div class="wayf_col">');
    document.write('                     <a href="javascript:void(0)" id="clear_a" title="<?php echo getLocalString('clear_tooltip') ?>" tabindex=16><?php echo getLocalString('clear_button') ?></a>');
    document.write('                     <p></p>');
    document.write('</div>');
@@ -186,4 +187,5 @@
 </form>
 
 <p><?php echo getLocalString('additional_info') ?></p>
+</div>
 <!-- Identity Provider Selection: End-->
