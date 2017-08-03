@@ -11,7 +11,7 @@
    document.write('<div class="wayf_radioArea">');
    document.write('<div class="wayf_row">');
    document.write('<div class="wayf_optionTitle" style="width:7em;">');
-   document.write('地域：');
+   document.write('<?php echo getLocalString('locations_filter') ?>');
    document.write('</div>');
    document.write('<div class="wayf_optionRadio">');
 <?php
@@ -60,7 +60,7 @@
    document.write('</div>');
    document.write('<div class="wayf_row">');
    document.write('<div class="wayf_optionTitle" style="width:7em;">');
-   document.write('カテゴリ：');
+   document.write('<?php echo getLocalString('category_filter') ?>');
    document.write('</div>');
    document.write('<div class="wayf_optionRadio">');
 <?php
@@ -116,7 +116,7 @@
    document.write('<div class="wayf_eventItem">');
    document.write('			<img id="geolocation_img" src="" title="<?php echo getLocalString('geolocation_tooltip') ?>" tabindex=7 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
    document.write('</div>');
-   document.write('<div class="wayf_eventItem">');
+   document.write('<div id="wayf_submit_div" class="wayf_eventItem">');
    document.write('	<input id="wayf_submit_button" type="submit" name="Select" accesskey="s" tabindex="19" value="<?php echo getLocalString('select_button') ?>" ');
    if (dispidp == initdisp) {
      document.write('disabled >');

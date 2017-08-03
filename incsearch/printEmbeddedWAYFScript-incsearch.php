@@ -37,7 +37,8 @@ function printEmbeddedWAYFScript_IncSearch(){
 	$geolocationErr2 = addslashes(getLocalString('geolocation_err2'));
 	$geolocationErr3 = addslashes(getLocalString('geolocation_err3'));
 	$geolocationErr4 = addslashes(getLocalString('geolocation_err4'));
-	$categoryRadio = addslashes(getLocalString('category_radio'));
+	$locationsFilter = addslashes(getLocalString('locations_filter'));
+	$categoryFilter = addslashes(getLocalString('category_filter'));
 	$closeString = addslashes(getLocalString('close_button'));
 	$geolocationString = addslashes(getLocalString('geolocation_button'));
 	$noHintMsg = addslashes(getLocalString('no_hint_msg'));
@@ -1164,7 +1165,7 @@ SCRIPT;
 		writeHTML('<div class="wayf_radioArea">');
 		writeHTML('<div class="wayf_row">');
 		writeHTML('<div class="wayf_optionTitle" style="width:6em;">');
-		writeHTML('地域：');
+		writeHTML('{$locationsFilter}');
 		writeHTML('</div>');
 		writeHTML('<div class="wayf_optionRadio">');
 SCRIPT;
@@ -1221,7 +1222,7 @@ SCRIPT;
 		writeHTML('</div>');
 		writeHTML('<div class="wayf_row">');
 		writeHTML('<div class="wayf_optionTitle" style="width:6em;">');
-		writeHTML('カテゴリ：');
+		writeHTML('{$categoryFilter}');
 		writeHTML('</div>');
 		writeHTML('<div class="wayf_optionRadio">');
 SCRIPT;
@@ -1290,7 +1291,7 @@ SCRIPT;
 		writeHTML('<img id="geolocation_img" src="{$geolocationOffURL}" title="{$geolocationTooltip}" tabindex=7 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
 		writeHTML('</div>');
 		
-		writeHTML('<div class="wayf_eventItem">');
+		writeHTML('<div id="wayf_submit_div" class="wayf_eventItem">');
 		// Do we have to display custom text?
 		if(typeof(wayf_overwrite_submit_button_text) == "undefined"){
 			writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="{$loginString}" tabindex="19" onClick="javascript:return submitForm();" ');
