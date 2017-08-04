@@ -91,7 +91,7 @@ Suggest.Local.prototype = {
       this.setInputText(this.initDisp);
     }
 
-    if (arguments[21]) this.setOptions(arguments[21]);
+    if (arguments[22]) this.setOptions(arguments[22]);
 
     // reg event
     this._addEvent(this.input, 'focus', this._bind(this.tabFocus));
