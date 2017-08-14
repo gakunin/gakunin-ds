@@ -249,6 +249,10 @@ var wayf_show_categories =  true;
 // [Optional, default: 150]
 // var wayf_list_height = 150;
 
+// API key for using GoogleMap
+// [Optional, commented out by default]
+// var wayf_googlemap_key = "";
+
 
 //////////////////// ADDITIONAL CSS CUSTOMIZATIONS ////////////////////
 

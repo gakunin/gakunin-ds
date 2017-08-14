@@ -21,7 +21,7 @@ function printHeader(){
 	global $useAutocompleteIdP, $selIdP, $incsearchCssURL, $incsearchLibURL, $dropdownUpURL, $dropdownDnURL, $ajaxLibURL, $ajaxFlickLibURL;
 	global $mduiHintIDPs, $geolocationOffURL, $geolocationOnURL, $useMduiHintMax;
 	global $IncSearchList, $IncSearchHintList, $JSONIdPList, $JSONIncCategoryList, $JSONIncIdPList, $JSONIncIdPHintList, $IdPHintList, $selIdP, $InitDisp, $hintIDPString;
-	global $googleMapLibURL, $geolocationJsURL, $geolocationCssURL, $commonJsURL, $SProviders, $DiscofeedURL;
+	global $googleMapKey, $googleMapLibURL, $geolocationJsURL, $geolocationCssURL, $commonJsURL, $SProviders, $DiscofeedURL;
 
 	$DiscofeedURL = '';
 	foreach ($SProviders as $key => $SProvider){

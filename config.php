@@ -207,6 +207,9 @@ $geolocationJsURL = $incsearchURL.'/functions-geolocation.js';
 $geolocationCssURL = $incsearchURL.'/geolocation.css';
 $commonJsURL = $incsearchURL.'/functions-common.js';
 
+// API key for using GoogleMap
+$googleMapKey = '';
+
 // 5. Files and path settings
 //***************************
 

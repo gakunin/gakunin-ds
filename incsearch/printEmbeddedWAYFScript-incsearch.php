@@ -827,6 +827,13 @@ function getGETArgumentSeparator(url){
 	}
 	
 	if(
+		typeof(wayf_googlemap_key) == "undefined"
+		|| typeof(wayf_googlemap_key) != "string"
+		){
+		wayf_googlemap_key = '';
+	}
+	
+	if(
 		typeof(wayf_discofeed_url) == "undefined"
 		|| typeof(wayf_discofeed_url) != "string"
 		){
@@ -986,7 +993,7 @@ SCRIPT;
 		writeHTML('<link rel="stylesheet" href="{$geolocationCssURL}" type="text/css" />');
 		writeHTML('<script type="text/javascript" src="{$ajaxLibURL}"></script>');
 		writeHTML('<script type="text/javascript" src="{$ajaxFlickLibURL}"></script>');
-		writeHTML('<script type="text/javascript" src="{$googleMapLibURL}"></script>');
+		writeHTML('<script type="text/javascript" src="{$googleMapLibURL}&key=' + wayf_googlemap_key + '"></script>');
 		writeHTML('<script type="text/javascript" src="{$geolocationJsURL}"></script>');
 		writeHTML('<script type="text/javascript" src="{$commonJsURL}"></script>');
 		writeHTML('<script type="text/javascript" src="{$incsearchLibURL}"></script>');
@@ -1353,7 +1360,11 @@ SCRIPT;
 		writeHTML('</div>');
 		writeHTML('<div class="wayf_linkArea">');
 		writeHTML('<div class="wayf_col">');
-		writeHTML('<a href="javascript:void(0)" id="map_a" title="{$mapTooltip}" tabindex=15>{$mapString}</a>');
+		if (wayf_googlemap_key != ''){
+			writeHTML('<a href="javascript:void(0)" id="map_a" title="{$mapTooltip}" tabindex=15>{$mapString}</a>');
+		} else {
+			writeHTML('<div id="map_a"></div>');
+		}
 		writeHTML('</div>');
 		writeHTML('<div class="wayf_col">');
 		writeHTML('<a href="javascript:void(0)" id="clear_a" title="{$clearTooltip}" tabindex=16>{$clearString}</a>');
