@@ -14,7 +14,7 @@ function CJ4BaseMapType() {
         CJ4BaseMapType.prototype.getTile = function( tileXY, zoom, ownerDocument ) {
                 var tileImage = ownerDocument.createElement('img');
 
-                var url= "http://cyberjapandata.gsi.go.jp/xyz/pale/"
+                var url= "https://cyberjapandata.gsi.go.jp/xyz/pale/"
                         + zoom.toString() + "/" + tileXY.x.toString()
                         + "/" + tileXY.y.toString() + ".png";
 
@@ -213,7 +213,7 @@ function getDistance(lat1, lng1, lat2, lng2, precision) {
 }
 
 function displayMapIdP(clientCenterFlg){
-	var mapframe = document.getElementById("mapframe");
+	var mapframe = document.getElementById("wayf_mapframe");
 	createList();
 	jQuery(document).ready(function($){
 		$('#' + mapframe.id).slideDown(1000);
@@ -224,7 +224,7 @@ function displayMapIdP(clientCenterFlg){
 function hiddenMapIdP(){
 	var wayfframe = document.getElementById(wayfdiv_id);
 	wayfframe.style.display = '';
-	var mapframe = document.getElementById("mapframe");
+	var mapframe = document.getElementById("wayf_mapframe");
 	mapframe.style.display = 'none';
 	document.getElementById("mapleft").innerHTML = '';
 	document.getElementById("mapright").innerHTML = '';
@@ -401,13 +401,13 @@ function createList(){
 	var elmRight_frm = document.getElementById("mapright");
 	var elmRight_close = document.createElement("div");
 	elmRight_close.id = 'mapclose';
-	elmRight_close.className = 'mframe mouseout';
+	elmRight_close.className = 'wayf_mframe mouseout';
 	elmRight_close.innerHTML = close_button;
-	elmRight_close.setAttribute('onmouseover', 'changeButtonColor("mapclose", "mframe mouseover");return false;');
-	elmRight_close.setAttribute('onmouseout', 'changeButtonColor("mapclose", "mframe mouseout");return false;');
+	elmRight_close.setAttribute('onmouseover', 'changeButtonColor("mapclose", "wayf_mframe mouseover");return false;');
+	elmRight_close.setAttribute('onmouseout', 'changeButtonColor("mapclose", "wayf_mframe mouseout");return false;');
 	elmRight_close.setAttribute('onClick', 'hiddenMapIdP();return false;');
-	elmRight_close.onmouseover = function() {changeButtonColor("mapclose","mframe mouseover");return false;};
-	elmRight_close.onmouseout = function() {changeButtonColor("mapclose","mframe mouseout");return false;};
+	elmRight_close.onmouseover = function() {changeButtonColor("mapclose","wayf_mframe mouseover");return false;};
+	elmRight_close.onmouseout = function() {changeButtonColor("mapclose","wayf_mframe mouseout");return false;};
 	elmRight_close.onclick = function() {hiddenMapIdP();return false;};
 	elmRight_frm.appendChild(elmRight_close);
 	
@@ -415,13 +415,13 @@ function createList(){
 	
 	var elmRight_geolocation = document.createElement("div");
 	elmRight_geolocation.id = 'mapgeolocation';
-	elmRight_geolocation.className = 'mframe mouseout';
+	elmRight_geolocation.className = 'wayf_mframe mouseout';
 	elmRight_geolocation.innerHTML = geolocation_button;
-	elmRight_geolocation.setAttribute('onmouseover', 'changeButtonColor("mapgeolocation", "mframe mouseover");return false;');
-	elmRight_geolocation.setAttribute('onmouseout', 'changeButtonColor("mapgeolocation", "mframe mouseout");return false;');
+	elmRight_geolocation.setAttribute('onmouseover', 'changeButtonColor("mapgeolocation", "wayf_mframe mouseover");return false;');
+	elmRight_geolocation.setAttribute('onmouseout', 'changeButtonColor("mapgeolocation", "wayf_mframe mouseout");return false;');
 	elmRight_geolocation.setAttribute('onclick', 'getClientGeolocation("map");return false;');
-	elmRight_geolocation.onmouseover = function() {changeButtonColor("mapgeolocation","mframe mouseover");return false;};
-	elmRight_geolocation.onmouseout = function() {changeButtonColor("mapgeolocation","mframe mouseout");return false;};
+	elmRight_geolocation.onmouseover = function() {changeButtonColor("mapgeolocation","wayf_mframe mouseover");return false;};
+	elmRight_geolocation.onmouseout = function() {changeButtonColor("mapgeolocation","wayf_mframe mouseout");return false;};
 	elmRight_geolocation.onclick = function() {getClientGeolocation("map");return false;};
 	elmRight_frm.appendChild(elmRight_geolocation);
 }
@@ -475,7 +475,7 @@ function createMap(clientCenterFlg){
 		
 		// Denshi Kokudo LOGO
 		cj4LOGO = document.createElement('div');
-		cj4LOGO.innerHTML = "<a href='http://portal.cyberjapan.jp/' target='_blank' ><img src='http://cyberjapan.jp/images/icon01.gif' width='32' height='32' alt='Denshi Kokudo'></a>";
+		cj4LOGO.innerHTML = "<a href='https://portal.cyberjapan.jp/' target='_blank' ><img src='https://cyberjapan.jp/images/icon01.gif' width='32' height='32' alt='Denshi Kokudo'></a>";
 		cj4LOGO.style.display = "inline";
 		myMap.controls[ google.maps.ControlPosition.BOTTOM_LEFT ].push(cj4LOGO);
 		
@@ -497,8 +497,7 @@ function createMap(clientCenterFlg){
 					if (json_idp_list[i].logoURL != ''){
 						content += '<img src="' + json_idp_list[i].logoURL + '" style="height:35px;" /><br />';
 					}
-					content += '<a href="javascript:void(0)" id="idplist' + i +
-							'" class="incsearch_link"' +
+					content += '<a href="javascript:void(0)" id="idplist' + i + '"' +
 							' onclick="selectMapIdP(' + "'" + json_idp_list[i].name + "'" + ');return false;">' +
 							json_idp_list[i].name +
 							'</a>';
@@ -515,7 +514,7 @@ function createMap(clientCenterFlg){
 		marker = new google.maps.Marker({
 			position: new google.maps.LatLng(clientLatLng[0], clientLatLng[1]),
 			map: myMap,
-			icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|7FFF00|000000'
+			icon: 'https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|7FFF00|000000'
 		});
 		markersList["GEOLOCATION"] = marker;
 	}

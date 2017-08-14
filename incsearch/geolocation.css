@@ -1,4 +1,4 @@
-div.mframe {
+#wayf_div div.wayf_mframe {
 	background-color: #FFFFFF;
 	box-shadow: 1px 1px 8px #999999;
 	border-radius: 13px;
@@ -8,7 +8,7 @@ div.mframe {
 	-moz-border-radius: 13px;
 }
 
-div#mapframe {
+#wayf_div div#wayf_mapframe {
 	position: relative;
 	float : center;
 	z-index: 90;
@@ -17,7 +17,7 @@ div#mapframe {
 	top:0px;
 }
 
-div#mapleft{
+#wayf_div div#mapleft{
 	position: relative;
 	float : left;
 	z-index: 91;
@@ -30,7 +30,7 @@ div#mapleft{
 	overflow-y: hidden;
 }
 
-div#mapcenter{
+#wayf_div div#mapcenter{
 	position: relative;
 	float : left;
 	z-index: 92;
@@ -39,7 +39,7 @@ div#mapcenter{
 	background-color: lavender;
 }
 
-div#mapright{
+#wayf_div div#mapright{
 	position: relative;
 	float : left;
 	z-index: 93;
@@ -50,7 +50,7 @@ div#mapright{
 	padding-top: 10px;
 }
 
-div.mouseover{
+#wayf_div div.mouseover{
 	background-Color: lightsteelblue;
 	box-shadow: 1px 1px 8px #999999;
 	border-radius: 13px;
@@ -60,11 +60,11 @@ div.mouseover{
 	-moz-border-radius: 13px;
 }
 
-div.mouseout{
+#wayf_div div.mouseout{
 	background-color: lavender;
 }
 
-div#mapclose{
+#wayf_div div#mapclose{
 	position: static;
 	text-align: center;
 	vertical-align: middle;
@@ -74,7 +74,7 @@ div#mapclose{
 	cursor: pointer;
 }
 
-div#mapgeolocation{
+#wayf_div div#mapgeolocation{
 	position: static;
 	text-align: center;
 	vertical-align: middle;
@@ -84,15 +84,15 @@ div#mapgeolocation{
 	cursor: pointer;
 }
 
-div#titlehint{
+#wayf_div div#titlehint{
 	background-color: chocolate;
 }
 
-div#titlegeolocation{
+#wayf_div div#titlegeolocation{
 	background-color: indianred;
 }
 
-div.title{
+#wayf_div div.title{
 	position:relative;
 	float: center;
 	width: 98%;
@@ -104,7 +104,7 @@ div.title{
 	padding: 5px;
 }
 
-div.listhint{
+#wayf_div div.listhint{
 	width: 98%;
 	font-size: 100%;
 	text-align: left;
@@ -112,7 +112,7 @@ div.listhint{
 	padding: 5px;
 }
 
-div.list{
+#wayf_div div.list{
 	float: left;
 	width: 70%;
 	font-size: 100%;
@@ -121,7 +121,7 @@ div.list{
 	padding: 5px 5px 5px 10px;
 }
 
-div.distance{
+#wayf_div div.distance{
 	float: right;
 	width: 28%;
 	font-size: 80%;
