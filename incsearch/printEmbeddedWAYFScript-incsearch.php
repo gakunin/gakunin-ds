@@ -327,23 +327,13 @@ function isAllowedCategory(category){
 
 function isAllowedIdP(IdP){
 	
-	if (wayf_hide_idps[0] != "all"){
-		for ( var i=0; i<wayf_hide_idps.length; i++){
-			if (wayf_hide_idps[i] == IdP){
-				return false;
-			}
+	for ( var i=0; i<wayf_hide_idps.length; i++){
+		if (wayf_hide_idps[i] == IdP){
+			return false;
 		}
-		// IdP was not hidden
-		return true;
-	} else {
-		for ( var i=0; i<wayf_unhide_idps.length; i++){
-			if (wayf_unhide_idps[i] == IdP){
-				return true;
-			}
-		}
-		// IdP was hidden
-		return false;
 	}
+	// IdP was not hidden
+	return true;
 }
 
 function setCookie(c_name, value, expiredays){
@@ -793,7 +783,7 @@ function getGETArgumentSeparator(url){
 	
 	// Disable categories if IdPs are unhidden from hidden categories
 	if (wayf_unhide_idps.length > 0){
-		wayf_show_categories = false;
+		wayf_show_categories = true;
 	}
 	
 	if(

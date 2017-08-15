@@ -347,7 +347,7 @@ Suggest.Local.prototype = {
     for (var i=0; i<this.candidateList.length; i++){
       if (this.isMatchKind(this.candidateList[i]) && this.isMatchLocation(this.candidateList[i])){
         if (this.embeddedFlg == false ||
-             isAllowedCategory(this.candidateList[i].categoryKey)){
+              isAllowedType(this.candidateList[i].entityid,this.candidateList[i].categoryKey)){
           if (text == '' ||
                this.candidateList[i].categoryName == this.hintIdpGroup ||
                this.candidateList[i].categoryName == this.favoriteIdpGroup) {
@@ -371,7 +371,7 @@ Suggest.Local.prototype = {
 
   isMatchKind: function(chkIdP) {
     var chkFlg = false;
-    if (selkind == '' || selkind == 'all') {
+    if (selkind == '' || selkind == 'all' || selkind == chkIdP.kind) {
       chkFlg = true;
     } else if (typeof chkIdP.kind != "undefined"){
       for (var i=0; i<chkIdP.kind.length; i++){
