@@ -9,20 +9,22 @@
 }
 
 #wayf_div div#wayf_mapframe {
-	position: relative;
+	position: absolute;
+	display:none;
 	float : center;
-	z-index: 90;
+	z-index: 910;
 	width:100%;
 	font-size: 90%;
 	top:0px;
+	left:0px;
 }
 
 #wayf_div div#mapleft{
 	position: relative;
 	float : left;
-	z-index: 91;
+	z-index: 911;
 	width:20%;
-	height: 590px;
+	height: 600px;
 	text-align: left;
 	vertical-align: top;
 	background-color: lavender;
@@ -33,7 +35,7 @@
 #wayf_div div#mapcenter{
 	position: relative;
 	float : left;
-	z-index: 92;
+	z-index: 912;
 	width: 75%;
 	height: 600px;
 	background-color: lavender;
@@ -42,7 +44,7 @@
 #wayf_div div#mapright{
 	position: relative;
 	float : left;
-	z-index: 93;
+	z-index: 913;
 	width:5%;
 	height: 590px;
 	text-align: center;

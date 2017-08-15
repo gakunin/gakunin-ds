@@ -239,8 +239,6 @@ Suggest.Local.prototype = {
         this.scrollArea.scrollTop = 0;
       }
     } else if (element.id == this.mapElm.id) {
-      var elem_wayf = this._getElement(wayfdiv_id);
-      elem_wayf.style.display = 'none';
       displayMapIdP(false);
     }
     }

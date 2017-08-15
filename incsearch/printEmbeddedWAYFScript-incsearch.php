@@ -115,7 +115,7 @@ var hintmax = '{$useMduiHintMax}';
 var favorite_idp_group = '{$mostUsedIdPsString}';
 var hint_idp_group = '{$hintIDPString}';
 
-var wayfdiv_id = 'wayfframe';
+var wayfdiv_id = 'wayf_div';
 var reg_button = '{$regString}';
 var geolocation_err1 = '{$geolocationErr1}';
 var geolocation_err2 = '{$geolocationErr2}';
@@ -850,22 +850,21 @@ function getGETArgumentSeparator(url){
 		return;
 	}
 	
-	writeHTML('<div id="wayf_div">');
-	writeHTML('<div id="wayf_mapframe" style="display:none;">');
-	writeHTML('	<div id="mapleft" class="wayf_mframe"></div>');
-	writeHTML('	<div id="mapcenter" class="wayf_mframe"></div>');
-	writeHTML('	<div id="mapright"></div>');
-	writeHTML('</div>');
-	
 	// Now start generating the HTML for outer box
 	if(
 		wayf_hide_after_login 
 		&& user_logged_in
 	){
-		writeHTML('<div id="wayfframe" style="background:' + wayf_background_color + ';border-style: solid;border-color: ' + wayf_border_color + ';border-width: 1px;padding: 10px;height: auto;width: ' + wayf_width + ';text-align: left;overflow: hidden;">');
+		writeHTML('<div id="wayf_div" style="background:' + wayf_background_color + ';border-style: solid;border-color: ' + wayf_border_color + ';border-width: 1px;padding: 10px;height: auto;width: ' + wayf_width + ';text-align: left;overflow: hidden;">');
 	} else {
-		writeHTML('<div id="wayfframe" style="background:' + wayf_background_color + ';border-style: solid;border-color: ' + wayf_border_color + ';border-width: 1px;padding: 10px;height: ' + wayf_height + ';width: ' + wayf_width + ';text-align: left;">');
+		writeHTML('<div id="wayf_div" style="background:' + wayf_background_color + ';border-style: solid;border-color: ' + wayf_border_color + ';border-width: 1px;padding: 10px;height: ' + wayf_height + ';width: ' + wayf_width + ';text-align: left;">');
 	}
+	
+	writeHTML('<div id="wayf_mapframe">');
+	writeHTML('	<div id="mapleft" class="wayf_mframe"></div>');
+	writeHTML('	<div id="mapcenter" class="wayf_mframe"></div>');
+	writeHTML('	<div id="mapright"></div>');
+	writeHTML('</div>');
 	
 	// Shall we display the logo
 	if (wayf_hide_logo != true){
@@ -1372,7 +1371,6 @@ SCRIPT;
 	// Close box
 	writeHTML('</div>');
 	writeHTML('<div style="clear:both;"></div>');
-	writeHTML('</div>');
 
 	// Now output HTML all at once
 	document.write(wayf_html);

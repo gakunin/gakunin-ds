@@ -157,7 +157,7 @@
 
 <body>
 <div id="wayf_div">
-<div id="wayf_mapframe" style="display:none;">
+<div id="wayf_mapframe">
 	<div id="mapleft" class="wayf_mframe"></div>
 	<div id="mapcenter" class="wayf_mframe"></div>
 	<div id="mapright"></div>
