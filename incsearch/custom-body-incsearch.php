@@ -10,7 +10,7 @@
    document.write('<div class="wayf_col">');
    document.write('<div class="wayf_radioArea">');
    document.write('<div class="wayf_row">');
-   document.write('<div class="wayf_optionTitle" style="width:7em;">');
+   document.write('<div class="wayf_optionTitle">');
    document.write('<?php echo getLocalString('locations_filter') ?>');
    document.write('</div>');
    document.write('<div class="wayf_optionRadio">');
@@ -24,7 +24,7 @@
   } else {
     $deviceType = 'other';
   }
-  $tabindex = 8;
+  $tabindex = 3;
   $idindex = 0;
   if ($deviceType == 'mobile'){
     print("   document.write('                  <select name=\"locationgroup\" onchange=\"changeLocation_sel();\">');\n");
@@ -46,20 +46,19 @@
       print("   document.write('                  <input type=\"radio\" id=\"location$idindex\" tabindex=$tabindex name=\"locationgroup\" value=\"$key\" onclick=\"changeLocation();\" $IdPLocationChecked/>');\n");
       print("   document.write('                  <label for=\"location$idindex\" class=\"wayf_label_option\">$IdPLocationName</label>');\n");
       print("   document.write('                  </div>');\n");
-      $tabindex++;
     } else {
       print("   document.write('                  <option id=\"location$idindex\" name=\"locationgroup\" value=\"$key\" $IdPLocationChecked>$IdPLocationName</option>');\n");
     }
   }
   if ($deviceType == 'mobile'){
     print("   document.write('                  </select>');\n");
-    $tabindex++;
   }
+  $tabindex++;
 ?>
    document.write('</div>');
    document.write('</div>');
    document.write('<div class="wayf_row">');
-   document.write('<div class="wayf_optionTitle" style="width:7em;">');
+   document.write('<div class="wayf_optionTitle">');
    document.write('<?php echo getLocalString('category_filter') ?>');
    document.write('</div>');
    document.write('<div class="wayf_optionRadio">');
@@ -85,15 +84,14 @@
       print("   document.write('                  <input type=\"radio\" id=\"kind$idindex\" tabindex=$tabindex name=\"kindgroup\" value=\"$key\" onclick=\"changeKind();\" $IdPKindChecked/>');\n");
       print("   document.write('                  <label for=\"kind$idindex\" class=\"wayf_label_option\">$IdPKindName</label>');\n");
       print("   document.write('                  </div>');\n");
-      $tabindex++;
     } else {
       print("   document.write('                  <option id=\"kind$idindex\" name=\"kindgroup\" value=\"$key\" $IdPKindChecked/>$IdPKindName</option>');\n");
     }
   }
   if ($deviceType == 'mobile'){
     print("   document.write('                  </select>');\n");
-    $tabindex++;
   }
+  $tabindex++;
 ?>
    document.write('</div>');
    document.write('</div>');
@@ -101,7 +99,7 @@
    document.write('<div class="wayf_inputArea">');
    document.write('<div class="wayf_inputtext">');
    document.write('	<input id="user_idp" type="hidden" name="user_idp" value=""/>');
-   document.write('	<input id="keytext" type="text" name="pattern" value="" autocomplete="off" size="60" tabindex="5" style="width:100%; display:block;" />');
+   document.write('	<input id="keytext" type="text" name="pattern" value="" autocomplete="off" size="60" tabindex="5" />');
    document.write('	<div id="view_incsearch_base">');
    document.write('		<div id="view_incsearch_animate">');
    document.write('			<div id="view_incsearch_scroll">');
@@ -110,11 +108,11 @@
    document.write('		</div>');
    document.write('	</div>');
    document.write('</div>');
-   document.write('<div classi="wayf_eventItem">');
-   document.write('			<img id="dropdown_img" src="" title="<?php echo getLocalString('dropdown_tooltip') ?>" tabindex=6 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
+   document.write('<div class="wayf_eventItem">');
+   document.write('			<img id="dropdown_img" src="" title="<?php echo getLocalString('dropdown_tooltip') ?>" tabindex=6 />');
    document.write('</div>');
    document.write('<div class="wayf_eventItem">');
-   document.write('			<img id="geolocation_img" src="" title="<?php echo getLocalString('geolocation_tooltip') ?>" tabindex=7 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
+   document.write('			<img id="geolocation_img" src="" title="<?php echo getLocalString('geolocation_tooltip') ?>" tabindex=7 />');
    document.write('</div>');
    document.write('<div id="wayf_submit_div" class="wayf_eventItem">');
    document.write('	<input id="wayf_submit_button" type="submit" name="Select" accesskey="s" tabindex="19" value="<?php echo getLocalString('select_button') ?>" ');

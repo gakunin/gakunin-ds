@@ -1170,7 +1170,7 @@ SCRIPT;
 		writeHTML('<div class="wayf_col">');
 		writeHTML('<div class="wayf_radioArea">');
 		writeHTML('<div class="wayf_row">');
-		writeHTML('<div class="wayf_optionTitle" style="width:6em;">');
+		writeHTML('<div class="wayf_optionTitle">');
 		writeHTML('{$locationsFilter}');
 		writeHTML('</div>');
 		writeHTML('<div class="wayf_optionRadio">');
@@ -1183,7 +1183,7 @@ SCRIPT;
 	} else {
 		$deviceType = 'other';
   	}
-	$tabindex = 8;
+	$tabindex = 3;
 	$idindex = 0;
 	if ($deviceType == 'mobile'){
 	echo <<<SCRIPT
@@ -1210,7 +1210,6 @@ SCRIPT;
 		writeHTML('                  <label for=\"location$idindex\" class=\"wayf_label_option\">$IdPLocationName</label>');
 		writeHTML('                  </div>');
 SCRIPT;
-			$tabindex++;
 		} else {
 	echo <<<SCRIPT
 		writeHTML('                  <option id=\"location$idindex\" name=\"locationgroup\" value=\"$key\" $IdPLocationChecked>$IdPLocationName</option>');
@@ -1221,13 +1220,13 @@ SCRIPT;
 	echo <<<SCRIPT
 		writeHTML('                  </select>');
 SCRIPT;
-		$tabindex++;
 	}
+	$tabindex++;
 	echo <<<SCRIPT
 		writeHTML('</div>');
 		writeHTML('</div>');
 		writeHTML('<div class="wayf_row">');
-		writeHTML('<div class="wayf_optionTitle" style="width:6em;">');
+		writeHTML('<div class="wayf_optionTitle">');
 		writeHTML('{$categoryFilter}');
 		writeHTML('</div>');
 		writeHTML('<div class="wayf_optionRadio">');
@@ -1279,7 +1278,7 @@ SCRIPT;
 		writeHTML('<div class="wayf_inputArea">');
 		writeHTML('<div class="wayf_inputtext">');
 		writeHTML('<input id="user_idp" name="user_idp" type="hidden" value="">');
-		writeHTML('<input id="keytext" type="text" name="pattern" value="" autocomplete="off" size="60" tabindex=5 style="width: 100%; display: block"/>');
+		writeHTML('<input id="keytext" type="text" name="pattern" value="" autocomplete="off" size="60" tabindex=5 />');
 		writeHTML('<div id="view_incsearch_base">');
 		writeHTML('<div id="view_incsearch_animate" style="height:' + wayf_list_height + ';">');
 		writeHTML('<div id="view_incsearch_scroll" style="height:' + wayf_list_height + ';">');
@@ -1290,11 +1289,11 @@ SCRIPT;
 		writeHTML('</div>');
 
 		writeHTML('<div class="wayf_eventItem">');
-		writeHTML('<img id="dropdown_img" src="{$dropdownDnURL}" title="{$dropdownTooltip}" tabindex=6 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
+		writeHTML('<img id="dropdown_img" src="{$dropdownDnURL}" title="{$dropdownTooltip}" tabindex=6 />');
 		writeHTML('</div>');
 		
 		writeHTML('<div class="wayf_eventItem">');
-		writeHTML('<img id="geolocation_img" src="{$geolocationOffURL}" title="{$geolocationTooltip}" tabindex=7 style="border:0px; width:20px; height:20px; vertical-align:middle;">');
+		writeHTML('<img id="geolocation_img" src="{$geolocationOffURL}" title="{$geolocationTooltip}" tabindex=7 />');
 		writeHTML('</div>');
 		
 		writeHTML('<div id="wayf_submit_div" class="wayf_eventItem">');
