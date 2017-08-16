@@ -51,6 +51,7 @@
 	var no_hint_msg = '<?php echo addslashes(getLocalString('no_hint_msg')); ?>';
 	var no_geolocation_msg = '<?php echo addslashes(getLocalString('no_geolocation_msg')); ?>';
 	var near_idp = '<?php echo addslashes(getLocalString('near_idp')); ?>';
+	var wayf_googlemap_key = '<?php echo $googleMapKey ?>';
 	
 <?php printJscode_GlobalVariables(); ?>
 

@@ -149,7 +149,11 @@
    document.write('</div>');
    document.write('<div class="wayf_linkArea">');
    document.write('<div class="wayf_col">');
-   document.write('                     <a href="javascript:void(0)" id="map_a" title="<?php echo getLocalString('map_tooltip') ?>" tabindex=15><?php echo getLocalString('map_button') ?></a>');
+   if (wayf_googlemap_key != ''){
+     document.write('                     <a href="javascript:void(0)" id="map_a" title="<?php echo getLocalString('map_tooltip') ?>" tabindex=15><?php echo getLocalString('map_button') ?></a>');
+   } else {
+     document.write('                     <div id="map_a"></div>');
+   }
    document.write('                     <p></p>');
    document.write('</div>');
    document.write('<div class="wayf_col">');
