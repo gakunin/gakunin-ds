@@ -1187,7 +1187,7 @@ SCRIPT;
 	$idindex = 0;
 	if ($deviceType == 'mobile'){
 	echo <<<SCRIPT
-		writeHTML('                  <select name=\"locationgroup\" onchange=\"changeLocation_sel();\">');
+		writeHTML('                  <select name=\"locationgroup\" tabindex=$tabindex onchange=\"changeLocation_sel();\">');
 SCRIPT;
 	}
 	
@@ -1235,7 +1235,7 @@ SCRIPT;
 	$idindex = 0;
 	if ($deviceType == 'mobile'){
 	echo <<<SCRIPT
-		writeHTML('                  <select name=\"kindgroup\" onchange=\"changeKind_sel();\">');
+		writeHTML('                  <select name=\"kindgroup\" tabindex=$tabindex onchange=\"changeKind_sel();\">');
 SCRIPT;
 	}
 	foreach ($IDProvidersKind as $key => $IDProviderKind){

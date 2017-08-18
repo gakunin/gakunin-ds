@@ -27,7 +27,7 @@
   $tabindex = 3;
   $idindex = 0;
   if ($deviceType == 'mobile'){
-    print("   document.write('                  <select name=\"locationgroup\" onchange=\"changeLocation_sel();\">');\n");
+    print("   document.write('                  <select name=\"locationgroup\" tabindex=$tabindex onchange=\"changeLocation_sel();\">');\n");
   }
   foreach ($IDProviders as $key => $IDProviderLocation){
     $IdPType = isset($IDProviders[$key]['Type']) ? $IDProviders[$key]['Type'] : '';
@@ -65,7 +65,7 @@
 <?php
   $idindex = 0;
   if ($deviceType == 'mobile'){
-    print("   document.write('                  <select name=\"kindgroup\" onchange=\"changeKind_sel();\">');\n");
+    print("   document.write('                  <select name=\"kindgroup\" tabindex=$tabindex onchange=\"changeKind_sel();\">');\n");
   }
   foreach ($IDProvidersKind as $key => $IDProviderKind){
     $IdPType = isset($IDProvidersKind[$key]['Type']) ? $IDProvidersKind[$key]['Type'] : '';

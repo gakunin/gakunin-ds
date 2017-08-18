@@ -229,3 +229,31 @@
 #wayf_div #wayf_mapframe a:focus {
 	color: red;
 }
+
+/* IdP list: link for mobile */
+#wayf_div #IdPList #view_incsearch a {
+	color: black;
+}
+
+@media only screen and (max-width: 768px) {
+	#wayf_div .wayf_inputArea,
+	#wayf_div .wayf_inputArea > .wayf_inputtext,
+	#wayf_div .wayf_inputArea > .wayf_eventItem,
+	#wayf_div .wayf_inputArea > .wayf_eventItem > input {
+		display:inline-block !important;
+	}
+	#wayf_div .wayf_inputtext {
+		width: 80% !important;
+	}
+	#wayf_div select,
+	#wayf_div #wayf_submit_div,
+	#wayf_div #wayf_submit_button {
+		width: 100%;
+	}
+	#view_incsearch_animate, #view_incsearch_scroll {
+		height: auto !important;
+	}
+	#view_incsearch_scroll, #view_incsearch {
+		position: static !important;
+	}
+}
