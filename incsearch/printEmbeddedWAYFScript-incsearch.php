@@ -860,7 +860,7 @@ function getGETArgumentSeparator(url){
 		writeHTML('<div id="wayf_div" style="background:' + wayf_background_color + ';border-style: solid;border-color: ' + wayf_border_color + ';border-width: 1px;padding: 10px;height: ' + wayf_height + ';width: ' + wayf_width + ';text-align: left;">');
 	}
 	
-	writeHTML('<div id="wayf_mapframe">');
+	writeHTML('<div id="wayf_mapframe" style="display: none;">');
 	writeHTML('	<div id="mapleft" class="wayf_mframe"></div>');
 	writeHTML('	<div id="mapcenter" class="wayf_mframe"></div>');
 	writeHTML('	<div id="mapright"></div>');

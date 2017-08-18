@@ -214,6 +214,16 @@ function getDistance(lat1, lng1, lat2, lng2, precision) {
 
 function displayMapIdP(clientCenterFlg){
 	var mapframe = document.getElementById("wayf_mapframe");
+	var d = mapframe.style.display, v = mapframe.style.visibility;
+	mapframe.style.visibility = "hidden"; mapframe.style.display = "block";
+	var p = mapframe.offsetParent; var t = window.scrollX, l = window.scrollY; while (p) { t -= p.offsetTop; l -= p.offsetLeft; p = p.offsetParent; } [t, l];
+	mapframe.style.display = d; mapframe.style.visibility = v;
+	mapframe.style.top = t + "px"; mapframe.style.left = l + "px";
+	mapframe.style.width = window.innerWidth+"px"; mapframe.style.height = window.innerHeight+"px";
+	mapframe.children[0].style.height = window.innerHeight+"px";
+	mapframe.children[1].style.height = window.innerHeight+"px";
+	mapframe.children[2].style.height = (window.innerHeight-10)+"px";
+
 	createList();
 	jQuery(document).ready(function($){
 		$('#' + mapframe.id).slideDown(1000);
@@ -475,7 +485,7 @@ function createMap(clientCenterFlg){
 		
 		// Denshi Kokudo LOGO
 		cj4LOGO = document.createElement('div');
-		cj4LOGO.innerHTML = "<a href='https://portal.cyberjapan.jp/' target='_blank' ><img src='https://cyberjapan.jp/images/icon01.gif' width='32' height='32' alt='Denshi Kokudo'></a>";
+		cj4LOGO.innerHTML = "<a href='http://portal.cyberjapan.jp/' target='_blank' ><img src='http://cyberjapan.jp/images/icon01.gif' width='32' height='32' alt='Denshi Kokudo'></a>";
 		cj4LOGO.style.display = "inline";
 		myMap.controls[ google.maps.ControlPosition.BOTTOM_LEFT ].push(cj4LOGO);
 		

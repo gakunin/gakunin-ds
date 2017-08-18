@@ -10,9 +10,11 @@
 
 #wayf_div div#wayf_mapframe {
 	position: absolute;
-	display:none;
 	float : center;
-	z-index: 910;
+	z-index: 2;
+	display:-ms-flexbox;
+	display:-webkit-flex;
+	display: flex;
 	width:100%;
 	font-size: 90%;
 	top:0px;
@@ -20,35 +22,30 @@
 }
 
 #wayf_div div#mapleft{
-	position: relative;
-	float : left;
-	z-index: 911;
+	z-index: 2;
 	width:20%;
 	height: 600px;
 	text-align: left;
 	vertical-align: top;
 	background-color: lavender;
 	padding-top: 10px;
-	overflow-y: hidden;
+	overflow-y: auto;
 }
 
 #wayf_div div#mapcenter{
-	position: relative;
-	float : left;
-	z-index: 912;
+	z-index: 2;
 	width: 75%;
 	height: 600px;
+	vertical-align: top;
 	background-color: lavender;
 }
 
 #wayf_div div#mapright{
-	position: relative;
-	float : left;
-	z-index: 913;
+	z-index: 2;
 	width:5%;
-	height: 590px;
+	height: 600px;
 	text-align: center;
-	vertical-align: middle;
+	vertical-align: top;
 	padding-top: 10px;
 }
 

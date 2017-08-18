@@ -97,7 +97,7 @@
 /* base in IdP list display area */
 #wayf_div #view_incsearch_base {
 	position: relative;
-	z-index: 901;
+	z-index: 1;
 }
 
 /* IdP list display animation area */
