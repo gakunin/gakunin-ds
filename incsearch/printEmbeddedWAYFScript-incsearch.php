@@ -982,7 +982,7 @@ SCRIPT;
 		writeHTML('<link rel="stylesheet" href="{$geolocationCssURL}" type="text/css" />');
 		writeHTML('<script type="text/javascript" src="{$ajaxLibURL}"></script>');
 		writeHTML('<script type="text/javascript" src="{$ajaxFlickLibURL}"></script>');
-		writeHTML('<script type="text/javascript" src="{$googleMapLibURL}&key=' + wayf_googlemap_key + '"></script>');
+		writeHTML('<script type="text/javascript" src="{$googleMapLibURL}?key=' + wayf_googlemap_key + '"></script>');
 		writeHTML('<script type="text/javascript" src="{$geolocationJsURL}"></script>');
 		writeHTML('<script type="text/javascript" src="{$commonJsURL}"></script>');
 		writeHTML('<script type="text/javascript" src="{$incsearchLibURL}"></script>');

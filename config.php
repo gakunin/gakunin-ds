@@ -202,7 +202,7 @@ $incsearchLibURL = $incsearchURL.'/suggest.js';
 $incsearchCssURL = $incsearchURL.'/suggest.css';
 $ajaxLibURL = $incsearchURL.'/jquery.js';
 $ajaxFlickLibURL = $incsearchURL.'/jquery.flickable.js';
-$googleMapLibURL = 'https://maps.google.com/maps/api/js?sensor=false';
+$googleMapLibURL = 'https://maps.google.com/maps/api/js';
 $geolocationJsURL = $incsearchURL.'/functions-geolocation.js';
 $geolocationCssURL = $incsearchURL.'/geolocation.css';
 $commonJsURL = $incsearchURL.'/functions-common.js';

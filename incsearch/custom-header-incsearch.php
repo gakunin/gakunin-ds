@@ -13,7 +13,7 @@
 
 	<script type="text/javascript" src="<?php echo $ajaxLibURL ?>"></script>
 	<script type="text/javascript" src="<?php echo $ajaxFlickLibURL ?>"></script>
-	<script type="text/javascript" src="<?php echo $googleMapLibURL."&key=".$googleMapKey ?>"></script>
+	<script type="text/javascript" src="<?php echo $googleMapLibURL."?key=".$googleMapKey ?>"></script>
 	<script type="text/javascript" src="<?php echo $geolocationJsURL ?>"></script>
 	<script type="text/javascript" src="<?php echo $commonJsURL ?>"></script>
 	<script type="text/javascript" src="<?php echo $incsearchLibURL ?>"></script>
