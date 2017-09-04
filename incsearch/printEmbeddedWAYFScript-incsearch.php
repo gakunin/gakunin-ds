@@ -1050,6 +1050,7 @@ SCRIPT;
 					if (wayf_most_used_idps[i] == wayf_incidps[j].entityid){
 						json_idp_favoritelist.push(clone(wayf_incidps[j]));
 						json_idp_favoritelist[json_idp_favoritelist.length - 1].categoryName = favorite_idp_group;
+						break;
 					}
 				}
 			}
@@ -1072,8 +1073,9 @@ SCRIPT;
 						dispDefault = wayf_additional_idps[i].name;
 						json_idp_list[listcnt] = new Array();
 						json_idp_list[listcnt].entityid = wayf_additional_idps[i].entityID;
-                                                json_idp_list[listcnt].categoryName = "{$otherFederationString}";
-                                                json_idp_list[listcnt].categoryKey = "other_federation";
+						json_idp_list[listcnt].type = 'others';
+						json_idp_list[listcnt].categoryName = "{$otherFederationString}";
+						json_idp_list[listcnt].categoryKey = 'other_federation';
 						json_idp_list[listcnt].name = wayf_additional_idps[i].name;
 						if (wayf_additional_idps[i].LogoURL){
 							json_idp_list[listcnt].logoURL = wayf_additional_idps[i].LogoURL;
@@ -1108,7 +1110,9 @@ SCRIPT;
 						dispDefault = wayf_additional_idps[i].name;
 						json_idp_list[listcnt] = new Array();
 						json_idp_list[listcnt].entityid = wayf_additional_idps[i].entityID;
-                                                json_idp_list[listcnt].categoryName = "{$otherFederationString}";
+						json_idp_list[listcnt].type = 'others';
+						json_idp_list[listcnt].categoryName = "{$otherFederationString}";
+						json_idp_list[listcnt].categoryKey = 'other_federation';
 						json_idp_list[listcnt].name = wayf_additional_idps[i].name;
 						if (wayf_additional_idps[i].LogoURL){
 							json_idp_list[listcnt].logoURL = wayf_additional_idps[i].LogoURL;
@@ -1136,7 +1140,9 @@ SCRIPT;
 					} else if (wayf_additional_idps[i].name) {
 						json_idp_list[listcnt] = new Array();
 						json_idp_list[listcnt].entityid = wayf_additional_idps[i].entityID;
-                                                json_idp_list[listcnt].categoryName = "{$otherFederationString}";
+						json_idp_list[listcnt].type = 'others';
+						json_idp_list[listcnt].categoryName = "{$otherFederationString}";
+						json_idp_list[listcnt].categoryKey = 'other_federation';
 						json_idp_list[listcnt].name = wayf_additional_idps[i].name;
 						if (wayf_additional_idps[i].LogoURL){
 							json_idp_list[listcnt].logoURL = wayf_additional_idps[i].LogoURL;
@@ -1206,7 +1212,7 @@ SCRIPT;
 			$IdPLocationName = addslashes($IDProviderLocation['Name']);
 		}
 		
-		if (($IdPLocationName == $otherFederationString)||($IdPLocationName == $mostUsedIdPsString)||($IdPLocationName == 'Unknown')){ continue; }
+		if ($IdPLocationName == $otherFederationString || $IdPLocationName == 'Unknown'){ continue; }
 		if (isset($IDProviderLocation['Default'])){
 			$IdPLocationChecked = $IDProviderLocation['Default'];
 		}

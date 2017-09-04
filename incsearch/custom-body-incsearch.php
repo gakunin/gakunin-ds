@@ -37,6 +37,7 @@
     } else {
       $IdPLocationName = addslashes($IDProviderLocation['Name']);
     }
+    if ($IdPLocationName == $otherFederationString || $IdPLocationName == 'Unknown'){ continue; }
     if (isset($IDProviderLocation['Default'])){
       $IdPLocationChecked = $IDProviderLocation['Default'];
     }

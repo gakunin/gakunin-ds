@@ -385,7 +385,7 @@ Suggest.Local.prototype = {
 
   isMatchLocation: function(chkIdP) {
     var chkFlg = false;
-    if (sellocation == '' || sellocation == 'all' || sellocation == chkIdP.type || (sellocation == 'others' && (chkIdP.type == 'unknown' || chkIdP.type == 'other_federation'))) {
+    if (sellocation == '' || sellocation == 'all' || sellocation == chkIdP.type || (sellocation == 'others' && chkIdP.type == 'unknown')) {
       chkFlg = true;
     }
     return chkFlg;
