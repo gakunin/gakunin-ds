@@ -90,7 +90,7 @@ function printWAYF(){
 	$actionURL = $_SERVER['SCRIPT_NAME'].'?'.htmlentities($_SERVER['QUERY_STRING']);
 	$defaultSelected = ($selectedIDP == '-') ? 'selected="selected"' : '';
 	$rememberSelectionChecked = (isset($_COOKIE[$redirectStateCookieName])) ? 'checked="checked"' : '' ;
-	
+	$otherFederationString = addslashes(getLocalString('other_federation'));
 	
 	// Check if custom header template exists
 	if(file_exists('custom-body.php')){
