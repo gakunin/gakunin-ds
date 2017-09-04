@@ -29,15 +29,6 @@ function CJ4BaseMapType() {
 var cj4Type = null;
 var cj4LOGO = null;
 
-function clone(obj) { 
-    if (null == obj || "object" != typeof obj) return obj; 
-    var copy = obj.constructor(); 
-    for (var attr in obj) { 
-        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr]; 
-    } 
-    return copy; 
-} 
-
 function keyPressGeoImg(evt) {
     var keyCode;
     if (evt) {
@@ -379,6 +370,7 @@ function createList(){
 			elmLeft_list_name.innerHTML = geoIdPList[i].name;
 			elmLeft_list_name.setAttribute('onmouseover', 'changeListColor("name' + i + '", "list",  "mouseover");return false;');
 			elmLeft_list_name.setAttribute('onmouseout', 'changeListColor("name' + i + '", "list", "mouseout");return false;');
+			if (typeof geoIdPList[i].categoryKey == "undefined") geoIdPList[i].categoryKey = "others";
 			elmLeft_list_name.setAttribute('onclick', 'moveMapCenter("' + json_category_list[geoIdPList[i].categoryKey].geolocation + '", ' + 
 																		json_category_list[geoIdPList[i].categoryKey].mapscale + ', "' +
 																		geoIdPList[i].name + '"); return false;');
@@ -461,6 +453,7 @@ function createMap(clientCenterFlg){
 	if (clientCenterFlg){
 		var min_kyori = null_distance;
 		for (var i in json_category_list){
+			if (i == 'all' || i == 'others' || i == 'other_federation') continue;
 			var latlon = json_category_list[i].geolocation.split(",");
 			var cur_kyori = getDistance(clientLatLng[0], clientLatLng[1], latlon[0], latlon[1], 10);
 			if (min_kyori > cur_kyori){
@@ -468,6 +461,7 @@ function createMap(clientCenterFlg){
 				hintCategoryKey = i;
 			}
 		}
+		if (hintCategoryKey == '') hintCategoryKey = 'others';
 		moveMapCenter(json_category_list[hintCategoryKey].geolocation, json_category_list[hintCategoryKey].mapscale, '');
 	} else {
 		arrayLatLng = json_category_list[hintCategoryKey].geolocation.split(",");

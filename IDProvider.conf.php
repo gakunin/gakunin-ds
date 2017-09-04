@@ -168,6 +168,19 @@ $IDProviders['others'] = array (
 		'Default' => '',
 );
 
+//
+// 他のフェデレーションから
+$IDProviders['other_federation'] = array (
+		'Type' => 'category',
+		'en' => array ('Name' => 'From other federations'),
+		'ja' => array ('Name' => '他のフェデレーションから'),
+		'Name' => 'From other federations',
+		'Index' => '010',
+		'Geolocation' => '36.107924,139.065113',
+		'Mapscale' => '5',
+		'Default' => '',
+);
+
 // Category
 
 //
