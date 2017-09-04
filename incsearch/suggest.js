@@ -139,6 +139,7 @@ Suggest.Local.prototype = {
   classActive: 'wayf_active',
   classGroup: 'wayf_list_group',
   classIdPNm: 'wayf_list_idp',
+  classIdPRegURL: 'wayf_list_idp_regurl',
   classGroupFavorite: 'wayf_list_group_favorite',
   classIdPNmFavorite: 'wayf_list_idp_favorite',
   classGroupHint: 'wayf_list_group_hint',
@@ -384,7 +385,7 @@ Suggest.Local.prototype = {
 
   isMatchLocation: function(chkIdP) {
     var chkFlg = false;
-    if (sellocation == '' || sellocation == 'all' || sellocation == chkIdP.type) {
+    if (sellocation == '' || sellocation == 'all' || sellocation == chkIdP.type || (sellocation == 'others' && (chkIdP.type == 'unknown' || chkIdP.type == 'other_federation'))) {
       chkFlg = true;
     }
     return chkFlg;
@@ -461,7 +462,7 @@ Suggest.Local.prototype = {
         logo = '&nbsp;<span style="vertical-align: middle; padding:0px; margin:0px;"><img src="' + resultList[i].logoURL + '" height="18"/></span>';
       }
      
-      if (this.userAgentFlg == 0) {
+      if (this.userAgentFlg == 0 || this.userAgentFlg == 2) {
         element1.innerHTML = resultList[i].name + logo;
       } else {
         element1.innerHTML = '<a onclick="">' + resultList[i].name + '</a>' + logo;
@@ -475,7 +476,8 @@ Suggest.Local.prototype = {
 
       var regurl = '';
       if ((typeof wayf_sp_entityID != 'undefined') && (typeof wayf_return_url != 'undefined') && (resultList[i].registrationURL != '')) {
-        element2.innerHTML = '<a href="javascript:void(0)" style="margin-left: 10px;">' + reg_button + '</a>';
+        element2.innerHTML = '<a href="javascript:void(0)" class="wayf_list_idp_regurl">' + reg_button + '</a>';
+
         this.suggestArea.appendChild(element2);
         this._addEvent(element2, 'click', this._bindEvent(this.listClick2, i));
       }

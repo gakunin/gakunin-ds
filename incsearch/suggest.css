@@ -222,19 +222,21 @@
 	text-align: left;
 }
 
+#wayf_div #IdPList .wayf_list_idp_regurl {
+	margin-left: 10px;
+}
+
 /* link active */
 #wayf_div #IdPList a:hover,
 #wayf_div #IdPList a:focus,
 #wayf_div #wayf_mapframe a:hover,
-#wayf_div #wayf_mapframe a:focus {
+#wayf_div #wayf_mapframe a:focus,
+#wayf_div #IdPList .wayf_list_idp_regurl a:hover,
+#wayf_div #IdPList .wayf_list_idp_regurl a:focus {
 	color: red;
 }
 
-/* IdP list: link for mobile */
-#wayf_div #IdPList #view_incsearch a {
-	color: black;
-}
-
+/*
 @media only screen and (max-width: 768px) {
 	#wayf_div .wayf_inputArea,
 	#wayf_div .wayf_inputArea > .wayf_inputtext,
@@ -257,3 +259,4 @@
 		position: static !important;
 	}
 }
+*/
