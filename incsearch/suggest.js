@@ -476,8 +476,7 @@ Suggest.Local.prototype = {
 
       var regurl = '';
       if ((typeof wayf_sp_entityID != 'undefined') && (typeof wayf_return_url != 'undefined') && (resultList[i].registrationURL != '')) {
-        element2.innerHTML = '<a href="javascript:void(0)" class="wayf_list_idp_regurl">' + reg_button + '</a>';
-
+        element2.innerHTML = '<a href="javascript:void(0)" class="' + this.classIdPRegURL + '">' + reg_button + '</a>';
         this.suggestArea.appendChild(element2);
         this._addEvent(element2, 'click', this._bindEvent(this.listClick2, i));
       }
