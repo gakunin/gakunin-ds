@@ -148,6 +148,9 @@ function printDropDownList($IDProviders, $selectedIDP = ''){
 			
 			// Check if entry is a category
 			if (isset($values['Type']) && $values['Type'] == 'category'){
+				if ($key == 'all' || $key == 'other_federation'){
+					continue;
+				} 
 				if (!empty($optgroup)){
 					echo '
 	</optgroup>';
