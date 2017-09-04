@@ -118,8 +118,6 @@ var wayf_show_categories =  true;
 // var wayf_hide_categories =  new Array();
 
 // EntityIDs of Identity Provider whose category is hidden but that shall be shown anyway
-// If this array is not empty, wayf_show_categories will be disabled because
-// otherwise, unhidden IdPs may be displayed in the wrong category
 // Example of how to unhide certain Identity Providers
 // var wayf_unhide_idps = new Array("https://aai-login.uzh.ch/idp/shibboleth");
 // [Optional, commented out by default]

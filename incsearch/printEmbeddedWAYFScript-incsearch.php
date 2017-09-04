@@ -572,6 +572,15 @@ function getGETArgumentSeparator(url){
 	}
 }
 
+function clone(obj) {
+	if (null == obj || "object" != typeof obj) return obj;
+	var copy = obj.constructor();
+	for (var attr in obj) {
+		if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+	}
+	return copy;
+}
+
 (function() {
 	
 	var config_ok = true; 
@@ -779,11 +788,6 @@ function getGETArgumentSeparator(url){
 		||  typeof(wayf_unhide_idps) != "object"
 	){
 		wayf_unhide_idps = new Array();
-	}
-	
-	// Disable categories if IdPs are unhidden from hidden categories
-	if (wayf_unhide_idps.length > 0){
-		wayf_show_categories = true;
 	}
 	
 	if(
@@ -994,21 +998,6 @@ SCRIPT;
 		writeHTML('<div id="optionElm" style="display:none;"></div>');
 		writeHTML('<input name="request_type" type="hidden" value="embedded">');
 
-		// Favourites
-		if (wayf_most_used_idps.length > 0){
-			if(typeof(wayf_overwrite_most_used_idps_text) != "undefined"){
-				favorite_idp_group = wayf_overwrite_most_used_idps_text;
-			}
-
-			// Show additional IdPs in the order they are defined
-			for ( var i=0; i < wayf_most_used_idps.length; i++){
-				if (wayf_idps[wayf_most_used_idps[i]]){
-					json_idp_favoritelist.push(json_idp_list[wayf_most_used_idps[i]]);
-					json_idp_favoritelist[json_idp_favoritelist.length - 1].categoryName = favorite_idp_group;
-				}
-			}
-		}
-
 SCRIPT;
 	
 	// Generate drop-down list
@@ -1050,6 +1039,22 @@ SCRIPT;
 	}
 	
 	echo <<<SCRIPT
+		// Favourites
+		if (wayf_most_used_idps.length > 0){
+			if(typeof(wayf_overwrite_most_used_idps_text) != "undefined"){
+				favorite_idp_group = wayf_overwrite_most_used_idps_text;
+			}
+			// Show additional IdPs in the order they are defined
+			for ( var i=0; i < wayf_most_used_idps.length; i++){
+				for ( var j=0; j < wayf_incidps.length; j++){
+					if (wayf_most_used_idps[i] == wayf_incidps[j].entityid){
+						json_idp_favoritelist.push(clone(wayf_incidps[j]));
+						json_idp_favoritelist[json_idp_favoritelist.length - 1].categoryName = favorite_idp_group;
+					}
+				}
+			}
+		}
+		
 		if (wayf_additional_idps.length > 0){
 			var listcnt = json_idp_list.length;
 			
@@ -1068,6 +1073,7 @@ SCRIPT;
 						json_idp_list[listcnt] = new Array();
 						json_idp_list[listcnt].entityid = wayf_additional_idps[i].entityID;
                                                 json_idp_list[listcnt].categoryName = "{$otherFederationString}";
+                                                json_idp_list[listcnt].categoryKey = "other_federation";
 						json_idp_list[listcnt].name = wayf_additional_idps[i].name;
 						if (wayf_additional_idps[i].LogoURL){
 							json_idp_list[listcnt].logoURL = wayf_additional_idps[i].LogoURL;
@@ -1199,6 +1205,8 @@ SCRIPT;
 		} else {
 			$IdPLocationName = addslashes($IDProviderLocation['Name']);
 		}
+		
+		if (($IdPLocationName == $otherFederationString)||($IdPLocationName == $mostUsedIdPsString)||($IdPLocationName == 'Unknown')){ continue; }
 		if (isset($IDProviderLocation['Default'])){
 			$IdPLocationChecked = $IDProviderLocation['Default'];
 		}
