@@ -154,11 +154,9 @@
    } else {
      document.write('                     <div id="map_a"></div>');
    }
-   document.write('                     <p></p>');
    document.write('</div>');
    document.write('<div class="wayf_col">');
    document.write('                     <a href="javascript:void(0)" id="clear_a" title="<?php echo getLocalString('clear_tooltip') ?>" tabindex=16><?php echo getLocalString('clear_button') ?></a>');
-   document.write('                     <p></p>');
    document.write('</div>');
    document.write('</div>');
    document.write('</div>');
