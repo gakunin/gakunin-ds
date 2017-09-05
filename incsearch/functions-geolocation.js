@@ -206,8 +206,8 @@ function getDistance(lat1, lng1, lat2, lng2, precision) {
 function displayMapIdP(clientCenterFlg){
 	var mapframe = document.getElementById("wayf_mapframe");
 	var d = mapframe.style.display, v = mapframe.style.visibility;
-	mapframe.style.visibility = "hidden"; mapframe.style.display = "block";
-	var p = mapframe.offsetParent; var t = window.scrollX, l = window.scrollY; while (p) { t -= p.offsetTop; l -= p.offsetLeft; p = p.offsetParent; } [t, l];
+	mapframe.style.visibility = "hidden"; mapframe.style.display = "";
+	var p = mapframe.offsetParent; var t = window.scrollY, l = window.scrollX; while (p) { t -= p.offsetTop; l -= p.offsetLeft; p = p.offsetParent; }
 	mapframe.style.display = d; mapframe.style.visibility = v;
 	mapframe.style.top = t + "px"; mapframe.style.left = l + "px";
 	mapframe.style.width = window.innerWidth+"px"; mapframe.style.height = window.innerHeight+"px";
