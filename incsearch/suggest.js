@@ -487,12 +487,12 @@ Suggest.Local.prototype = {
     this.scrollArea.scrollTop = 0;
     this.dnupImgElm.src = this.upImgURL;
     $('#' + this.animateArea.id).slideDown(this.dispListTime);
-    var scrollbarWidth = 0;
-    if (this.userAgentFlg == 0) scrollbarWidth = 19;
-    var scrollAreaWidth = Number($('#' + this.scrollArea.id).css('width').replace('px', ''));
-    var suggestAreaWidth = Number($('#' + this.suggestArea.id).css('width').replace('px', ''));
+    var scrollAreaWidth = this.scrollArea.clientWidth;
+    var suggestAreaWidth = this.suggestArea.scrollWidth;
     if (scrollAreaWidth > suggestAreaWidth) {
-      $('#' + this.suggestArea.id).css('width', scrollAreaWidth - scrollbarWidth + 'px');
+      $('#' + this.suggestArea.id).css('width', scrollAreaWidth + 'px');
+    } else {
+      $('#' + this.suggestArea.id).css('width', suggestAreaWidth + 'px');
     }
     if (this.userAgentFlg == 1) {
       $('#' + this.scrollArea.id).flickable('enable');
