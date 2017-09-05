@@ -6,7 +6,8 @@
 		<p class="promptMessage"><?php echo $promptMessage ?></p>
 <script language="JavaScript" type="text/javascript">
 <!--
-   document.write('<div class="wayf_optionArea">');
+   document.write('<div class="wayf_userInputArea">');
+   document.write('<div class="wayf_col">');
    document.write('<div class="wayf_col">');
    document.write('<div class="wayf_radioArea">');
    document.write('<div class="wayf_row">');

@@ -3,12 +3,12 @@
 	-webkit-box-sizing: border-box; /* Chrome, Safari */
 	-moz-box-sizing: border-box;    /* Firefox */
 	box-sizing: border-box;         /* IE8+, Opera */
+	text-align: left;
 }
 
 #wayf_div .wayf_row,
 #wayf_div .wayf_col,
 #wayf_div .wayf_inputArea,
-#wayf_div .wayf_optionArea,
 #wayf_div .wayf_optionTitle,
 #wayf_div .wayf_optionRadio,
 #wayf_div .wayf_linkArea,
@@ -27,7 +27,10 @@
 	padding-right: 5px;
 }
 
-#wayf_div .wayf_inputArea {
+#wayf_div .wayf_userInputArea > .wayf_col > .wayf_col > .wayf_row {
+	-ms-flexbox-direction: row;
+	-webkit-flex-direction: row;
+	flex-direction: row;
 	justify-content: space-between;
 }
 
@@ -35,24 +38,34 @@
 	width:70px;
 }
 
+#wayf_div .wayf_inputArea {
+	align-items: center;
+}
+
 #wayf_div .wayf_inputtext,
-#wayf_div .wayf_inputtext #keytext {
+#wayf_div #keytext {
 	width: 100%;
-	height:20px;
+	height: auto !important;
 }
 
 #wayf_div .wayf_inputtext #keytext {
 	display:block;
 }
 
-#wayf_div .wayf_eventItem {
-	margin-right: 3px;
+#wayf_div .wayf_eventItem:last-child {
+	margin-right: 0px !important;
 }
 
 #wayf_div .wayf_eventItem #dropdown_img,
 #wayf_div .wayf_eventItem #geolocation_img {
 	width:20px;
 	height:20px;
+}
+
+#wayf_div .wayf_eventItem #dropdown_img,
+#wayf_div .wayf_eventItem #geolocation_img,
+#wayf_div .wayf_eventItem #wayf_submit_button {
+	display: block;
 }
 
 #wayf_div .wayf_radioArea,
@@ -85,13 +98,29 @@
 }
 
 #wayf_div .wayf_linkArea {
-	justify-content: space-between;
-	margin-top: 5px;
-	margin-left: 5px;
+	-ms-flexbox-wrap: wrap-reverse;
+	-webkit-flex-wrap: wrap-reverse;
+	flex-wrap: wrap-reverse;
+	justify-content: flex-end !important;
+	flex-shrink: 10000;
+	align-content: flex-end;
+}
+
+#wayf_div .wayf_linkArea > div {
+	width: auto;
+}
+
+#wayf_div .wayf_linkArea > div:last-child {
+	margin-bottom: 5px;
 }
 
 #wayf_div #map_a {
-	margin-right: 5px;
+	margin-right: 0px !important;
+}
+
+#wayf_div .wayf_checkArea,
+#wayf_div .wayf_checkArea .wayf_optionCheck {
+	width: auto !important;
 }
 
 /* base in IdP list display area */
@@ -137,7 +166,6 @@
 #wayf_div #view_incsearch div.wayf_select {
 	color: white;
 	background-color: #3366FF;
-	text-align: left;
 }
 
 /* IdP list: mouseover */
@@ -145,7 +173,6 @@
 	color: black;
 	background-color: #99CCFF;
 	cursor: pointer;
-	text-align: left;
 }
 
 /* IdP list: group title */
@@ -154,7 +181,6 @@
 	background-color: indianred;
 	font-weight: bold;
 	font-size: 75%;
-	text-align: left;
 	vertical-align: middle;
 }
 
@@ -164,7 +190,6 @@
 	background-color: white;
 	font-weight: normal;
 	font-size: 100%;
-	text-align: left;
 	vertical-align: middle;
 }
 
@@ -174,7 +199,6 @@
 	background-color: forestgreen;
 	font-weight: bold;
 	font-size: 75%;
-	text-align: left;
 	vertical-align: middle;
 }
 
@@ -184,7 +208,6 @@
 	background-color: #EEFFDD;
 	font-weight: normal;
 	font-size: 100%;
-	text-align: left;
 	vertical-align: middle;
 }
 
@@ -194,7 +217,6 @@
 	background-color: chocolate;
 	font-weight: bold;
 	font-size: 75%;
-	text-align: left;
 	vertical-align: middle;
 }
 
@@ -204,7 +226,6 @@
 	background-color: #FFFF99;
 	font-weight: normal;
 	font-size: 100%;
-	text-align: left;
 	vertical-align: middle;
 }
 
@@ -219,7 +240,6 @@
 	white-space: nowrap;
 	font-size: 70%;
 	color: blue;
-	text-align: left;
 }
 
 #wayf_div #IdPList .wayf_list_idp_regurl {
@@ -234,6 +254,12 @@
 #wayf_div #IdPList .wayf_list_idp_regurl a:hover,
 #wayf_div #IdPList .wayf_list_idp_regurl a:focus {
 	color: red;
+}
+
+@media only screen and (max-width: 768px) {
+	#wayf_div #wayf_submit_button {
+		margin-top: 8px;
+	}
 }
 
 /*
