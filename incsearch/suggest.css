@@ -93,6 +93,10 @@
 	flex-wrap: wrap;
 }
 
+#wayf_div .wayf_optionCheck > .wayf_row:first-child {
+	flex-shrink: 0;
+}
+
 #wayf_div .wayf_linkArea {
 	margin-top: 5px;
 	-ms-flexbox-wrap: wrap-reverse;
