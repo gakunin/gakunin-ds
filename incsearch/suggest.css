@@ -249,11 +249,9 @@
 }
 
 @media only screen and (max-width: 768px) {
-	#wayf_div .wayf_inputArea,
-	#wayf_div .wayf_inputArea > .wayf_inputtext,
-	#wayf_div .wayf_inputArea > .wayf_eventItem,
-	#wayf_div .wayf_inputArea > .wayf_eventItem > input {
-		display:inline-block !important;
+	#wayf_div .wayf_inputArea {
+		flex-wrap: wrap;
+		justify-content: flex-start !important;
 	}
 	#wayf_div .wayf_inputtext {
 		width: 80% !important;
@@ -266,8 +264,9 @@
 	#view_incsearch_animate, #view_incsearch_scroll {
 		height: auto !important;
 	}
-	#view_incsearch_scroll, #view_incsearch {
-		position: static !important;
+	#wayf_div #view_incsearch_animate > #view_incsearch_scroll,
+	#wayf_div #view_incsearch_animate > #view_incsearch_scroll > #view_incsearch {
+		position: static;
 	}
 	#wayf_div #wayf_submit_button {
 		margin-top: 8px;
