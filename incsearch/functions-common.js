@@ -6,6 +6,9 @@ function getMatchIdPList(json, list){
 	for (var i=0; i<list.length; i++) {
 		for (var j=0; j<json.length; j++) {
 			if (list[i].entityid == json[j].entityID) {
+				if (list[i].name == dispidp) {
+					document.getElementById('keytext').value=dispidp;
+				}
 				newList[index] = list[i];
 				matchFlg = true;
 				index++;
@@ -14,6 +17,9 @@ function getMatchIdPList(json, list){
 		}
 		for (var k=0; k<wayf_additional_idps.length; k++) {
 			if (list[i].entityid == wayf_additional_idps[k].entityID) {
+				if (list[i].name == dispidp) {
+					document.getElementById('keytext').value=dispidp;
+				}
 				newList[index] = list[i];
 				matchFlg = true;
 				index++;
