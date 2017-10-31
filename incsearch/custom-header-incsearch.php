@@ -52,6 +52,8 @@
 	var no_geolocation_msg = '<?php echo addslashes(getLocalString('no_geolocation_msg')); ?>';
 	var near_idp = '<?php echo addslashes(getLocalString('near_idp')); ?>';
 	var wayf_googlemap_key = '<?php echo $googleMapKey ?>';
+	var wayf_use_disco_feed = false;
+	var wayf_additional_idps = [];
 	
 <?php printJscode_GlobalVariables(); ?>
 
