@@ -90,7 +90,6 @@ $useKerberos = false;
 // If true, the users IP is used for a reverse DNS lookup whose
 // resulting domain name then is matched with the URN values of the IdPs
 //$useReverseDNSLookup = false;
-$useReverseDNSLookup = true;
 
 // Whether the JavaScript for embedding the WAYF
 // on a remote site shall be generated or not
