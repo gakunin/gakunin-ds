@@ -841,7 +841,7 @@ function sortIdentityProviders(&$IDProviders){
 	
 	// Compose array
 	$unknownCategoryIsEmpty = true;
-	while(list($categoryKey, $categoryValue) = each($sortedCategories)){
+	foreach ($sortedCategories as $categoryKey => $categoryValue){
 		$IDProviders[$categoryKey] = $categoryValue;
 		
 		// Loop through all IdPs
